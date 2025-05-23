@@ -1,0 +1,13 @@
+com\example\edupal\model\Answer.class
+com\example\edupal\model\Question.class
+com\example\edupal\controller\User\UserController.class
+com\example\edupal\model\Quiz.class
+com\example\edupal\config\WebConfig$1.class
+com\example\edupal\model\User.class
+com\example\edupal\config\WebConfig.class
+com\example\edupal\EduPalApplication.class
+com\example\edupal\model\LearningProgress.class
+com\example\edupal\model\Teacher.class
+com\example\edupal\model\Resource.class
+com\example\edupal\model\Student.class
+com\example\edupal\model\Speech.class
