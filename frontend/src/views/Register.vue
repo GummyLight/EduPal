@@ -1,18 +1,18 @@
 <template>
-  <div class="login-container">
+  <div class="register-container">
     <div class="background-layer"></div>
     <div class="content-wrapper">
-      <LoginForm />
+      <RegisterForm />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import LoginForm from '../components/RegisterForm.vue';
+import RegisterForm from '../components/RegisterForm.vue';
 </script>
 
 <style scoped>
-.login-container {
+.register-container {
   min-height: 100vh;
   width: 100%;
   position: relative;
@@ -33,7 +33,7 @@ import LoginForm from '../components/RegisterForm.vue';
   background-position: center;
   background-repeat: no-repeat;
   filter: blur(1px);
-  transform: scale(1);
+  transform: scale(1.1);
   z-index: 1;
 }
 
