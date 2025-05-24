@@ -17,9 +17,13 @@
             type="text" 
             id="userId"
             class="form-input"
+            :class="{ 'error': userIdError }"
             placeholder="请输入用户名"
+            @input="handleUserIdInput"
+            @blur="validateUserId"
             required 
           />
+          <span v-if="userIdError" class="error-message">{{ userIdError }}</span>
         </div>
         <div class="form-group">
           <label for="password">密码：</label>
@@ -28,9 +32,12 @@
             type="password" 
             id="password"
             class="form-input"
+            :class="{ 'error': passwordError }"
             placeholder="请输入密码"
+            @blur="validatePassword"
             required 
           />
+          <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
         </div>
         <div class="form-group">
           <label for="confirmPassword">确认密码：</label>
@@ -39,9 +46,12 @@
             type="password" 
             id="confirmPassword"
             class="form-input"
+            :class="{ 'error': confirmPasswordError }"
             placeholder="请再次输入密码"
+            @blur="validateConfirmPassword"
             required 
           />
+          <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
         </div>
         <div class="form-group">
           <label for="phoneNum">手机号：</label>
@@ -50,12 +60,16 @@
             type="tel" 
             id="phoneNum"
             class="form-input"
+            :class="{ 'error': phoneError }"
             placeholder="请输入手机号"
+            @input="handlePhoneInput"
+            @blur="validatePhone"
             required 
           />
+          <span v-if="phoneError" class="error-message">{{ phoneError }}</span>
         </div>
         <div class="button-group">
-          <button type="submit" class="register-button" :disabled="loading">
+          <button type="submit" class="register-button" :disabled="loading || !isFormValid">
             {{ loading ? '注册中...' : '注册' }}
           </button>
           <button type="button" @click="handleBack" class="back-button">返回</button>
@@ -66,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref, computed } from 'vue';
 import { ElMessage } from 'element-plus';
 import ex from '../api/auth';
 
@@ -80,22 +94,141 @@ const form = reactive({
 
 const loading = ref(false);
 
-const handleSubmit = async () => {
-  // 验证密码匹配
-  if (form.password !== form.confirmPassword) {
-    ElMessage.error('两次输入的密码不匹配！');
+// 错误信息状态
+const userIdError = ref('');
+const passwordError = ref('');
+const confirmPasswordError = ref('');
+const phoneError = ref('');
+
+// 表单验证状态
+const isFormValid = computed(() => {
+  return form.userId && 
+         form.password && 
+         form.confirmPassword &&
+         form.phoneNum &&
+         !userIdError.value &&
+         !passwordError.value &&
+         !confirmPasswordError.value &&
+         !phoneError.value;
+});
+
+// 用户名验证规则：只允许英文字母和数字
+const isValidUsername = (username: string): boolean => {
+  const usernameRegex = /^[a-zA-Z0-9]+$/;
+  return usernameRegex.test(username);
+};
+
+// 手机号验证规则：只允许数字，11位
+const isValidPhone = (phone: string): boolean => {
+  const phoneRegex = /^[0-9]{11}$/;
+  return phoneRegex.test(phone);
+};
+
+// 处理用户名输入
+const handleUserIdInput = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  let value = target.value;
+  
+  // 只保留英文字母和数字
+  value = value.replace(/[^a-zA-Z0-9]/g, '');
+  
+  form.userId = value;
+  target.value = value;
+  
+  // 清除之前的错误信息
+  userIdError.value = '';
+};
+
+// 处理手机号输入
+const handlePhoneInput = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  let value = target.value;
+  
+  // 只保留数字，最多11位
+  value = value.replace(/[^0-9]/g, '').slice(0, 11);
+  
+  form.phoneNum = value;
+  target.value = value;
+  
+  // 清除之前的错误信息
+  phoneError.value = '';
+};
+
+// 验证用户名
+const validateUserId = () => {
+  if (!form.userId) {
+    userIdError.value = '';
     return;
   }
   
-  // 验证密码长度
+  if (!isValidUsername(form.userId)) {
+    userIdError.value = '用户名只能包含英文字母和数字';
+  } else if (form.userId.length < 3) {
+    userIdError.value = '用户名至少3个字符';
+  } else if (form.userId.length > 20) {
+    userIdError.value = '用户名不能超过20个字符';
+  } else {
+    userIdError.value = '';
+  }
+};
+
+// 验证密码
+const validatePassword = () => {
+  if (!form.password) {
+    passwordError.value = '';
+    return;
+  }
+  
   if (form.password.length < 6) {
-    ElMessage.error('密码长度不能少于6位');
+    passwordError.value = '密码长度不能少于6位';
+  } else {
+    passwordError.value = '';
+  }
+  
+  // 如果确认密码已填写，重新验证确认密码
+  if (form.confirmPassword) {
+    validateConfirmPassword();
+  }
+};
+
+// 验证确认密码
+const validateConfirmPassword = () => {
+  if (!form.confirmPassword) {
+    confirmPasswordError.value = '';
     return;
   }
   
-  // 验证手机号格式
-  if (!/^\d{11}$/.test(form.phoneNum)) {
-    ElMessage.error('手机号码必须是11位数字');
+  if (form.password !== form.confirmPassword) {
+    confirmPasswordError.value = '两次输入的密码不匹配';
+  } else {
+    confirmPasswordError.value = '';
+  }
+};
+
+// 验证手机号
+const validatePhone = () => {
+  if (!form.phoneNum) {
+    phoneError.value = '';
+    return;
+  }
+  
+  if (!isValidPhone(form.phoneNum)) {
+    phoneError.value = '请输入正确的11位手机号';
+  } else {
+    phoneError.value = '';
+  }
+};
+
+const handleSubmit = async () => {
+  // 提交前再次验证所有字段
+  validateUserId();
+  validatePassword();
+  validateConfirmPassword();
+  validatePhone();
+  
+  // 检查是否有任何错误
+  if (userIdError.value || passwordError.value || confirmPasswordError.value || phoneError.value) {
+    ElMessage.error('请检查输入格式');
     return;
   }
 
@@ -190,8 +323,19 @@ const handleBack = () => {
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
+.form-input.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
 .form-input::placeholder {
   color: #9ca3af;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
 }
 
 .button-group {
@@ -243,6 +387,16 @@ const handleBack = () => {
 
 .back-button:active {
   transform: translateY(0);
+}
+
+.error {
+  border-color: #f44336;
+}
+
+.error-message {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: -5px;
 }
 
 @media (max-width: 480px) {
