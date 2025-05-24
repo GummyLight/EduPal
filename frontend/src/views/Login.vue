@@ -28,7 +28,7 @@ import LoginForm from '../components/LoginForm.vue';
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/img.png');
+  background-image: url('../assets/LoginBackground.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

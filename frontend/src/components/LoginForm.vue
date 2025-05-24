@@ -12,25 +12,41 @@
         </div>
         <div class="form-group">
           <label for="userId">{{ userIdLabel }}</label>
-          <input
-              v-model="form.userId"
-              :type="userIdInputType"
-              id="userId"
-              class="form-input"
-              :placeholder="userIdPlaceholder"
-              required
+          <input 
+            v-model="form.userId" 
+            :type="userIdInputType"
+            id="userId"
+            class="form-input"
+            :placeholder="userIdPlaceholder"
+            required 
           />
         </div>
         <div class="form-group">
           <label for="password">密码：</label>
-          <input
-              v-model="form.password"
-              type="password"
-              id="password"
-              class="form-input"
-              placeholder="请输入密码"
-              required
+          <input 
+            v-model="form.password" 
+            type="password" 
+            id="password"
+            class="form-input"
+            placeholder="请输入密码"
+            required 
           />
+        </div>
+        <div class="form-group">
+          <label for="verifyCode">验证码：</label>
+          <div class="verify-code-container">
+            <input 
+              v-model="form.verifyCode" 
+              type="text" 
+              id="verifyCode"
+              class="form-input"
+              placeholder="请输入验证码"
+              required 
+            />
+            <span @click="refreshCode" style="cursor: pointer; margin-left: 10px;">
+              <s-identify :identifyCode="identifyCode" ></s-identify>
+            </span>
+          </div>
         </div>
         <div class="button-group">
           <button type="submit" class="login-button">登录</button>
@@ -42,16 +58,15 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, computed } from 'vue';
-import { useRouter } from 'vue-router'; // 引入 useRouter
+import { reactive, computed, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import ex from '../api/auth';
-
-const router = useRouter(); // 获取 router 实例
+import SIdentify from './identify/identify.vue'; // 引入图片验证码组件
 
 const form = reactive({
   userId: '',
   password: '',
+  verifyCode: '', // 添加验证码字段
   type: 0 as number
 });
 
@@ -69,12 +84,13 @@ const userIdInputType = computed(() => {
 
 const handleSubmit = async () => {
   try {
-    const response = await ex.login(form.userId, form.password, form.type);
+    const response = await ex.login(form.userId, form.password, form.type); // 添加验证码参数
     if (response.data.success) {
       ElMessage.success(response.data.message);
-      router.push('/'); // 使用 Vue Router 进行跳转
+      window.location.href = '/';
     } else {
       ElMessage.error(response.data.message);
+      refreshCode(); // 登录失败时刷新验证码
     }
   } catch (error: any) {
     console.error('Login failed:', error);
@@ -83,14 +99,31 @@ const handleSubmit = async () => {
     } else {
       ElMessage.error('登录失败，请检查网络连接或联系管理员');
     }
+    refreshCode(); // 登录失败时刷新验证码
   }
 };
 
 const handleRegister = () => {
-  console.log('Register button clicked');
-  ElMessage.info('跳转到注册页面');
-  router.push('/register'); // 使用 Vue Router 进行跳转
+  window.location.href = '/register'; // 跳转到注册页面
 };
+
+// 验证码相关逻辑
+const identifyCode = ref(''); // 定义验证码
+const identifyCodes = '3456789ABCDEFGHGKMNPQRSTUVWXY'; // 验证码规则
+
+const refreshCode = () => {
+  identifyCode.value = '';
+  makeCode(identifyCodes, 4);
+};
+
+const makeCode = (o: string, l: number) => {
+  for (let i = 0; i < l; i++) {
+    identifyCode.value += o[Math.floor(Math.random() * o.length)];
+  }
+};
+
+// 初始化验证码
+refreshCode();
 </script>
 
 <style scoped>
@@ -205,12 +238,18 @@ const handleRegister = () => {
   transform: translateY(0);
 }
 
+.verify-code-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 输入框和验证码图片之间的间距 */
+}
+
 @media (max-width: 480px) {
   .login-card {
     padding: 30px 20px;
     margin: 10px;
   }
-
+  
   .login-title {
     font-size: 24px;
   }
