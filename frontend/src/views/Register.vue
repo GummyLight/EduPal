@@ -1,18 +1,31 @@
 <template>
-  <div class="login-container">
-    <div class="background-layer"></div>
+  <div class="register-container">
+    <!-- 背景图片层 -->
+    <div 
+      v-for="(image, index) in backgroundImages" 
+      :key="index"
+      class="background-layer"
+      :class="{ 'active': index === currentImageIndex }"
+      :style="{ backgroundImage: `url(${image})` }"
+    ></div>
+    
+    <!-- 内容层 -->
     <div class="content-wrapper">
-      <LoginForm />
+      <RegisterForm />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import LoginForm from '../components/RegisterForm.vue';
+import RegisterForm from '../components/RegisterForm.vue'
+import { useBackgroundSlider } from '../composables/useBackgroundSlider'
+
+// 使用背景切换功能，每5秒切换一次
+const { currentImageIndex, backgroundImages } = useBackgroundSlider(5000)
 </script>
 
 <style scoped>
-.login-container {
+.register-container {
   min-height: 100vh;
   width: 100%;
   position: relative;
@@ -28,13 +41,18 @@ import LoginForm from '../components/RegisterForm.vue';
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/LoginBackground.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: blur(1px);
-  transform: scale(1);
+  filter: blur(8px);
+  transform: scale(1.1);
   z-index: 1;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+}
+
+.background-layer.active {
+  opacity: 1;
 }
 
 .content-wrapper {

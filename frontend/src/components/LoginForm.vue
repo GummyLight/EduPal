@@ -17,9 +17,13 @@
             :type="userIdInputType"
             id="userId"
             class="form-input"
+            :class="{ 'error': userIdError }"
             :placeholder="userIdPlaceholder"
+            @input="handleUserIdInput"
+            @blur="validateUserId"
             required 
           />
+          <span v-if="userIdError" class="error-message">{{ userIdError }}</span>
         </div>
         <div class="form-group">
           <label for="password">密码：</label>
@@ -49,7 +53,7 @@
           </div>
         </div>
         <div class="button-group">
-          <button type="submit" class="login-button">登录</button>
+          <button type="submit" class="login-button" :disabled="!isFormValid">登录</button>
           <button type="button" @click="handleRegister" class="register-button">注册</button>
         </div>
       </form>
@@ -70,6 +74,9 @@ const form = reactive({
   type: 0 as number
 });
 
+// 错误信息
+const userIdError = ref('');
+
 const userIdLabel = computed(() => {
   return form.type === 1 ? '手机号：' : '用户名：';
 });
@@ -82,14 +89,95 @@ const userIdInputType = computed(() => {
   return form.type === 1 ? 'tel' : 'text';
 });
 
-const handleSubmit = async () => {
-  // 验证验证码是否正确
-  if (form.verifyCode.toLowerCase() !== identifyCode.value.toLowerCase()) {
-    ElMessage.error('验证码错误');
-    refreshCode(); // 验证码错误时刷新验证码
+// 表单验证状态
+const isFormValid = computed(() => {
+  return form.userId && 
+         form.password && 
+         form.verifyCode && 
+         !userIdError.value;
+});
+
+// 用户名验证规则：只允许英文字母和数字
+const isValidUsername = (username: string): boolean => {
+  const usernameRegex = /^[a-zA-Z0-9]+$/;
+  return usernameRegex.test(username);
+};
+
+// 手机号验证规则：只允许数字，11位
+const isValidPhone = (phone: string): boolean => {
+  const phoneRegex = /^[0-9]{11}$/;
+  return phoneRegex.test(phone);
+};
+
+// 处理用户输入
+const handleUserIdInput = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  let value = target.value;
+  
+  if (form.type === 0) {
+    // 用户名模式：只保留英文字母和数字
+    value = value.replace(/[^a-zA-Z0-9]/g, '');
+  } else {
+    // 手机号模式：只保留数字，最多11位
+    value = value.replace(/[^0-9]/g, '').slice(0, 11);
+  }
+  
+  form.userId = value;
+  target.value = value;
+  
+  // 清除之前的错误信息
+  userIdError.value = '';
+};
+
+// 验证用户输入
+const validateUserId = () => {
+  if (!form.userId) {
+    userIdError.value = '';
     return;
   }
+  
+  if (form.type === 0) {
+    // 验证用户名
+    if (!isValidUsername(form.userId)) {
+      userIdError.value = '用户名只能包含英文字母和数字';
+    } else if (form.userId.length < 3) {
+      userIdError.value = '用户名至少3个字符';
+    } else if (form.userId.length > 20) {
+      userIdError.value = '用户名不能超过20个字符';
+    } else {
+      userIdError.value = '';
+    }
+  } else {
+    // 验证手机号
+    if (!isValidPhone(form.userId)) {
+      userIdError.value = '请输入正确的11位手机号';
+    } else {
+      userIdError.value = '';
+    }
+  }
+};
 
+// 监听登录方式切换，清除输入和错误信息
+const handleTypeChange = () => {
+  form.userId = '';
+  userIdError.value = '';
+};
+
+// 添加监听器来处理类型切换
+import { watch } from 'vue';
+watch(() => form.type, () => {
+  handleTypeChange();
+});
+
+const handleSubmit = async () => {
+  // 提交前再次验证
+  validateUserId();
+  
+  if (userIdError.value) {
+    ElMessage.error('请检查输入格式');
+    return;
+  }
+  
   try {
     const response = await ex.login(form.userId, form.password, form.type); // 添加验证码参数
     if (response.data.success) {
@@ -196,8 +284,19 @@ refreshCode();
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
+.form-input.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
 .form-input::placeholder {
   color: #9ca3af;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
 }
 
 .button-group {
@@ -223,13 +322,20 @@ refreshCode();
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.login-button:hover {
+.login-button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
 }
 
-.login-button:active {
+.login-button:active:not(:disabled) {
   transform: translateY(0);
+}
+
+.login-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .register-button {
