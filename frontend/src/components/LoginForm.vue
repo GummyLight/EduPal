@@ -83,6 +83,13 @@ const userIdInputType = computed(() => {
 });
 
 const handleSubmit = async () => {
+  // 验证验证码是否正确
+  if (form.verifyCode.toLowerCase() !== identifyCode.value.toLowerCase()) {
+    ElMessage.error('验证码错误');
+    refreshCode(); // 验证码错误时刷新验证码
+    return;
+  }
+
   try {
     const response = await ex.login(form.userId, form.password, form.type); // 添加验证码参数
     if (response.data.success) {
