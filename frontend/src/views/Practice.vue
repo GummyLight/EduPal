@@ -5,11 +5,11 @@
 </template>
 
 <script setup lang="ts">
-import PracticeForm from '@/components/PracticeForm.vue';
+import PracticeForm from '../components/PracticeForm.vue';
 </script>
 
 <style scoped>
 .practice-page {
-  padding: 24px;
+  height: 100%;
 }
 </style>
