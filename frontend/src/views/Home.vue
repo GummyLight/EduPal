@@ -1,15 +1,15 @@
+<!-- Home.vue -->
 <template>
   <div class="home-page">
     <Sidebar />
     <div class="main-content">
-      <HomeForm />
+      <router-view /> <!-- 切换显示子功能页面 -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Sidebar from '../components/Siderbar.vue';
-import HomeForm from '../components/HomeForm.vue';
 </script>
 
 <style scoped>
