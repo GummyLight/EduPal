@@ -51,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
         if (!passwordEncoder.matches(password, user.getUserPassword())) {
             return new Result(false, "密码错误");
         }
-        return new Result(true, "登录成功");
+        return new Result(true, "登录成功", user);
     }
 
     @Override
@@ -65,5 +65,10 @@ public class AuthServiceImpl implements AuthService {
             return new Result(false, "密码错误");
         }
         return new Result(true, "登录成功");
+    }
+
+    @Override
+    public User getUserById(String userId) {
+        return userRepository.findById(userId).orElse(null);
     }
 }

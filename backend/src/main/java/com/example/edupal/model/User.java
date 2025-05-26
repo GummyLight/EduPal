@@ -34,4 +34,7 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "login_time")
     private Date loginTime;
+
+    @Column(name = "user_name")
+    private String userName;
 }
