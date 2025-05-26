@@ -4,22 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(db):将数据库部署在服务器上，更新数据库地址、用户名、密码等信息。">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/common/ApiResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/common/JsonUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat:优化了response的格式，修改了登录的response接口，数据库增加了User类里面的user_name">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/backend.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/common/Result.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/common/Result.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/LoginResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/LoginResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/assets/vue.svg" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,7 +129,7 @@
       <workItem from="1748052956720" duration="2442000" />
       <workItem from="1748077981511" duration="6689000" />
       <workItem from="1748135813382" duration="856000" />
-      <workItem from="1748170716654" duration="10618000" />
+      <workItem from="1748170716654" duration="11005000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />
@@ -158,7 +147,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748090115606</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="feat:优化了response的格式，修改了登录的response接口，数据库增加了User类里面的user_name">
+      <option name="closed" value="true" />
+      <created>1748249034752</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1748249034752</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -178,7 +175,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="feat(auth):新增auth模块，包括登录和注册" />
     <MESSAGE value="feat(db):将数据库部署在服务器上，更新数据库地址、用户名、密码等信息。" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(db):将数据库部署在服务器上，更新数据库地址、用户名、密码等信息。" />
+    <MESSAGE value="feat:优化了response的格式，修改了登录的response接口，数据库增加了User类里面的user_name" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat:优化了response的格式，修改了登录的response接口，数据库增加了User类里面的user_name" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

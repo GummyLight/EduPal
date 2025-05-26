@@ -66,9 +66,4 @@ public class AuthServiceImpl implements AuthService {
         }
         return new Result(true, "登录成功");
     }
-
-    @Override
-    public User getUserById(String userId) {
-        return userRepository.findById(userId).orElse(null);
-    }
 }
