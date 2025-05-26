@@ -18,7 +18,7 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
-
+    //Spring Boot 会自动处理 @RequestBody 注解的参数，将其从 JSON 格式反序列化为 Java 对象。同样，ResponseEntity 中的对象会自动被序列化为 JSON 格式返回给客户端。
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest request) {
         Result result = authService.registerUser(request.getUserId(), request.getPassword(), request.getPhoneNum(), request.getUserType());
