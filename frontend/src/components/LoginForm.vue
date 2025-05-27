@@ -180,11 +180,12 @@ const handleSubmit = async () => {
   
   try {
     const response = await ex.login(form.userId, form.password, form.type); // 添加验证码参数
-    if (response.data.success) {
+    if (response.data && response.data.code === 200) {
+      // 登录成功
       ElMessage.success(response.data.message);
-      window.location.href = '/';
+      window.location.href = '/home';
     } else {
-      ElMessage.error(response.data.message);
+      ElMessage.error(response.data?.message || '登录失败');
       refreshCode(); // 登录失败时刷新验证码
     }
   } catch (error: any) {
