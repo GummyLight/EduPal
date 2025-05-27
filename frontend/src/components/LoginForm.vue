@@ -103,7 +103,7 @@ const isValidUsername = (username: string): boolean => {
   return usernameRegex.test(username);
 };
 
-// 手机号验证规则：只允许数字，11位
+// 手机号验证规则：只允许数字，11位的
 const isValidPhone = (phone: string): boolean => {
   const phoneRegex = /^[0-9]{11}$/;
   return phoneRegex.test(phone);
