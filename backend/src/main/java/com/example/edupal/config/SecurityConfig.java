@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // 禁用CSRF保护
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/auth/**").permitAll() // 允许对/auth路径下的所有请求无需认证
+                        .requestMatchers("/ai/**").permitAll() // 允许对/ai路径下的所有请求无需认证
                         .anyRequest().authenticated() // 其他所有请求都需要认证
                 );
         return http.build(); // 构建并返回HTTP安全配置对象
