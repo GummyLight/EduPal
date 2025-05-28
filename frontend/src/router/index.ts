@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import ForgotPassword from '../views/ForgotPassword.vue';
+import MarkdownDemo from '../views/MarkdownDemo.vue';
 import Home from '../views/Home.vue'; // 包含 Sidebar
 import HomeForm from '../components/HomeForm.vue'; // 首页主内容
 import Course from '../views/Course.vue';
@@ -18,6 +19,7 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/forgot-password', component: ForgotPassword },
+  { path: '/markdown-demo', component: MarkdownDemo }, // 新增 Markdown 示例页面
   {
     path: '/home',
     component: Home,
