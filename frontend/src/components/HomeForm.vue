@@ -18,11 +18,12 @@
 }
 -->
 
+<!-- HomeForm.vue -->
 <template>
   <div class="home-form">
     <el-card class="welcome-card" shadow="hover">
-      <h2>👋 欢迎你，{{ username }}！</h2> <!-- 这里的用户名是根据用户表的外键关联到学生表或者教师表的姓名属性中获取的-->
-      <p>今天是 {{ today }}，祝你学习愉快～</p> <!--这个不用管，会自动获取-->
+      <h2>👋 欢迎你，{{ props.username }}！</h2>
+      <p>今天是 {{ today }}，祝你学习愉快～</p>
     </el-card>
 
     <el-row :gutter="20" class="overview">
@@ -62,29 +63,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, defineProps } from 'vue';
 
-const username = ref('张三同学');
+const props = defineProps({
+  username: {
+    type: String,
+    required: true
+  }
+});
+
 const today = new Date().toLocaleDateString('zh-CN', {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
 });
+
 const Finished_lectures = ref(10);
 const Finished_exercises = ref(20);
 const Grade_level = ref('A+');
 const Answer_rate = ref('90%');
+
 const todayTasks = ref<string[]>([
   "完成《线性代数》第三章练习题（10题）",
   "观看《概率论》第五节视频（20分钟）"
 ]);
+
 const notifications = ref<string[]>([
   "2025-05-23：题库已更新，新增 300 题",
   "2025-05-22：新增“社区交流”模块，欢迎体验"
 ]);
-
-
-
 </script>
 
 <style scoped>
@@ -109,3 +116,4 @@ const notifications = ref<string[]>([
   line-height: 1.8;
 }
 </style>
+
