@@ -14,7 +14,6 @@ interface ApiResponse<T = any> {
 // 登录请求数据类型
 interface LoginRequest {
   userId?: string
-  address?: string
   password: string
   type: number //0表示用户名登录，1表示邮箱登录
 }
@@ -66,7 +65,7 @@ export const login = async (userInput: string, password: string, type: number): 
     } else if (type === 1) {
       // 邮箱登录
       requestData = {
-        address: userInput,  // 发送邮箱
+        userId: userInput,  // 发送邮箱
         password: password,
         type: type
       };

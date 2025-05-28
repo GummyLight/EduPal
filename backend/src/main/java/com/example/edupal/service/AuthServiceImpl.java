@@ -55,8 +55,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Result loginUserByPhoneNum(String phoneNum, String password) {
-        User user = userRepository.findByUserEmail(phoneNum);
+    public Result loginUserByEmail(String email, String password) {
+        User user = userRepository.findByUserEmail(email);
 
         if (user == null) {
             return new Result(false, "用户不存在");

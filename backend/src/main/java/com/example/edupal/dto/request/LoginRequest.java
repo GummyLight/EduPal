@@ -6,12 +6,12 @@ import lombok.Setter;
 @Setter
 @Getter
 public class LoginRequest {
-    private String userId;
+    private String userInput;
     private String password;
     private Integer type; // 0 表示用户名，1 表示手机号
 
-    public LoginRequest(String userId, String password, Integer type) {
-        this.userId = userId;
+    public LoginRequest(String userInput, String password, Integer type) {
+        this.userInput = userInput;
         this.password = password;
         this.type = type;
     }

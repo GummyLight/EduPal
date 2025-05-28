@@ -37,9 +37,9 @@ public class AuthController {
 
         Result result;
         if (request.getType() == 0) {
-            result = authService.loginUserByUserId(request.getUserId(), request.getPassword());
+            result = authService.loginUserByUserId(request.getUserInput(), request.getPassword());
         } else {
-            result = authService.loginUserByPhoneNum(request.getUserId(), request.getPassword());
+            result = authService.loginUserByEmail(request.getUserInput(), request.getPassword());
         }
 
         if (result == null) {
@@ -57,7 +57,7 @@ public class AuthController {
             }
 
             LoginResponse response = new LoginResponse(result.getMessage(), true, user.getUserId(), user.getUserName(), user.getUserType());
-            return ResponseEntity.ok(new ApiResponse<>(200, "Login successful", response));
+            return ResponseEntity.ok(new ApiResponse<>(200, "登录成功", response));
         } else {
             return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));
         }
