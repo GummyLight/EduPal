@@ -10,6 +10,7 @@ import QAForm from '@/components/QAForm.vue';
 
 <style scoped>
 .qa-page {
-  padding: 24px;
+  height: 100vh;
+  overflow: hidden;
 }
 </style>

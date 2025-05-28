@@ -13,7 +13,7 @@ import { ref } from 'vue';
 import Sidebar from '../components/Siderbar.vue';
 
 // 定义 usertype 变量
-const usertype = ref(''); // 默认设置为教师
+const usertype = ref('student'); // 默认设置为教师
 
 // 定义 username 变量
 const username = ref('');
