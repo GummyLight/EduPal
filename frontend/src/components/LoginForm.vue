@@ -6,7 +6,7 @@
         <div class="form-group">
           <label for="type">登录方式：</label>
           <select v-model="form.type" id="type" class="form-select">
-            <option :value="0">用户名</option>
+            <option :value="0">账号</option>
             <option :value="1">手机号</option>
           </select>
         </div>
@@ -54,7 +54,7 @@
         </div>
         <div class="button-group">
           <button type="submit" class="login-button" :disabled="!isFormValid">登录</button>
-          <button type="button" @click="handleRegister" class="register-button">注册</button>
+          <button type="button" @click="handleForgotPassword" class="register-button">忘记密码</button>
         </div>
       </form>
     </div>
@@ -78,11 +78,11 @@ const form = reactive({
 const userIdError = ref('');
 
 const userIdLabel = computed(() => {
-  return form.type === 1 ? '手机号：' : '用户名：';
+  return form.type === 1 ? '手机号：' : '账号：';
 });
 
 const userIdPlaceholder = computed(() => {
-  return form.type === 1 ? '请输入手机号' : '请输入用户名';
+  return form.type === 1 ? '请输入手机号' : '请输入账号';
 });
 
 const userIdInputType = computed(() => {
@@ -103,7 +103,7 @@ const isValidUsername = (username: string): boolean => {
   return usernameRegex.test(username);
 };
 
-// 手机号验证规则：只允许数字，11位的
+// 手机号验证规则：只允许数字，11位
 const isValidPhone = (phone: string): boolean => {
   const phoneRegex = /^[0-9]{11}$/;
   return phoneRegex.test(phone);
@@ -180,12 +180,11 @@ const handleSubmit = async () => {
   
   try {
     const response = await ex.login(form.userId, form.password, form.type); // 添加验证码参数
-    if (response.data && response.data.code === 200) {
-      // 登录成功
-      ElMessage.success(response.data.message);
-      window.location.href = '/home';
+    if (response.code==200) {
+      ElMessage.success(response.message);
+      window.location.href = '/';
     } else {
-      ElMessage.error(response.data?.message || '登录失败');
+      ElMessage.error(response.message);
       refreshCode(); // 登录失败时刷新验证码
     }
   } catch (error: any) {
@@ -199,13 +198,13 @@ const handleSubmit = async () => {
   }
 };
 
-const handleRegister = () => {
-  window.location.href = '/register'; // 跳转到注册页面
+const handleForgotPassword = () => {
+  window.location.href = '/forgot-password'; // 跳转到忘记密码页面
 };
 
 // 验证码相关逻辑
 const identifyCode = ref(''); // 定义验证码
-const identifyCodes = '3456789ABCDEFGHGKMNPQRSTUVWXY'; // 验证码规则
+const identifyCodes = '3456789ABCDEFGHjKMNPQRSTUVWXY'; // 验证码规则
 
 const refreshCode = () => {
   identifyCode.value = '';
@@ -377,6 +376,7 @@ refreshCode();
   .register-button {
     /* 在堆叠时，flex:1 不再是为了平分宽度，可以保持或移除 */
     /* 如果希望它们仍然是全宽，flex:1 配合父容器的列方向仍然有效 */
+    width: 100%;
   }
 }
 </style>
