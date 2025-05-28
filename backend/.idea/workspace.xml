@@ -4,20 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(auth):修复了邮箱登录报错的错误，修复了前端登录成功不能跳转的问题">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/EmailCodeRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/ResetPasswordRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/Validation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/ValidationRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/EmailService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/EmailServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(auth):增加了忘记密码功能：发送验证码，验证验证码">
+      <change afterPath="$PROJECT_DIR$/../frontend/src/api/ai.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/src/assets/sparkIcon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/src/components/MaterialUpload.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/controller/AuthController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/dto/request/LoginRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/dto/request/LoginRequest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/service/AuthService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/service/AuthService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/service/AuthServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/service/AuthServiceImpl.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/example/edupal/controller/AuthControllerTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/example/edupal/service/AuthServiceImplIntegrationTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/com/example/edupal/service/AuthServiceImplTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/example/edupal/service/AuthServiceImplTest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/api/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/api/auth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/CommunityForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/CommunityForm.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/CourseForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/CourseForm.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/MaterialsForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/MaterialsForm.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/PracticeForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/PracticeForm.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/QAForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/QAForm.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/Siderbar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/Siderbar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/router/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/views/Community.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/views/Community.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/views/Home.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/views/Materials.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/views/Materials.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/views/QA.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/views/QA.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +93,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Spring Boot.EduPalApplication.executor": "Debug",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "Merging main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "E:/00-02 Do it yourself/LLM_SpringBoot/X1_http_java",
     "node.js.detected.package.eslint": "true",
@@ -205,7 +214,7 @@
       <workItem from="1748356092858" duration="19518000" />
       <workItem from="1748417285349" duration="623000" />
       <workItem from="1748421813251" duration="859000" />
-      <workItem from="1748438582498" duration="6199000" />
+      <workItem from="1748438582498" duration="6518000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />
@@ -295,7 +304,23 @@
       <option name="project" value="LOCAL" />
       <updated>1748416809150</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="fix(auth):增加了忘记密码功能：发送验证码，验证验证码">
+      <option name="closed" value="true" />
+      <created>1748445279682</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1748445279682</updated>
+    </task>
+    <task id="LOCAL-00013" summary="fix(auth):增加了忘记密码功能：发送验证码，验证验证码">
+      <option name="closed" value="true" />
+      <created>1748445325235</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1748445325235</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -337,7 +362,8 @@
     <MESSAGE value="feat(AI):完善学生向AI提问的response和request，以及Repository" />
     <MESSAGE value="feat(auth):前后端统一了接口内容" />
     <MESSAGE value="fix(auth):修复了邮箱登录报错的错误，修复了前端登录成功不能跳转的问题" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(auth):修复了邮箱登录报错的错误，修复了前端登录成功不能跳转的问题" />
+    <MESSAGE value="fix(auth):增加了忘记密码功能：发送验证码，验证验证码" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(auth):增加了忘记密码功能：发送验证码，验证验证码" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
