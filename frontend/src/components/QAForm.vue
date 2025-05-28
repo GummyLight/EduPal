@@ -1,40 +1,5 @@
 <template>
   <div class="qa-container">
-    <!-- 侧边栏 - 历史对话 -->
-    <div class="sidebar" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
-      <div class="sidebar-header">
-        <h3 v-if="!sidebarCollapsed">对话历史</h3>
-        <el-button 
-          text 
-          @click="toggleSidebar" 
-          class="collapse-btn"
-          :icon="sidebarCollapsed ? 'ArrowRight' : 'ArrowLeft'"
-        />
-      </div>
-      
-      <div class="conversation-list" v-if="!sidebarCollapsed">
-        <div class="new-chat-btn">
-          <el-button type="primary" @click="startNewConversation" style="width: 100%;">
-            <el-icon><Plus /></el-icon>
-            新对话
-          </el-button>
-        </div>
-        
-        <div class="conversation-history">
-          <div 
-            v-for="conv in conversations" 
-            :key="conv.id"
-            class="conversation-item"
-            :class="{ 'active': currentConversationId === conv.id }"
-            @click="selectConversation(conv.id)"
-          >
-            <div class="conversation-title">{{ conv.title }}</div>
-            <div class="conversation-time">{{ formatTime(conv.lastTime) }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- 主聊天区域 -->
     <div class="chat-main" :class="{ 'chat-expanded': sidebarCollapsed }">
       <!-- 头部 -->
@@ -164,6 +129,52 @@
         </div>
       </div>
     </div>
+
+    <!-- 侧边栏 - 历史对话（右侧） -->
+    <div class="sidebar" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
+      <!-- 折叠状态的快速切换按钮 -->
+      <div v-if="sidebarCollapsed" class="sidebar-collapsed-trigger" @click="toggleSidebar">
+        <el-icon><Operation /></el-icon>
+        <span class="trigger-tooltip">历史</span>
+      </div>
+      
+      <!-- 展开状态的完整内容 -->
+      <div v-else class="sidebar-content">
+        <div class="sidebar-header">
+          <h3>对话历史</h3>
+          <el-button 
+            text 
+            @click="toggleSidebar" 
+            class="collapse-btn"
+            title="收起侧边栏"
+          >
+            <el-icon><ArrowRight /></el-icon>
+          </el-button>
+        </div>
+        
+        <div class="conversation-list">
+          <div class="new-chat-btn">
+            <el-button type="primary" @click="startNewConversation" style="width: 100%;">
+              <el-icon><Plus /></el-icon>
+              新对话
+            </el-button>
+          </div>
+          
+          <div class="conversation-history">
+            <div 
+              v-for="conv in conversations" 
+              :key="conv.id"
+              class="conversation-item"
+              :class="{ 'active': currentConversationId === conv.id }"
+              @click="selectConversation(conv.id)"
+            >
+              <div class="conversation-title">{{ conv.title }}</div>
+              <div class="conversation-time">{{ formatTime(conv.lastTime) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -172,7 +183,7 @@ import { ref, computed, nextTick, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { 
   Plus, UserFilled, Delete, DocumentCopy, Star, 
-  Paperclip, Promotion, ArrowLeft, ArrowRight, Service
+  Paperclip, Promotion, ArrowLeft, ArrowRight, Service, Operation
 } from '@element-plus/icons-vue';
 
 // 接口定义
@@ -594,81 +605,7 @@ watch(conversations, saveConversations, { deep: true });
   display: flex;
   height: 100vh;
   background: #f5f7fa;
-}
-
-/* 侧边栏样式 */
-.sidebar {
-  width: 280px;
-  background: white;
-  border-right: 1px solid #e4e7ed;
-  transition: all 0.3s ease;
   overflow: hidden;
-}
-
-.sidebar-collapsed {
-  width: 60px;
-}
-
-.sidebar-header {
-  padding: 16px;
-  border-bottom: 1px solid #e4e7ed;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.sidebar-header h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-}
-
-.collapse-btn {
-  padding: 4px;
-  min-height: auto;
-}
-
-.new-chat-btn {
-  padding: 16px;
-  border-bottom: 1px solid #e4e7ed;
-}
-
-.conversation-history {
-  padding: 8px;
-  max-height: calc(100vh - 140px);
-  overflow-y: auto;
-}
-
-.conversation-item {
-  padding: 12px;
-  margin-bottom: 4px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.conversation-item:hover {
-  background: #f5f7fa;
-}
-
-.conversation-item.active {
-  background: #e6f4ff;
-  border: 1px solid #91caff;
-}
-
-.conversation-title {
-  font-size: 14px;
-  color: #303133;
-  margin-bottom: 4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.conversation-time {
-  font-size: 12px;
-  color: #909399;
 }
 
 /* 主聊天区域 */
@@ -677,10 +614,13 @@ watch(conversations, saveConversations, { deep: true });
   display: flex;
   flex-direction: column;
   background: white;
+  transition: margin-right 0.3s ease;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .chat-expanded {
-  margin-left: 0;
+  margin-right: 0;
 }
 
 .chat-header {
@@ -710,12 +650,170 @@ watch(conversations, saveConversations, { deep: true });
   color: #409eff;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-toggle-btn {
+  color: #606266;
+}
+
+.sidebar-toggle-btn:hover {
+  color: #409eff;
+}
+
+/* 侧边栏样式 - 右侧 */
+.sidebar {
+  width: 320px;
+  background: white;
+  border-left: 1px solid #e4e7ed;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+  order: 2;
+  height: 100vh;
+}
+
+.sidebar-collapsed {
+  width: 60px;
+}
+
+.sidebar-collapsed-trigger {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 80px;
+  background: white;
+  border: 1px solid #e4e7ed;
+  border-radius: 8px 0 0 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-collapsed-trigger:hover {
+  background: #f5f7fa;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-collapsed-trigger .el-icon {
+  font-size: 20px;
+  color: #606266;
+  margin-bottom: 4px;
+}
+
+.trigger-tooltip {
+  font-size: 12px;
+  color: #909399;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.sidebar-collapsed-trigger:hover .trigger-tooltip {
+  color: #409eff;
+}
+
+.sidebar-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 16px;
+  border-bottom: 1px solid #e4e7ed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafbfc;
+}
+
+.sidebar-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.collapse-btn {
+  padding: 4px;
+  min-height: auto;
+  color: #606266;
+}
+
+.collapse-btn:hover {
+  color: #409eff;
+}
+
+.conversation-list {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.new-chat-btn {
+  padding: 16px;
+  border-bottom: 1px solid #e4e7ed;
+  background: white;
+}
+
+.conversation-history {
+  flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+  background: white;
+}
+
+.conversation-item {
+  padding: 12px;
+  margin-bottom: 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.conversation-item:hover {
+  background: #f5f7fa;
+  border-color: #e4e7ed;
+}
+
+.conversation-item.active {
+  background: #e6f4ff;
+  border-color: #91caff;
+}
+
+.conversation-title {
+  font-size: 14px;
+  color: #303133;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.conversation-time {
+  font-size: 12px;
+  color: #909399;
+}
+
 /* 消息区域 */
 .chat-messages {
   flex: 1;
   padding: 24px;
   overflow-y: auto;
   background: #fafbfc;
+  min-height: 0; /* 允许flex子项收缩 */
 }
 
 .welcome-message {
@@ -871,6 +969,8 @@ watch(conversations, saveConversations, { deep: true });
   padding: 16px 24px;
   border-top: 1px solid #e4e7ed;
   background: white;
+  flex-shrink: 0; /* 防止输入区域被压缩 */
+  max-height: 200px; /* 限制最大高度 */
 }
 
 .input-container {
@@ -929,11 +1029,17 @@ watch(conversations, saveConversations, { deep: true });
 
 /* 响应式设计 */
 @media (max-width: 768px) {
+  .qa-container {
+    height: 100vh;
+    height: 100dvh; /* 动态视口高度，在移动设备上更准确 */
+  }
+  
   .sidebar {
     position: fixed;
     left: 0;
     top: 0;
     height: 100vh;
+    height: 100dvh;
     z-index: 1000;
     transform: translateX(-100%);
   }
@@ -944,6 +1050,8 @@ watch(conversations, saveConversations, { deep: true });
   
   .chat-main {
     width: 100%;
+    height: 100vh;
+    height: 100dvh;
   }
   
   .message {
@@ -956,6 +1064,10 @@ watch(conversations, saveConversations, { deep: true });
   
   .quick-questions {
     flex-direction: column;
+  }
+  
+  .chat-input {
+    padding: 12px 16px;
   }
 }
 

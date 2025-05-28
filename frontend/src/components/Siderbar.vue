@@ -75,7 +75,8 @@ const activePath = computed(() => route.path);
 <style scoped>
 .sidebar-menu {
   width: 200px;
-  height: 100vh;
+  min-height: 100vh;
   border-right: none;
+  
 }
 </style>
