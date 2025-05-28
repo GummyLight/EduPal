@@ -8,10 +8,10 @@ public interface UserRepository extends JpaRepository<User, String> {
     //需要在User类中定义好对应的字段，比如user_id, user_phone_num等，且字段类型要与方法参数类型一致
     //方法名中的属性名必须与实体类中的属性名一致
     boolean existsByUserId(String userId);
-    boolean existsByUserPhoneNum(String userPhoneNum);
+    boolean existsByUserEmail(String email);
 
     // 根据 userId 查找用户的方法
     User findByUserId(String userId);
     // 根据 userPhoneNum 查找用户的方法
-    User findByUserPhoneNum(String userPhoneNum);
+    User findByUserEmail(String email);
 }
