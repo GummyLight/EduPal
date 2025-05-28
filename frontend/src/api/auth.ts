@@ -41,12 +41,14 @@ interface RegisterResponse {
   message: string
 }
 
+// 忘记密码请求数据类型
 interface ForgetPasswordRequest {
   email: string
   identifyCode: string
   password: string
 }
 
+// 忘记密码响应数据类型
 interface ForgetPasswordResponse {
   code: number
   message: string
