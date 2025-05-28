@@ -13,8 +13,7 @@ interface ApiResponse<T = any> {
 
 // 登录请求数据类型
 interface LoginRequest {
-  userId?: string
-  address?: string
+  userInput: string //将userId和email合并为同一项，即，只检测用户输入的内容是什么，不区分账号还是有邮箱
   password: string
   type: number //0表示用户名登录，1表示邮箱登录
 }
@@ -32,7 +31,7 @@ interface LoginResponseData {
 interface RegisterRequest {
   userId: string
   password: string
-  address: string
+  email: string
   userType: number //0表示学生，1表示教师
 }
 
@@ -43,38 +42,36 @@ interface RegisterResponse {
 }
 
 interface ForgetPasswordRequest {
-
+  email: string
+  identifyCode: string
+  password: string
 }
 
 interface ForgetPasswordResponse {
-  
+  code: number
+  message: string
 }
 
 // 登录函数, 分类处理账号和邮箱登录
 export const login = async (userInput: string, password: string, type: number): Promise<ApiResponse<LoginResponseData>> => {
   try {
+
+    //发送请求部分
     let requestData: LoginRequest;
     
+    requestData = {
+      userInput: userInput,
+      password: password,
+      type: type
+    }
+
     if (type === 0) {
-      // 账号登录
-      requestData = {
-        userId: userInput,    // 发送账号
-        password: password,
-        type: type
-      };
       console.log('账号登录:', { userId: userInput, type });
     } else if (type === 1) {
-      // 邮箱登录
-      requestData = {
-        address: userInput,  // 发送邮箱
-        password: password,
-        type: type
-      };
-      console.log('邮箱登录:', { phoneNum: userInput, type });
-    } else {
-      throw new Error('无效的登录类型');
+      console.log('邮箱登录:', { email: userInput, type });
     }
     
+    //返回响应部分
     const response = await axios.post<ApiResponse<LoginResponseData>>('/api/auth/login', requestData);
     return response.data;
   } catch (error: any) {
@@ -91,7 +88,7 @@ export const register = async (userId: string, password: string, email: string, 
     const response = await axios.post<ApiResponse>(`/api/auth/register`, {
       userId,
       password,
-      phoneNum: email,  // 暂时保持后端参数名，发送邮箱作为值
+      email,  // 暂时保持后端参数名，发送邮箱作为值
       userType
     });
     return response.data;  // 直接返回，不需要转换
