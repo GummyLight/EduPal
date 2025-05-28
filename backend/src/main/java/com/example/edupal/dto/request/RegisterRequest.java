@@ -6,13 +6,13 @@ import lombok.Data;
 public class RegisterRequest {
     private String userId;
     private String password;
-    private String phoneNum;
+    private String email;
     private Integer userType;
 
-    public RegisterRequest(String userId, String password, String phoneNum, Integer userType) {
+    public RegisterRequest(String userId, String password, String email, Integer userType) {
         this.userId = userId;
         this.password = password;
-        this.phoneNum = phoneNum;
+        this.email = email;
         this.userType = userType;
     }
 }
