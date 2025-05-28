@@ -2,103 +2,85 @@
   <div class="forgot-password-form-container">
     <div class="forgot-password-card">
       <h2 class="forgot-password-title">忘记密码</h2>
-      <div v-if="step === 1" class="form-step">
-        <form @submit.prevent="handleSendCode" class="forgot-password-form">
-          <div class="form-group">
-            <label for="email">邮箱地址：</label>
-            <input 
-              v-model="form.email" 
-              type="email"
-              id="email"
-              class="form-input"
-              :class="{ 'error': emailError }"
-              placeholder="请输入邮箱地址"
-              @input="handleEmailInput"
-              @blur="validateEmail"
-              required 
-            />
-            <span v-if="emailError" class="error-message">{{ emailError }}</span>
-          </div>
-          <div class="form-group">
-            <label for="verifyCode">图片验证码：</label>
-            <div class="verify-code-container">
-              <input 
-                v-model="form.verifyCode" 
-                type="text" 
-                id="verifyCode"
-                class="form-input"
-                placeholder="请输入验证码"
-                required 
-              />
-              <span @click="refreshCode" style="cursor: pointer; margin-left: 10px;">
-                <s-identify :identifyCode="identifyCode"></s-identify>
-              </span>
-            </div>
-          </div>
-          <div class="button-group">
-            <button type="submit" class="send-code-button" :disabled="!isStep1Valid">发送验证码</button>
-            <button type="button" @click="handleBackToLogin" class="back-button">返回</button>
-          </div>
-        </form>
-      </div>
+      <form @submit.prevent="handleResetPassword" class="forgot-password-form">
+        <!-- 邮箱输入 -->
+        <div class="form-group">
+          <label for="email">邮箱地址：</label>
+          <input 
+            v-model="form.email" 
+            type="email"
+            id="email"
+            class="form-input"
+            :class="{ 'error': emailError }"
+            placeholder="请输入邮箱地址"
+            @input="handleEmailInput"
+            @blur="validateEmail"
+            required 
+          />
+          <span v-if="emailError" class="error-message">{{ emailError }}</span>
+        </div>
 
-      <div v-if="step === 2" class="form-step">
-        <form @submit.prevent="handleResetPassword" class="forgot-password-form">
-          <div class="form-group">
-            <label for="emailCode">邮箱验证码：</label>
-            <div class="email-code-container">
-              <input 
-                v-model="form.emailCode" 
-                type="text" 
-                id="emailCode"
-                class="form-input"
-                placeholder="请输入邮箱验证码"
-                required 
-              />
-              <button 
-                type="button" 
-                @click="handleResendCode" 
-                class="resend-button"
-                :disabled="countdown > 0"
-              >
-                {{ countdown > 0 ? `${countdown}s后重发` : '重新发送' }}
-              </button>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="newPassword">新密码：</label>
+        <!-- 邮箱验证码 -->
+        <div class="form-group">
+          <label for="emailCode">邮箱验证码：</label>
+          <div class="email-code-container">
             <input 
-              v-model="form.newPassword" 
-              type="password" 
-              id="newPassword"
+              v-model="form.emailCode" 
+              type="text" 
+              id="emailCode"
               class="form-input"
-              :class="{ 'error': passwordError }"
-              placeholder="请输入新密码"
-              @blur="validatePassword"
+              placeholder="请输入邮箱验证码"
               required 
             />
-            <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
+            <button 
+              type="button" 
+              @click="handleSendCode" 
+              class="send-code-button"
+              :disabled="!form.email || !!emailError || countdown > 0"
+            >
+              {{ countdown > 0 ? `${countdown}s后重发` : (form.emailCode ? '重新发送' : '发送验证码') }}
+            </button>
           </div>
-          <div class="form-group">
-            <label for="confirmPassword">确认密码：</label>
-            <input 
-              v-model="form.confirmPassword" 
-              type="password" 
-              id="confirmPassword"
-              class="form-input"
-              :class="{ 'error': confirmPasswordError }"
-              placeholder="请再次输入新密码"
-              @blur="validateConfirmPassword"
-              required 
-            />
-            <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
-          </div>
-          <div class="button-group">
-            <button type="submit" class="reset-button" :disabled="!isStep2Valid">重置密码</button>
-            <button type="button" @click="handleBackToStep1" class="back-button">返回上一步</button>
-          </div>
-        </form>
-      </div>
+        </div>
+
+        <!-- 新密码 -->
+        <div class="form-group">
+          <label for="newPassword">新密码：</label>
+          <input 
+            v-model="form.newPassword" 
+            type="password" 
+            id="newPassword"
+            class="form-input"
+            :class="{ 'error': passwordError }"
+            placeholder="请输入新密码"
+            @blur="validatePassword"
+            required 
+          />
+          <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
+        </div>
+
+        <!-- 确认密码 -->
+        <div class="form-group">
+          <label for="confirmPassword">确认密码：</label>
+          <input 
+            v-model="form.confirmPassword" 
+            type="password" 
+            id="confirmPassword"
+            class="form-input"
+            :class="{ 'error': confirmPasswordError }"
+            placeholder="请再次输入新密码"
+            @blur="validateConfirmPassword"
+            required 
+          />
+          <span v-if="confirmPasswordError" class="error-message">{{ confirmPasswordError }}</span>
+        </div>
+
+        <!-- 按钮组 -->
+        <div class="button-group">
+          <button type="submit" class="reset-button" :disabled="!isFormValid">重置密码</button>
+          <button type="button" @click="handleBackToLogin" class="back-button">返回登录</button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
@@ -106,19 +88,14 @@
 <script setup lang="ts">
 import { reactive, computed, ref } from 'vue';
 import { ElMessage } from 'element-plus';
-import SIdentify from './identify/identify.vue';
 
 // 表单数据
 const form = reactive({
   email: '',
-  verifyCode: '',
   emailCode: '',
   newPassword: '',
   confirmPassword: ''
 });
-
-// 当前步骤：1-输入邮箱信息发送验证码，2-输入验证码重置密码
-const step = ref(1);
 
 // 错误信息
 const emailError = ref('');
@@ -129,18 +106,13 @@ const confirmPasswordError = ref('');
 const countdown = ref(0);
 let countdownTimer: NodeJS.Timeout | null = null;
 
-// 第一步表单验证
-const isStep1Valid = computed(() => {
+// 表单验证
+const isFormValid = computed(() => {
   return form.email && 
-         form.verifyCode && 
-         !emailError.value;
-});
-
-// 第二步表单验证
-const isStep2Valid = computed(() => {
-  return form.emailCode && 
+         form.emailCode && 
          form.newPassword && 
          form.confirmPassword &&
+         !emailError.value &&
          !passwordError.value &&
          !confirmPasswordError.value;
 });
@@ -220,17 +192,15 @@ const handleSendCode = async () => {
   
   try {
     // 这里应该调用发送验证码的API
-    // const response = await api.sendResetCode(form.email, form.verifyCode);
+    // const response = await api.sendEmailCode(form.email);
     
     // 模拟API调用成功
     ElMessage.success('验证码已发送到您的邮箱，请查收');
-    step.value = 2;
     startCountdown();
     
   } catch (error: any) {
     console.error('Send code failed:', error);
     ElMessage.error('发送验证码失败，请重试');
-    refreshCode();
   }
 };
 
@@ -288,40 +258,6 @@ const startCountdown = () => {
 const handleBackToLogin = () => {
   window.location.href = '/login';
 };
-
-// 返回第一步
-const handleBackToStep1 = () => {
-  step.value = 1;
-  form.emailCode = '';
-  form.newPassword = '';
-  form.confirmPassword = '';
-  passwordError.value = '';
-  confirmPasswordError.value = '';
-  
-  if (countdownTimer) {
-    clearInterval(countdownTimer);
-    countdownTimer = null;
-  }
-  countdown.value = 0;
-};
-
-// 验证码相关逻辑
-const identifyCode = ref('');
-const identifyCodes = '3456789ABCDEFGHjKMNPQRSTUVWXY';
-
-const refreshCode = () => {
-  identifyCode.value = '';
-  makeCode(identifyCodes, 4);
-};
-
-const makeCode = (o: string, l: number) => {
-  for (let i = 0; i < l; i++) {
-    identifyCode.value += o[Math.floor(Math.random() * o.length)];
-  }
-};
-
-// 初始化验证码
-refreshCode();
 </script>
 
 <style scoped>

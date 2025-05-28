@@ -7,7 +7,7 @@
           <label for="type">登录方式：</label>
           <select v-model="form.type" id="type" class="form-select">
             <option :value="0">账号</option>
-            <option :value="1">手机号</option>
+            <option :value="1">邮箱</option>
           </select>
         </div>
         <div class="form-group">
@@ -78,15 +78,15 @@ const form = reactive({
 const userIdError = ref('');
 
 const userIdLabel = computed(() => {
-  return form.type === 1 ? '手机号：' : '账号：';
+  return form.type === 1 ? '邮箱：' : '账号：';
 });
 
 const userIdPlaceholder = computed(() => {
-  return form.type === 1 ? '请输入手机号' : '请输入账号';
+  return form.type === 1 ? '请输入邮箱地址' : '请输入账号';
 });
 
 const userIdInputType = computed(() => {
-  return form.type === 1 ? 'tel' : 'text';
+  return form.type === 1 ? 'email' : 'text';
 });
 
 // 表单验证状态
@@ -103,10 +103,10 @@ const isValidUsername = (username: string): boolean => {
   return usernameRegex.test(username);
 };
 
-// 手机号验证规则：只允许数字，11位
-const isValidPhone = (phone: string): boolean => {
-  const phoneRegex = /^[0-9]{11}$/;
-  return phoneRegex.test(phone);
+// 邮箱验证规则
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
 };
 
 // 处理用户输入
@@ -118,8 +118,8 @@ const handleUserIdInput = (event: Event) => {
     // 用户名模式：只保留英文字母和数字
     value = value.replace(/[^a-zA-Z0-9]/g, '');
   } else {
-    // 手机号模式：只保留数字，最多11位
-    value = value.replace(/[^0-9]/g, '').slice(0, 11);
+    // 邮箱模式：不做特殊处理，保留原始输入
+    value = target.value;
   }
   
   form.userId = value;
@@ -148,9 +148,9 @@ const validateUserId = () => {
       userIdError.value = '';
     }
   } else {
-    // 验证手机号
-    if (!isValidPhone(form.userId)) {
-      userIdError.value = '请输入正确的11位手机号';
+    // 验证邮箱
+    if (!isValidEmail(form.userId)) {
+      userIdError.value = '请输入正确的邮箱格式';
     } else {
       userIdError.value = '';
     }
