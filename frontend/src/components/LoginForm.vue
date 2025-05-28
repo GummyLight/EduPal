@@ -182,7 +182,7 @@ const handleSubmit = async () => {
     const response = await ex.login(form.userId, form.password, form.type); // 添加验证码参数
     if (response.code==200) {
       ElMessage.success(response.message);
-      window.location.href = '/';
+      window.location.href = '/home';
     } else {
       ElMessage.error(response.message);
       refreshCode(); // 登录失败时刷新验证码

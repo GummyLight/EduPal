@@ -4,33 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(AI):完善学生向AI提问的response和request，以及Repository">
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(auth):前后端统一了接口内容">
+      <change afterPath="$PROJECT_DIR$/../frontend/src/components/MarkdownDemo.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/src/views/MarkdownDemo.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/LoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/LoginRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/QuestionRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/QuestionRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/AnswerResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/AnswerResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/edupal/controller/AuthControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/controller/AuthControllerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/edupal/service/AuthServiceImplIntegrationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/service/AuthServiceImplIntegrationTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/edupal/service/AuthServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/service/AuthServiceImplTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/controller/AuthController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/dto/request/LoginRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/dto/request/LoginRequest.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/dto/request/RegisterRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/dto/request/RegisterRequest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/model/Answer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/model/Answer.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/model/Question.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/model/Question.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/model/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/model/User.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/repository/UserRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/repository/UserRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/service/AuthService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/service/AuthService.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/service/AuthServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/service/AuthServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/example/edupal/EduPalApplicationTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/example/edupal/EduPalApplicationTests.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/example/edupal/config/SecurityConfigTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/example/edupal/config/SecurityConfigTest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/example/edupal/controller/AuthControllerTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/example/edupal/controller/AuthControllerTest.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/test-classes/com/example/edupal/service/AuthServiceImplIntegrationTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/example/edupal/service/AuthServiceImplIntegrationTest.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/test-classes/com/example/edupal/service/AuthServiceImplTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/example/edupal/service/AuthServiceImplTest.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend/src/api/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/api/auth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/router/index.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,7 +88,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Spring Boot.EduPalApplication.executor": "Run",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "Merging main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "E:/00-02 Do it yourself/LLM_SpringBoot/X1_http_java",
     "node.js.detected.package.eslint": "true",
@@ -123,7 +114,7 @@
       <recent name="com.example.edupal.service" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Spring Boot.EduPalApplication">
     <configuration name="AuthControllerTest.testRegisterUser_Success" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
@@ -215,7 +206,7 @@
       <workItem from="1748313288996" duration="1976000" />
       <workItem from="1748318834490" duration="146000" />
       <workItem from="1748325520244" duration="7477000" />
-      <workItem from="1748356092858" duration="18060000" />
+      <workItem from="1748356092858" duration="19157000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />
@@ -289,7 +280,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748412853833</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="feat(auth):前后端统一了接口内容">
+      <option name="closed" value="true" />
+      <created>1748415662593</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1748415662593</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -329,7 +328,8 @@
     <MESSAGE value="feat(AI):接入讯飞星火大模型，创建AIController，AIService等模块。" />
     <MESSAGE value="feat(auth):修改登录逻辑，将手机号改为邮箱，便于完成忘记密码的验证操作。" />
     <MESSAGE value="feat(AI):完善学生向AI提问的response和request，以及Repository" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(AI):完善学生向AI提问的response和request，以及Repository" />
+    <MESSAGE value="feat(auth):前后端统一了接口内容" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(auth):前后端统一了接口内容" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -568,6 +568,21 @@
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIServiceImpl.java</url>
           <line>133</line>
           <option name="timeStamp" value="91" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
+          <line>51</line>
+          <option name="timeStamp" value="98" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
+          <line>49</line>
+          <option name="timeStamp" value="99" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
+          <line>39</line>
+          <option name="timeStamp" value="100" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java</url>

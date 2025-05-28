@@ -64,6 +64,6 @@ public class AuthServiceImpl implements AuthService {
         if (!passwordEncoder.matches(password, user.getUserPassword())) {
             return new Result(false, "密码错误");
         }
-        return new Result(true, "登录成功");
+        return new Result(true, "登录成功", user);
     }
 }
