@@ -1,99 +1,45 @@
 package com.example.edupal.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Lob;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.Date;
+
+@Setter
+@Getter
 @Entity
+@Table(name = "question")
 public class Question {
     @Id
-    @Column(length = 8)
-    private String question_id;
+    @Column(name="question_id", length = 36, nullable = false)
+    private String questionId;
 
-    @Column(length = 8)
-    private String answer_id;
+    @PrePersist
+    private void generateUUID() {
+        if (this.questionId == null) {
+            this.questionId = java.util.UUID.randomUUID().toString();
+        }
+    }
 
     @Lob
-    private String question_content;
+    @Column(name="question_content", nullable = false)
+    private String questionContent;
 
-    @Column(length = 8, nullable = false)
-    private String question_subject;
+    @Column(name="question_subject", length = 8, nullable = false)
+    private String questionSubject;
 
-    @Column(nullable = false)
-    private Integer question_type;
+    @Column(name="question_type",nullable = false)
+    private Integer questionType;
 
-    @Column(nullable = false)
-    private Integer is_answered;
+    @Column(name="is_answered",nullable = false)
+    private Integer isAnswered;
 
-    @Column(length = 8)
-    private String related_answer;
+    @Column(name="student_id",length = 10)
+    private String studentId;
 
-    @Column(length = 10)
-    private String student_id;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "question_time")
+    private Date questionTime;
 
-    // Getters and Setters
-    public String getQuestion_id() {
-        return question_id;
-    }
-
-    public void setQuestion_id(String question_id) {
-        this.question_id = question_id;
-    }
-
-    public String getAnswer_id() {
-        return answer_id;
-    }
-
-    public void setAnswer_id(String answer_id) {
-        this.answer_id = answer_id;
-    }
-
-    public String getQuestion_content() {
-        return question_content;
-    }
-
-    public void setQuestion_content(String question_content) {
-        this.question_content = question_content;
-    }
-
-    public String getQuestion_subject() {
-        return question_subject;
-    }
-
-    public void setQuestion_subject(String question_subject) {
-        this.question_subject = question_subject;
-    }
-
-    public Integer getQuestion_type() {
-        return question_type;
-    }
-
-    public void setQuestion_type(Integer question_type) {
-        this.question_type = question_type;
-    }
-
-    public Integer getIs_answered() {
-        return is_answered;
-    }
-
-    public void setIs_answered(Integer is_answered) {
-        this.is_answered = is_answered;
-    }
-
-    public String getRelated_answer() {
-        return related_answer;
-    }
-
-    public void setRelated_answer(String related_answer) {
-        this.related_answer = related_answer;
-    }
-
-    public String getStudent_id() {
-        return student_id;
-    }
-
-    public void setStudent_id(String student_id) {
-        this.student_id = student_id;
-    }
 }

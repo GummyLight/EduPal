@@ -1,77 +1,39 @@
 package com.example.edupal.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Lob;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.Date;
+
+@Getter
+@Setter
 @Entity
+@Table(name = "answer")
 public class Answer {
     @Id
-    @Column(length = 8)
-    private String answer_id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name="answer_id",length = 36,nullable = false)
+    private String answerId;
 
-    @Column(length = 8)
-    private String question_id;
+    @Column(name="question_id", length = 36, nullable = false)
+    private String questionId;
 
     @Lob
-    private String answer_content;
+    @Column(name="answer_content", nullable = false)
+    private String answerContent;
 
-    @Column(length = 8, nullable = false)
-    private String related_question;
+    @Lob
+    @Column(name="related_question")
+    private String relatedQuestion;
 
-    @Column(nullable = false)
-    private Integer answer_type;
+    @Column(name="answer_type", nullable = false)
+    private Integer answerType;
 
-    @Column(length = 10)
-    private String teacher_id;
+    @Column(name="teacher_id")
+    private String teacherId;
 
-    // Getters and Setters
-    public String getAnswer_id() {
-        return answer_id;
-    }
-
-    public void setAnswer_id(String answer_id) {
-        this.answer_id = answer_id;
-    }
-
-    public String getQuestion_id() {
-        return question_id;
-    }
-
-    public void setQuestion_id(String question_id) {
-        this.question_id = question_id;
-    }
-
-    public String getAnswer_content() {
-        return answer_content;
-    }
-
-    public void setAnswer_content(String answer_content) {
-        this.answer_content = answer_content;
-    }
-
-    public String getRelated_question() {
-        return related_question;
-    }
-
-    public void setRelated_question(String related_question) {
-        this.related_question = related_question;
-    }
-
-    public Integer getAnswer_type() {
-        return answer_type;
-    }
-
-    public void setAnswer_type(Integer answer_type) {
-        this.answer_type = answer_type;
-    }
-
-    public String getTeacher_id() {
-        return teacher_id;
-    }
-
-    public void setTeacher_id(String teacher_id) {
-        this.teacher_id = teacher_id;
-    }
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "answer_time")
+    private Date answerTime;
 }

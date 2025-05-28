@@ -9,5 +9,6 @@ public class QuestionRequest {
     private String studentId;
     private String questionContent;
     private Integer questionType;
+    private String questionSubject;
 
 }
