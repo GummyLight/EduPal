@@ -3,9 +3,12 @@ package com.example.edupal.controller;
 import com.example.edupal.dto.request.LoginRequest;
 import com.example.edupal.dto.request.RegisterRequest;
 import com.example.edupal.dto.response.LoginResponse;
+import com.example.edupal.dto.request.ResetPasswordRequest;
+import com.example.edupal.dto.request.EmailCodeRequest;
 import com.example.edupal.service.AuthService;
 import com.example.edupal.common.ApiResponse;
 import com.example.edupal.common.Result;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,4 +65,35 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));
         }
     }
+
+    @PostMapping("/send-code")
+    public ResponseEntity<?> sendCode(@RequestBody EmailCodeRequest emailCodeRequest) throws MessagingException {
+        if (emailCodeRequest.getEmail() == null || emailCodeRequest.getEmail().isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(400, "Email is required"));
+        }
+
+        Result result = authService.sendVerificationCode(emailCodeRequest.getEmail());
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
+        } else {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        if (resetPasswordRequest.getEmail() == null || resetPasswordRequest.getEmail().isEmpty() ||
+                resetPasswordRequest.getCode() == null || resetPasswordRequest.getCode().isEmpty() ||
+                resetPasswordRequest.getNewPassword() == null || resetPasswordRequest.getNewPassword().isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(400, "Email, code, and new password are required"));
+        }
+
+        Result result = authService.resetPassword(resetPasswordRequest.getEmail(), resetPasswordRequest.getCode(), resetPasswordRequest.getNewPassword());
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
+        } else {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));
+        }
+    }
+
 }
