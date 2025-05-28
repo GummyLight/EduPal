@@ -3,7 +3,7 @@
     <el-header class="navbar">
       <div class="title">智慧教学系统</div>
       <div class="user-info">
-        <span>您好，{{ userType === 'teacher' ? '老师' : '同学' }} ({{ userType }})</span>
+        <span>您好，{{ username }}{{ userType === 'teacher' ? '老师' : '同学' }} ({{ userType }})</span>
         <el-button type="danger" @click="logout">退出登录</el-button>
       </div>
     </el-header>
@@ -31,8 +31,7 @@
           <el-form-item label="所属学科">
             <el-select v-model="filters.subject" placeholder="请选择学科" clearable>
               <el-option label="数学" value="math" />
-              <el-option label="物理" CHEMISTRY>化 </el-option>
-            </el-select>
+              <el-option label="物理" value="physics">物理</el-option> <el-option label="化学" value="chemistry">化学</el-option> </el-select>
           </el-form-item>
           <el-form-item v-if="userType === 'teacher'" label="选择班级">
             <el-select v-model="filters.classId" placeholder="请选择班级" clearable @change="handleSelectClass">
@@ -85,14 +84,14 @@
           <el-table-column v-if="userType === 'student'" prop="我的状态" label="我的状态" />
           <el-table-column v-if="userType === 'student'" prop="我的分数" label="我的分数" />
 
-          <el-table-column label="操作" width="150" v-if="userType === 'teacher' || userType === 'student'">
+          <el-table-column label="操作" width="200" v-if="userType === 'teacher' || userType === 'student'">
             <template #default="scope">
-              <div v-if="userType === 'teacher'">
+              <div v-if="userType === 'teacher'" class="operation-buttons-horizontal">
                 <el-button type="text" size="small" @click="handleViewSubmissions(scope.row)">查看提交</el-button>
                 <el-button type="text" size="small" @click="handleEdit(scope.row)">编辑</el-button>
                 <el-button type="text" size="small" danger @click="handleDelete(scope.row)">删除</el-button>
               </div>
-              <div v-if="userType === 'student'">
+              <div v-if="userType === 'student'" class="operation-buttons-horizontal">
                 <el-button type="text" size="small" @click="handleGoToPracticeDetail(scope.row)">
                   {{ scope.row.我的状态 === '已提交' ? '查看详情' : '开始练习' }}
                 </el-button>
@@ -108,12 +107,12 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { ElMessage, ElMessageBox } from 'element-plus'; // 导入 ElMessage 和 ElMessageBox
 
 const router = useRouter();
 
-// FIX: Changed default userType to 'student' to easily test the student view
-//const userType = ref<'teacher' | 'student'>('teacher');
 const userType = ref<'teacher' | 'student'>('student');
+const username = ref('张三');
 
 const filters = ref({
   keyword: '',
@@ -140,6 +139,7 @@ const tableData = ref([
     已批改人数: 10,
     我的状态: '未提交',
     我的分数: null,
+    chapter: '1' // 添加 chapter 字段用于筛选
   },
   {
     习题号: 'EX20250502',
@@ -157,6 +157,7 @@ const tableData = ref([
     已批改人数: 15,
     我的状态: '已提交',
     我的分数: null,
+    chapter: '2' // 添加 chapter 字段用于筛选
   },
   {
     习题号: 'EX20250503',
@@ -174,6 +175,7 @@ const tableData = ref([
     已批改人数: 25,
     我的状态: '已批改',
     我的分数: 95,
+    chapter: '3' // 添加 chapter 字段用于筛选
   },
 ]);
 
@@ -182,7 +184,8 @@ const filteredData = computed(() => {
     const keywordMatch = filters.value.keyword === '' ||
         item.内容.includes(filters.value.keyword) ||
         item.习题号.includes(filters.value.keyword);
-    const chapterMatch = !filters.value.chapter || item.chapter === filters.value.chapter;
+    // 确保 item.chapter 存在再进行比较
+    const chapterMatch = !filters.value.chapter || (item.chapter && item.chapter === filters.value.chapter);
     const difficultyMatch = !filters.value.difficulty || item.难度 === filters.value.difficulty;
     const subjectMatch = !filters.value.subject || item.科目 === filters.value.subject;
     return keywordMatch && chapterMatch && difficultyMatch && subjectMatch;
@@ -191,6 +194,7 @@ const filteredData = computed(() => {
 
 function handleSearch() {
   console.log('搜索条件:', filters.value, '用户类型:', userType.value);
+  ElMessage.success('正在搜索...');
 }
 
 function handleAdd() {
@@ -201,8 +205,10 @@ function handleAdd() {
 function handleExport() {
   if (userType.value === 'teacher') {
     console.log('教师操作: 导出练习完成情况', filteredData.value);
+    ElMessage.success('正在导出练习完成情况...');
   } else {
     console.log('学生操作: 导出我的练习情况', filteredData.value);
+    ElMessage.success('正在导出我的练习情况...');
   }
 }
 
@@ -212,25 +218,37 @@ function handleEdit(row: any) {
 }
 
 function handleDelete(row: any) {
-  console.log('教师操作: 删除练习:', row);
+  ElMessageBox.confirm(`确定删除练习《${row.内容}》吗？`, '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    tableData.value = tableData.value.filter(item => item.习题号 !== row.习题号);
+    ElMessage.success('练习删除成功！');
+  }).catch(() => {
+    ElMessage.info('已取消删除。');
+  });
 }
 
 function logout() {
   console.log('退出登录');
   router.push('/login');
+  ElMessage.info('您已退出登录。');
 }
 
 function handleViewAnalytics() {
   console.log('教师操作: 查看学情分析');
+  ElMessage.info('正在查看学情分析...');
 }
 
 function handleSelectClass() {
   console.log('教师操作: 选择了班级', filters.value.classId);
-  handleSearch();
+  handleSearch(); // 班级选择后立即搜索
 }
 
 function handleViewProgress() {
   console.log('学生操作: 查看学习进度');
+  ElMessage.info('正在查看学习进度...');
 }
 
 function handleViewSubmissions(row: any) {
@@ -308,5 +326,13 @@ function handleGoToPracticeDetail(row: any) {
 }
 .el-button [class*="el-icon-"] + span {
   margin-left: 5px;
+}
+
+/* 重点修改：为操作列的按钮容器添加 flex 布局 */
+.operation-buttons-horizontal {
+  display: flex;
+  gap: 8px; /* 按钮之间的间距 */
+  flex-wrap: wrap; /* 如果按钮过多，允许换行 */
+  justify-content: flex-start; /* 按钮左对齐 */
 }
 </style>
