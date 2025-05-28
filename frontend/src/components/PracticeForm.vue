@@ -112,8 +112,8 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 // FIX: Changed default userType to 'student' to easily test the student view
-const userType = ref<'teacher' | 'student'>('teacher');
-//const userType = ref<'teacher' | 'student'>('student');
+//const userType = ref<'teacher' | 'student'>('teacher');
+const userType = ref<'teacher' | 'student'>('student');
 
 const filters = ref({
   keyword: '',
@@ -217,6 +217,7 @@ function handleDelete(row: any) {
 
 function logout() {
   console.log('退出登录');
+  router.push('/login');
 }
 
 function handleViewAnalytics() {
