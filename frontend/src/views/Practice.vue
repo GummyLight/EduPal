@@ -1,11 +1,12 @@
 <template>
   <div class="practice-page">
-    <PracticeForm />
+    <router-view></router-view>
   </div>
 </template>
 
 <script setup lang="ts">
-import PracticeForm from '../components/PracticeForm.vue';
+
+// import PracticeForm from '../components/PracticeForm.vue';
 </script>
 
 <style scoped>
