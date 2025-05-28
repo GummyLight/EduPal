@@ -17,15 +17,15 @@ public class AuthServiceImpl implements AuthService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public Result registerUser(String userId, String password, String phoneNum, Integer userType) {
+    public Result registerUser(String userId, String password, String email, Integer userType) {
         if (userRepository.existsByUserId(userId)) {
             return new Result(false, "用户名已存在");
         }
-        if (userRepository.existsByUserPhoneNum(phoneNum)) {
-            return new Result(false, "手机号已存在");
+        if (userRepository.existsByUserEmail(email)) {
+            return new Result(false, "邮箱已存在");
         }
         //任何一项为空都要报错
-        if (userId == null || password == null || phoneNum == null) {
+        if (userId == null || password == null || email == null) {
             return new Result(false, "未填写完整信息");
         }
         if(password.length() < 6){
@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
         User user = new User();
         user.setUserId(userId);
         user.setUserPassword(passwordEncoder.encode(password));
-        user.setUserPhoneNum(phoneNum);
+        user.setUserEmail(email);
         user.setUserType(userType);
         userRepository.save(user);
         return new Result(true, "注册成功");
@@ -56,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Result loginUserByPhoneNum(String phoneNum, String password) {
-        User user = userRepository.findByUserPhoneNum(phoneNum);
+        User user = userRepository.findByUserEmail(phoneNum);
 
         if (user == null) {
             return new Result(false, "用户不存在");

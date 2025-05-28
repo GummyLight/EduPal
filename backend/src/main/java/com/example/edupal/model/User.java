@@ -17,8 +17,8 @@ public class User {
     @Column(name = "user_id", updatable = false, unique = true)
     private String userId;
 
-    @Column(name = "user_phone_num", unique = true)
-    private String userPhoneNum;
+    @Column(name = "user_email", unique = true)
+    private String userEmail;
 
     @Column(name = "user_password")
     private String userPassword;
