@@ -1,4 +1,5 @@
 // src/api/auth.ts
+//注册相关先不要写，因为注册功能是给管理员用的，而我们没有管理员
 import axios from 'axios';
 
 /*auth.ts用于实现后端和前端的数据交接*/
@@ -13,9 +14,9 @@ interface ApiResponse<T = any> {
 // 登录请求数据类型
 interface LoginRequest {
   userId?: string
-  phoneNum?: string
+  address?: string
   password: string
-  type: number //0表示用户名登录，1表示手机号登录
+  type: number //0表示用户名登录，1表示邮箱登录
 }
 
 // 登录响应数据类型
@@ -31,7 +32,7 @@ interface LoginResponseData {
 interface RegisterRequest {
   userId: string
   password: string
-  phoneNum: string
+  address: string
   userType: number //0表示学生，1表示教师
 }
 
@@ -41,27 +42,35 @@ interface RegisterResponse {
   message: string
 }
 
-// 登录函数, 分类处理用户名和手机号登录
+interface ForgetPasswordRequest {
+
+}
+
+interface ForgetPasswordResponse {
+  
+}
+
+// 登录函数, 分类处理账号和邮箱登录
 export const login = async (userInput: string, password: string, type: number): Promise<ApiResponse<LoginResponseData>> => {
   try {
     let requestData: LoginRequest;
     
     if (type === 0) {
-      // 用户名登录
+      // 账号登录
       requestData = {
-        userId: userInput,    // 发送用户名
+        userId: userInput,    // 发送账号
         password: password,
         type: type
       };
-      console.log('用户名登录:', { userId: userInput, type });
+      console.log('账号登录:', { userId: userInput, type });
     } else if (type === 1) {
-      // 手机号登录
+      // 邮箱登录
       requestData = {
-        phoneNum: userInput,  // 发送手机号
+        address: userInput,  // 发送邮箱
         password: password,
         type: type
       };
-      console.log('手机号登录:', { phoneNum: userInput, type });
+      console.log('邮箱登录:', { phoneNum: userInput, type });
     } else {
       throw new Error('无效的登录类型');
     }
@@ -77,12 +86,12 @@ export const login = async (userInput: string, password: string, type: number): 
 }
 
 // 注册函数
-export const register = async (userId: string, password: string, phoneNum: string, userType: number): Promise<ApiResponse> => {
+export const register = async (userId: string, password: string, email: string, userType: number): Promise<ApiResponse> => {
   try {
     const response = await axios.post<ApiResponse>(`/api/auth/register`, {
       userId,
       password,
-      phoneNum,
+      phoneNum: email,  // 暂时保持后端参数名，发送邮箱作为值
       userType
     });
     return response.data;  // 直接返回，不需要转换
