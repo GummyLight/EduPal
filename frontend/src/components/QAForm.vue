@@ -21,7 +21,7 @@
         <!-- 欢迎消息 -->
         <div v-if="currentMessages.length === 0" class="welcome-message">
           <div class="ai-avatar">
-            <el-icon><Service /></el-icon>
+            <img :src="aiIconDefault" alt="AI头像" class="avatar-image" />
           </div>
           <div class="welcome-content">
             <h3>欢迎使用 EduPal AI 智能答疑！</h3>
@@ -55,7 +55,7 @@
           <!-- AI消息 -->
           <div v-else class="message ai-message">
             <div class="ai-avatar">
-              <el-icon><Service /></el-icon>
+              <img :src="aiIconDefault" alt="AI头像" class="avatar-image" />
             </div>
             <div class="message-content">
               <div class="message-text" v-html="formatAIResponse(message.content)"></div>
@@ -79,7 +79,7 @@
         <!-- 加载状态 -->
         <div v-if="isLoading" class="message ai-message">
           <div class="ai-avatar">
-            <el-icon><Service /></el-icon>
+            <img :src="aiIconDefault" alt="AI头像" class="avatar-image" />
           </div>
           <div class="message-content">
             <div class="loading-container">
@@ -114,7 +114,7 @@
           <el-input
             v-model="currentQuestion"
             type="textarea"
-            placeholder="输入你的问题，按 Ctrl+Enter 发送..."
+            placeholder="输入你的问题，按 Enter 发送，Ctrl+Enter 换行..."
             :rows="3"
             resize="none"
             @keydown="handleKeydown"
@@ -206,6 +206,8 @@ import {
 import { askAI, getConversationHistory } from '../api/ai';
 // 导入用户默认头像
 import userIconDefault from '../assets/userIconDefault.jpg';
+// 导入AI默认头像
+import aiIconDefault from '../assets/aiIconDefault.jpg';
 
 // 接口定义
 interface Message {
@@ -480,17 +482,20 @@ const scrollToBottom = () => {
 };
 
 const handleKeydown = (event: KeyboardEvent) => {
-  if (event.ctrlKey && event.key === 'Enter') {
-    event.preventDefault();
-    sendMessage();
+  if (event.key === 'Enter') {
+    if (event.ctrlKey) {
+      // Ctrl+Enter 换行，让默认行为发生
+      return;
+    } else {
+      // Enter 发送消息
+      event.preventDefault();
+      sendMessage();
+    }
   }
 };
 
 // 生命周期
 onMounted(() => {
-  // 创建默认对话
-  startNewConversation();
-  
   // 尝试从localStorage恢复对话历史
   const savedConversations = localStorage.getItem('qa-conversations');
   if (savedConversations) {
@@ -504,9 +509,22 @@ onMounted(() => {
           timestamp: new Date(msg.timestamp)
         }))
       }));
+      
+      // 如果有保存的对话，选择第一个作为当前对话
+      if (conversations.value.length > 0) {
+        currentConversationId.value = conversations.value[0].id;
+      } else {
+        // 如果没有保存的对话，创建默认对话
+        startNewConversation();
+      }
     } catch (error) {
       console.error('恢复对话历史失败:', error);
+      // 恢复失败时也要创建默认对话
+      startNewConversation();
     }
+  } else {
+    // 没有保存的对话时创建默认对话
+    startNewConversation();
   }
 });
 
@@ -759,6 +777,7 @@ watch(conversations, saveConversations, { deep: true });
   color: white;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(64, 158, 255, 0.3);
+  overflow: hidden; /* 确保图片不会溢出圆形边界 */
 }
 
 .welcome-content h3 {
@@ -1267,6 +1286,7 @@ watch(conversations, saveConversations, { deep: true });
     font-size: 14px;
   }
   
+  .ai-avatar .avatar-image,
   .user-avatar .avatar-image {
     width: 100%;
     height: 100%;

@@ -84,7 +84,7 @@ public class AIServiceImpl implements AIService {
 
                 jsonObject.set("messages", messagesArray);
                 jsonObject.set("stream", true);
-                jsonObject.set("max_tokens", 512);
+                jsonObject.set("max_tokens", 16384);
 
                 // Set up the HTTP connection
                 URL url = new URL(API_URL);
