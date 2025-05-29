@@ -32,6 +32,12 @@ api.interceptors.response.use(
     return response
   },
   (error) => {
+    // 检查是否为用户主动取消的请求
+    if (axios.isCancel(error)) {
+      // 用户主动取消请求，不显示错误消息，直接抛出错误
+      return Promise.reject(error)
+    }
+    
     if (error.response) {
       const { status, data } = error.response
       

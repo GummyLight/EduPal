@@ -31,8 +31,8 @@ export const askAI = async (
   studentId: string,
   questionContent: string,
   questionSubject: string = 'other',
-  timeoutMs: number = 120000, // 默认60秒超时
-  onCancel?: () => void
+  timeoutMs: number = 60000, // 默认60秒超时
+  cancelTokenSource?: any
 ): Promise<AIQuestionResponse> => {
   try {
     const requestData: AIQuestionRequest = {
@@ -45,17 +45,18 @@ export const askAI = async (
     console.log('发送AI问答请求:', requestData);
 
     // 创建取消令牌
-    const cancelTokenSource = axios.CancelToken.source();
+    const source = cancelTokenSource || axios.CancelToken.source();
     
     // 设置超时定时器
     const timeoutId = setTimeout(() => {
-      cancelTokenSource.cancel('请求超时，AI响应时间过长，请稍后重试');
-      if (onCancel) onCancel();
+      if (!cancelTokenSource) {
+        source.cancel('请求超时，AI响应时间过长，请稍后重试');
+      }
     }, timeoutMs);
 
     const response = await request.post<AIQuestionResponse>('/ai/ask', requestData, {
       timeout: timeoutMs,
-      cancelToken: cancelTokenSource.token
+      cancelToken: source.token
     });
     
     // 清除超时定时器

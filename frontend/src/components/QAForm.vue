@@ -204,6 +204,8 @@ import {
 } from '@element-plus/icons-vue';
 // 导入真实的AI API
 import { askAI, getConversationHistory } from '../api/ai';
+// 导入axios用于取消令牌
+import axios, { CancelTokenSource } from 'axios';
 // 导入用户默认头像
 import userIconDefault from '../assets/userIconDefault.jpg';
 // 导入AI默认头像
@@ -236,7 +238,7 @@ const sidebarCollapsed = ref(false);
 const messagesContainer = ref<HTMLElement>();
 
 // 请求取消相关
-const currentRequestCancel = ref<(() => void) | null>(null);
+const currentRequestCancel = ref<CancelTokenSource | null>(null);
 
 // 对话管理
 const conversations = ref<Conversation[]>([]);
@@ -331,6 +333,9 @@ const sendMessage = async () => {
   loadingText.value = 'AI正在思考中...';
   loadingProgress.value = 0;
 
+  // 创建取消令牌
+  currentRequestCancel.value = axios.CancelToken.source();
+
   // 模拟加载进度
   const progressInterval = setInterval(() => {
     if (loadingProgress.value < 90) {
@@ -348,19 +353,13 @@ const sendMessage = async () => {
   scrollToBottom();
 
   try {
-    // 调用真实的AI API，设置60秒超时
+    // 调用真实的AI API，传入取消令牌
     const aiResponse = await askAI(
       currentUser.value.studentId,
       questionContent,
       currentSubject.value,
       60000, // 60秒超时
-      () => {
-        // 取消回调
-        clearInterval(progressInterval);
-        isLoading.value = false;
-        loadingProgress.value = 0;
-        ElMessage.warning('请求已取消');
-      }
+      currentRequestCancel.value // 传入取消令牌源
     );
 
     // 清除进度模拟
@@ -385,11 +384,15 @@ const sendMessage = async () => {
     console.error('AI回答失败:', error);
     clearInterval(progressInterval);
     
+    // 检查是否为取消请求
+    if (axios.isCancel(error)) {
+      // 取消请求不显示错误，只重置状态
+      return;
+    }
+    
     let errorMessage = '抱歉，我现在无法回答你的问题，请稍后再试。';
     
-    if (error.message.includes('取消')) {
-      errorMessage = '请求已取消。';
-    } else if (error.message.includes('超时')) {
+    if (error.message.includes('超时')) {
       errorMessage = '请求超时，AI响应时间较长，请稍后重试。你也可以尝试简化问题或分段提问。';
     } else if (error.message.includes('网络')) {
       errorMessage = '网络连接错误，请检查网络连接后重试。';
@@ -397,7 +400,7 @@ const sendMessage = async () => {
     
     ElMessage.error(error.message || 'AI服务暂时不可用');
     
-    // 添加错误消息
+    // 添加错误消息到对话中
     const errorMsg: Message = {
       id: generateId(),
       type: 'ai',
@@ -467,11 +470,12 @@ const likeMessage = (messageId: string) => {
 
 const cancelRequest = () => {
   if (currentRequestCancel.value) {
-    currentRequestCancel.value();
+    currentRequestCancel.value.cancel('用户取消了请求');
     currentRequestCancel.value = null;
   }
   isLoading.value = false;
   loadingProgress.value = 0;
+  loadingText.value = 'AI正在思考中...';
   ElMessage.info('已取消AI请求');
 };
 
