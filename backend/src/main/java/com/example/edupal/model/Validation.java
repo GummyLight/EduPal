@@ -7,7 +7,6 @@ import java.util.Date;
 
 @Setter
 @Getter
-@Data
 @Entity
 @Table(name = "validation")
 @NoArgsConstructor

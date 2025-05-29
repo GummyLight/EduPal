@@ -4,29 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(auth):增加了忘记密码功能：发送验证码，验证验证码">
-      <change afterPath="$PROJECT_DIR$/../frontend/src/api/ai.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/src/assets/sparkIcon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/src/components/MaterialUpload.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/controller/AuthController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/dto/request/LoginRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/dto/request/LoginRequest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/service/AuthService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/service/AuthService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/service/AuthServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/service/AuthServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/example/edupal/controller/AuthControllerTest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/example/edupal/service/AuthServiceImplIntegrationTest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/example/edupal/service/AuthServiceImplTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/example/edupal/service/AuthServiceImplTest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/api/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/api/auth.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/CommunityForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/CommunityForm.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/CourseForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/CourseForm.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/MaterialsForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/MaterialsForm.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/PracticeForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/PracticeForm.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/QAForm.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/QAForm.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/Siderbar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/Siderbar.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/router/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/views/Community.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/views/Community.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/views/Home.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/views/Materials.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/views/Materials.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/views/QA.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/views/QA.vue" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(auth):修复了重置密码result始终为false的问题">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/Validation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/Validation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/model/Quiz.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/model/Quiz.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,47 +55,47 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "JUnit.AuthControllerTest.executor": "Run",
-    "JUnit.AuthControllerTest.testRegisterUser_Success.executor": "Run",
-    "JUnit.AuthServiceImplIntegrationTest.executor": "Run",
-    "JUnit.AuthServiceImplTest.executor": "Run",
-    "JUnit.AuthServiceImplTest.loginUserByEmailSuccess.executor": "Run",
-    "JUnit.AuthServiceImplTest.loginUserByEmail_ReturnsError_WhenEmailIsNull.executor": "Run",
-    "JUnit.SecurityConfigTest.executor": "Run",
-    "JUnit.UserControllerTest.executor": "Run",
-    "JUnit.UserServiceImplIntegrationTest.executor": "Run",
-    "JUnit.UserServiceImplTest.executor": "Run",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.EduPalApplication.executor": "Debug",
-    "git-widget-placeholder": "Merging main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "E:/00-02 Do it yourself/LLM_SpringBoot/X1_http_java",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "database.query.execution",
-    "ts.external.directory.path": "D:\\Program Files\\JetBrains\\IntelliJ IDEA 2023.3.5\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;JUnit.AuthControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthControllerTest.testRegisterUser_Success.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplIntegrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplTest.loginUserByEmailSuccess.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplTest.loginUserByEmail_ReturnsError_WhenEmailIsNull.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.SecurityConfigTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.UserControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.UserServiceImplIntegrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.UserServiceImplTest.executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Spring Boot.EduPalApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/00-02 Do it yourself/LLM_SpringBoot/X1_http_java&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.runner&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Program Files\\JetBrains\\IntelliJ IDEA 2023.3.5\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql_aurora_aws"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql_aurora_aws&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.example.edupal.service" />
@@ -214,7 +196,12 @@
       <workItem from="1748356092858" duration="19518000" />
       <workItem from="1748417285349" duration="623000" />
       <workItem from="1748421813251" duration="859000" />
-      <workItem from="1748438582498" duration="6518000" />
+      <workItem from="1748438582498" duration="6683000" />
+      <workItem from="1748478281875" duration="32000" />
+      <workItem from="1748482633216" duration="6404000" />
+      <workItem from="1748489969476" duration="2723000" />
+      <workItem from="1748499678871" duration="1061000" />
+      <workItem from="1748500964983" duration="347000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />
@@ -320,7 +307,39 @@
       <option name="project" value="LOCAL" />
       <updated>1748445325235</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="fix(auth):增加了忘记密码功能：发送验证码，验证验证码">
+      <option name="closed" value="true" />
+      <created>1748445494533</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1748445494533</updated>
+    </task>
+    <task id="LOCAL-00015" summary="fix(auth):统一了前后端忘记密码的router">
+      <option name="closed" value="true" />
+      <created>1748485138323</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1748485138323</updated>
+    </task>
+    <task id="LOCAL-00016" summary="fix(model):增加了 LearningProgress和Quiz的model和数据库的连接">
+      <option name="closed" value="true" />
+      <created>1748487581457</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1748487581457</updated>
+    </task>
+    <task id="LOCAL-00017" summary="fix(auth):修复了重置密码result始终为false的问题">
+      <option name="closed" value="true" />
+      <created>1748488468677</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1748488468677</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -363,7 +382,10 @@
     <MESSAGE value="feat(auth):前后端统一了接口内容" />
     <MESSAGE value="fix(auth):修复了邮箱登录报错的错误，修复了前端登录成功不能跳转的问题" />
     <MESSAGE value="fix(auth):增加了忘记密码功能：发送验证码，验证验证码" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(auth):增加了忘记密码功能：发送验证码，验证验证码" />
+    <MESSAGE value="fix(auth):统一了前后端忘记密码的router" />
+    <MESSAGE value="fix(model):增加了 LearningProgress和Quiz的model和数据库的连接" />
+    <MESSAGE value="fix(auth):修复了重置密码result始终为false的问题" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(auth):修复了重置密码result始终为false的问题" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -524,26 +546,6 @@
           <option name="timeStamp" value="74" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>jar://$PROJECT_DIR$/../../../../../environment/maven-3.9/myRepository/org/springframework/data/spring-data-jpa/3.4.5/spring-data-jpa-3.4.5-sources.jar!/org/springframework/data/jpa/repository/support/SimpleJpaRepository.java</url>
-          <line>632</line>
-          <option name="timeStamp" value="76" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>jar://$PROJECT_DIR$/../../../../../environment/maven-3.9/myRepository/org/springframework/data/spring-data-jpa/3.4.5/spring-data-jpa-3.4.5-sources.jar!/org/springframework/data/jpa/repository/support/SimpleJpaRepository.java</url>
-          <line>634</line>
-          <option name="timeStamp" value="77" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>jar://$PROJECT_DIR$/../../../../../environment/maven-3.9/myRepository/org/springframework/data/spring-data-jpa/3.4.5/spring-data-jpa-3.4.5-sources.jar!/org/springframework/data/jpa/repository/support/SimpleJpaRepository.java</url>
-          <line>636</line>
-          <option name="timeStamp" value="78" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>jar://$PROJECT_DIR$/../../../../../environment/maven-3.9/myRepository/org/springframework/data/spring-data-jpa/3.4.5/spring-data-jpa-3.4.5-sources.jar!/org/springframework/data/jpa/repository/support/SimpleJpaRepository.java</url>
-          <line>635</line>
-          <option name="timeStamp" value="79" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIServiceImpl.java</url>
           <line>34</line>
           <option name="timeStamp" value="80" />
@@ -594,99 +596,64 @@
           <option name="timeStamp" value="91" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java</url>
+          <line>120</line>
+          <option name="timeStamp" value="119" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
-          <line>74</line>
-          <option name="timeStamp" value="92" />
+          <line>84</line>
+          <option name="timeStamp" value="120" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
+          <line>92</line>
+          <option name="timeStamp" value="121" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
+          <line>94</line>
+          <option name="timeStamp" value="122" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java</url>
-          <line>95</line>
-          <option name="timeStamp" value="94" />
+          <line>133</line>
+          <option name="timeStamp" value="123" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java</url>
-          <line>88</line>
-          <option name="timeStamp" value="95" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java</url>
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
           <line>90</line>
-          <option name="timeStamp" value="96" />
+          <option name="timeStamp" value="124" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java</url>
-          <line>162</line>
-          <option name="timeStamp" value="103" />
+          <line>122</line>
+          <option name="timeStamp" value="125" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java</url>
-          <line>166</line>
-          <option name="timeStamp" value="104" />
+          <line>123</line>
+          <option name="timeStamp" value="126" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java</url>
-          <line>167</line>
-          <option name="timeStamp" value="105" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/EmailServiceImpl.java</url>
-          <line>20</line>
-          <option name="timeStamp" value="106" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/EmailServiceImpl.java</url>
-          <line>23</line>
-          <option name="timeStamp" value="107" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/EmailServiceImpl.java</url>
-          <line>29</line>
-          <option name="timeStamp" value="108" />
+          <line>127</line>
+          <option name="timeStamp" value="127" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java</url>
-          <line>98</line>
-          <option name="timeStamp" value="109" />
+          <line>126</line>
+          <option name="timeStamp" value="129" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java</url>
-          <line>97</line>
-          <option name="timeStamp" value="110" />
+          <line>132</line>
+          <option name="timeStamp" value="130" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java</url>
-          <line>101</line>
-          <option name="timeStamp" value="111" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java</url>
-          <line>106</line>
-          <option name="timeStamp" value="112" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java</url>
-          <line>109</line>
-          <option name="timeStamp" value="113" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthServiceImpl.java</url>
-          <line>114</line>
-          <option name="timeStamp" value="114" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/EmailServiceImpl.java</url>
-          <line>22</line>
-          <option name="timeStamp" value="115" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/EmailServiceImpl.java</url>
-          <line>26</line>
-          <option name="timeStamp" value="116" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/EmailServiceImpl.java</url>
-          <line>30</line>
-          <option name="timeStamp" value="117" />
+          <line>128</line>
+          <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java</url>
@@ -696,24 +663,6 @@
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="23" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>jar://$PROJECT_DIR$/../../../../../environment/maven-3.9/myRepository/org/springframework/data/spring-data-commons/3.4.5/spring-data-commons-3.4.5-sources.jar!/org/springframework/data/repository/CrudRepository.java</url>
-          <line>42</line>
-          <properties class="org.springframework.data.repository.CrudRepository" method="save">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="75" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthService.java</url>
-          <line>9</line>
-          <properties class="com.example.edupal.service.AuthService" method="sendVerificationCode">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="93" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
