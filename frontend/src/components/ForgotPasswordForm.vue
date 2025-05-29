@@ -222,16 +222,16 @@ const handleSendCode = async () => {
     const response = await sendEmailCode(form.email);
     
     if (response.code === 200) {
-      ElMessage.success(response.message || '验证码已发送到您的邮箱，请查收');
+      ElMessage.success(response.message + '验证码已发送到您的邮箱，请查收');
       startCountdown();
     } else {
-      ElMessage.error(response.message || '发送验证码失败，请重试');
+      ElMessage.error(response.message + '发送验证码失败，请重试');
     }
     
   } catch (error: any) {
     console.error('Send code failed:', error);
     if (error.response && error.response.data) {
-      ElMessage.error(error.response.data.message || '发送验证码失败，请检查网络连接');
+      ElMessage.error(error.response.data.message + '发送验证码失败，请检查网络连接');
     } else {
       ElMessage.error('发送验证码失败，请检查网络连接或联系管理员');
     }
