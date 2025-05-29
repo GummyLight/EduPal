@@ -21,7 +21,7 @@
         <!-- 欢迎消息 -->
         <div v-if="currentMessages.length === 0" class="welcome-message">
           <div class="ai-avatar">
-            <el-icon><Service /></el-icon>
+            <img :src="aiIconDefault" alt="AI头像" class="avatar-image" />
           </div>
           <div class="welcome-content">
             <h3>欢迎使用 EduPal AI 智能答疑！</h3>
@@ -48,14 +48,14 @@
               <div class="message-time">{{ formatTime(message.timestamp) }}</div>
             </div>
             <div class="user-avatar">
-              <el-icon><UserFilled /></el-icon>
+              <img :src="userIconDefault" alt="用户头像" class="avatar-image" />
             </div>
           </div>
 
           <!-- AI消息 -->
           <div v-else class="message ai-message">
             <div class="ai-avatar">
-              <el-icon><Service /></el-icon>
+              <img :src="aiIconDefault" alt="AI头像" class="avatar-image" />
             </div>
             <div class="message-content">
               <div class="message-text" v-html="formatAIResponse(message.content)"></div>
@@ -79,13 +79,30 @@
         <!-- 加载状态 -->
         <div v-if="isLoading" class="message ai-message">
           <div class="ai-avatar">
-            <el-icon><Service /></el-icon>
+            <img :src="aiIconDefault" alt="AI头像" class="avatar-image" />
           </div>
           <div class="message-content">
-            <div class="typing-indicator">
-              <span></span>
-              <span></span>
-              <span></span>
+            <div class="loading-container">
+              <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="loading-info">
+                <div class="loading-text">{{ loadingText }}</div>
+                <div class="loading-progress">
+                  <el-progress :percentage="loadingProgress" :show-text="false" />
+                </div>
+                <el-button 
+                  text 
+                  size="small" 
+                  @click="cancelRequest"
+                  class="cancel-btn"
+                >
+                  <el-icon><Close /></el-icon>
+                  取消请求
+                </el-button>
+              </div>
             </div>
           </div>
         </div>
@@ -97,7 +114,7 @@
           <el-input
             v-model="currentQuestion"
             type="textarea"
-            placeholder="输入你的问题，按 Ctrl+Enter 发送..."
+            placeholder="输入你的问题，按 Enter 发送，Ctrl+Enter 换行...&#10;"
             :rows="3"
             resize="none"
             @keydown="handleKeydown"
@@ -183,10 +200,19 @@ import { ref, computed, nextTick, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { 
   Plus, UserFilled, Delete, DocumentCopy, Star, 
-  Paperclip, Promotion, ArrowLeft, ArrowRight, Service, Operation
+  Paperclip, Promotion, ArrowLeft, ArrowRight, Service, Operation, Close
 } from '@element-plus/icons-vue';
 // 导入真实的AI API
 import { askAI, getConversationHistory } from '../api/ai';
+// 导入axios用于取消令牌
+import axios, { CancelTokenSource } from 'axios';
+// 导入用户默认头像
+import userIconDefault from '../assets/userIconDefault.jpg';
+// 导入AI默认头像
+import aiIconDefault from '../assets/aiIconDefault.jpg';
+// 导入KaTeX用于LaTeX渲染
+import * as katex from 'katex';
+import 'katex/dist/katex.min.css';
 
 // 接口定义
 interface Message {
@@ -209,8 +235,13 @@ interface Conversation {
 const currentQuestion = ref('');
 const currentSubject = ref('math');
 const isLoading = ref(false);
+const loadingProgress = ref(0);
+const loadingText = ref('AI正在思考中...');
 const sidebarCollapsed = ref(false);
 const messagesContainer = ref<HTMLElement>();
+
+// 请求取消相关
+const currentRequestCancel = ref<CancelTokenSource | null>(null);
 
 // 对话管理
 const conversations = ref<Conversation[]>([]);
@@ -227,7 +258,8 @@ const quickQuestions = [
   '什么是余弦定理？',
   '如何解一元二次方程？',
   '牛顿第二定律是什么？',
-  '什么是递归算法？'
+  '什么是递归算法？',
+  '请解释积分 ∫x²dx 的计算过程'
 ];
 
 // 计算属性
@@ -302,18 +334,41 @@ const sendMessage = async () => {
   const questionContent = currentQuestion.value;
   currentQuestion.value = '';
   isLoading.value = true;
+  loadingText.value = 'AI正在思考中...';
+  loadingProgress.value = 0;
+
+  // 创建取消令牌
+  currentRequestCancel.value = axios.CancelToken.source();
+
+  // 模拟加载进度
+  const progressInterval = setInterval(() => {
+    if (loadingProgress.value < 90) {
+      loadingProgress.value += Math.random() * 10;
+      if (loadingProgress.value > 30 && loadingProgress.value < 60) {
+        loadingText.value = 'AI正在分析问题...';
+      } else if (loadingProgress.value >= 60) {
+        loadingText.value = 'AI正在生成回答...';
+      }
+    }
+  }, 800);
 
   // 滚动到底部
   await nextTick();
   scrollToBottom();
 
   try {
-    // 调用真实的AI API
+    // 调用真实的AI API，传入取消令牌
     const aiResponse = await askAI(
       currentUser.value.studentId,
       questionContent,
-      currentSubject.value
+      currentSubject.value,
+      60000, // 60秒超时
+      currentRequestCancel.value // 传入取消令牌源
     );
+
+    // 清除进度模拟
+    clearInterval(progressInterval);
+    loadingProgress.value = 100;
 
     // 添加AI回答消息
     const aiMessage: Message = {
@@ -331,46 +386,118 @@ const sendMessage = async () => {
     
   } catch (error: any) {
     console.error('AI回答失败:', error);
+    clearInterval(progressInterval);
+    
+    // 检查是否为取消请求
+    if (axios.isCancel(error)) {
+      // 取消请求不显示错误，只重置状态
+      return;
+    }
+    
+    let errorMessage = '抱歉，我现在无法回答你的问题，请稍后再试。';
+    
+    if (error.message.includes('超时')) {
+      errorMessage = '请求超时，AI响应时间较长，请稍后重试。你也可以尝试简化问题或分段提问。';
+    } else if (error.message.includes('网络')) {
+      errorMessage = '网络连接错误，请检查网络连接后重试。';
+    }
+    
     ElMessage.error(error.message || 'AI服务暂时不可用');
     
-    // 添加错误消息
-    const errorMessage: Message = {
+    // 添加错误消息到对话中
+    const errorMsg: Message = {
       id: generateId(),
       type: 'ai',
-      content: '抱歉，我现在无法回答你的问题，请稍后再试。可能的原因：网络连接问题或AI服务暂时不可用。',
+      content: errorMessage,
       timestamp: new Date()
     };
-    conv.messages.push(errorMessage);
+    conv.messages.push(errorMsg);
   } finally {
     isLoading.value = false;
+    loadingProgress.value = 0;
+    currentRequestCancel.value = null;
     await nextTick();
     scrollToBottom();
   }
 };
 
 const formatAIResponse = (content: string) => {
-  // 处理LaTeX数学公式
-  let formatted = content
-    // 处理行内公式 \(...\) 和 $...$
-    .replace(/\\\((.*?)\\\)/g, '<span class="math-inline">$1</span>')
-    .replace(/\$([^$]+)\$/g, '<span class="math-inline">$1</span>')
-    // 处理块级公式 \[...\] 和 $$...$$
-    .replace(/\\\[(.*?)\\\]/g, '<div class="math-block">$1</div>')
-    .replace(/\$\$(.*?)\$\$/g, '<div class="math-block">$1</div>')
-    // 处理markdown格式
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    // 处理换行
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/\n/g, '<br>');
+  try {
+    // 处理LaTeX数学公式
+    let formatted = content
+      // 处理块级公式 \[...\] 和 $$...$$
+      .replace(/\\\[([\s\S]*?)\\\]/g, (match, formula) => {
+        try {
+          const html = katex.renderToString(formula.trim(), {
+            displayMode: true,
+            throwOnError: false,
+            errorColor: '#ff0000'
+          });
+          return `<div class="math-block">${html}</div>`;
+        } catch (error) {
+          console.warn('KaTeX块级公式渲染错误:', error);
+          return `<div class="math-block math-error">$$${formula}$$</div>`;
+        }
+      })
+      .replace(/\$\$([\s\S]*?)\$\$/g, (match, formula) => {
+        try {
+          const html = katex.renderToString(formula.trim(), {
+            displayMode: true,
+            throwOnError: false,
+            errorColor: '#ff0000'
+          });
+          return `<div class="math-block">${html}</div>`;
+        } catch (error) {
+          console.warn('KaTeX块级公式渲染错误:', error);
+          return `<div class="math-block math-error">$$${formula}$$</div>`;
+        }
+      })
+      // 处理行内公式 \(...\) 和 $...$
+      .replace(/\\\((.*?)\\\)/g, (match, formula) => {
+        try {
+          const html = katex.renderToString(formula.trim(), {
+            displayMode: false,
+            throwOnError: false,
+            errorColor: '#ff0000'
+          });
+          return `<span class="math-inline">${html}</span>`;
+        } catch (error) {
+          console.warn('KaTeX行内公式渲染错误:', error);
+          return `<span class="math-inline math-error">$${formula}$</span>`;
+        }
+      })
+      .replace(/\$([^$\n]+)\$/g, (match, formula) => {
+        try {
+          const html = katex.renderToString(formula.trim(), {
+            displayMode: false,
+            throwOnError: false,
+            errorColor: '#ff0000'
+          });
+          return `<span class="math-inline">${html}</span>`;
+        } catch (error) {
+          console.warn('KaTeX行内公式渲染错误:', error);
+          return `<span class="math-inline math-error">$${formula}$</span>`;
+        }
+      })
+      // 处理markdown格式
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      // 处理换行
+      .replace(/\n\n/g, '</p><p>')
+      .replace(/\n/g, '<br>');
 
-  // 包装在段落中
-  if (!formatted.includes('<p>')) {
-    formatted = '<p>' + formatted + '</p>';
+    // 包装在段落中
+    if (!formatted.includes('<p>')) {
+      formatted = '<p>' + formatted + '</p>';
+    }
+
+    return formatted;
+  } catch (error) {
+    console.error('格式化AI回答时出错:', error);
+    // 如果出现错误，返回原始内容
+    return content.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
   }
-
-  return formatted;
 };
 
 const formatTime = (date: Date) => {
@@ -399,6 +526,16 @@ const likeMessage = (messageId: string) => {
   ElMessage.success('感谢你的反馈！');
 };
 
+const cancelRequest = () => {
+  if (currentRequestCancel.value) {
+    currentRequestCancel.value.cancel('用户取消了请求');
+    currentRequestCancel.value = null;
+  }
+  isLoading.value = false;
+  loadingProgress.value = 0;
+  ElMessage.info('已取消AI请求');
+};
+
 const scrollToBottom = () => {
   if (messagesContainer.value) {
     messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
@@ -406,17 +543,20 @@ const scrollToBottom = () => {
 };
 
 const handleKeydown = (event: KeyboardEvent) => {
-  if (event.ctrlKey && event.key === 'Enter') {
-    event.preventDefault();
-    sendMessage();
+  if (event.key === 'Enter') {
+    if (event.ctrlKey) {
+      // Ctrl+Enter 换行，让默认行为发生
+      return;
+    } else {
+      // Enter 发送消息
+      event.preventDefault();
+      sendMessage();
+    }
   }
 };
 
 // 生命周期
 onMounted(() => {
-  // 创建默认对话
-  startNewConversation();
-  
   // 尝试从localStorage恢复对话历史
   const savedConversations = localStorage.getItem('qa-conversations');
   if (savedConversations) {
@@ -430,9 +570,22 @@ onMounted(() => {
           timestamp: new Date(msg.timestamp)
         }))
       }));
+      
+      // 如果有保存的对话，选择第一个作为当前对话
+      if (conversations.value.length > 0) {
+        currentConversationId.value = conversations.value[0].id;
+      } else {
+        // 如果没有保存的对话，创建默认对话
+        startNewConversation();
+      }
     } catch (error) {
       console.error('恢复对话历史失败:', error);
+      // 恢复失败时也要创建默认对话
+      startNewConversation();
     }
+  } else {
+    // 没有保存的对话时创建默认对话
+    startNewConversation();
   }
 });
 
@@ -678,12 +831,14 @@ watch(conversations, saveConversations, { deep: true });
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #409eff;
+  background: linear-gradient(135deg, #409eff, #67c23a);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.3);
+  overflow: hidden; /* 确保图片不会溢出圆形边界 */
 }
 
 .welcome-content h3 {
@@ -708,42 +863,61 @@ watch(conversations, saveConversations, { deep: true });
 .quick-question-tag {
   cursor: pointer;
   transition: all 0.2s ease;
+  border-radius: 16px;
 }
 
 .quick-question-tag:hover {
   background: #409eff;
   color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.3);
 }
 
 .message-item {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .message {
   display: flex;
   gap: 12px;
-  max-width: 80%;
+  max-width: calc(100% - 80px); /* 留出头像和间距的空间 */
+  min-width: 120px; /* 最小宽度，防止过短的消息 */
+  width: fit-content; /* 根据内容自适应宽度 */
 }
 
 .user-message {
   flex-direction: row-reverse;
   margin-left: auto;
+  justify-content: flex-end;
 }
 
 .user-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #67c23a;
+  background: linear-gradient(135deg, #67c23a, #85ce61);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(103, 194, 58, 0.3);
+  overflow: hidden; /* 确保图片不会溢出圆形边界 */
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 保持图片比例并填充整个容器 */
+  border-radius: 50%;
 }
 
 .message-content {
   flex: 1;
+  min-width: 0; /* 允许flex子项收缩 */
+  max-width: 100%;
 }
 
 .user-message .message-content {
@@ -751,23 +925,70 @@ watch(conversations, saveConversations, { deep: true });
 }
 
 .message-text {
+  display: inline-block;
   background: white;
   padding: 12px 16px;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  line-height: 1.5;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  line-height: 1.6;
   word-wrap: break-word;
+  word-break: break-word;
+  position: relative;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+.message-text:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+/* AI消息气泡样式 */
+.ai-message .message-text {
+  background: linear-gradient(135deg, #ffffff, #f8fafb);
+  border-left: 3px solid #409eff;
+  border-radius: 18px 18px 18px 4px;
+}
+
+.ai-message .message-text::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  bottom: 8px;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  border-right-color: #409eff;
+  border-left: none;
+  margin-left: -3px;
+}
+
+/* 用户消息气泡样式 */
 .user-message .message-text {
-  background: #409eff;
+  background: linear-gradient(135deg, #409eff, #66b1ff);
   color: white;
+  border-radius: 18px 18px 4px 18px;
+  border: none;
+}
+
+.user-message .message-text::before {
+  content: '';
+  position: absolute;
+  right: -8px;
+  bottom: 8px;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  border-left-color: #409eff;
+  border-right: none;
+  margin-right: -3px;
 }
 
 .message-time {
   font-size: 12px;
   color: #909399;
-  margin-top: 4px;
+  margin-top: 6px;
+  opacity: 0.7;
 }
 
 .message-actions {
@@ -780,33 +1001,94 @@ watch(conversations, saveConversations, { deep: true });
 .action-buttons {
   display: flex;
   gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.message-item:hover .action-buttons {
+  opacity: 1;
 }
 
 /* 打字指示器 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: fit-content;
+  min-width: 200px;
+  max-width: 400px;
+}
+
 .typing-indicator {
   display: flex;
   gap: 4px;
   padding: 12px 16px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffffff, #f8fafb);
+  border-radius: 18px 18px 18px 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-left: 3px solid #409eff;
+  position: relative;
+  width: fit-content;
+}
+
+.typing-indicator::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  bottom: 8px;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  border-right-color: #409eff;
+  border-left: none;
+  margin-left: -3px;
 }
 
 .typing-indicator span {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #c0c4cc;
+  background: #409eff;
   animation: typing 1.4s infinite ease-in-out;
 }
 
 .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
 .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
 
+.loading-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 16px;
+}
+
+.loading-text {
+  font-size: 14px;
+  color: #606266;
+  font-weight: 500;
+}
+
+.loading-progress {
+  width: 100%;
+  min-width: 200px;
+}
+
+.cancel-btn {
+  color: #f56c6c;
+  align-self: flex-start;
+  transition: all 0.2s ease;
+  border-radius: 16px;
+}
+
+.cancel-btn:hover {
+  background-color: rgba(245, 108, 108, 0.1);
+  transform: translateY(-1px);
+}
+
 @keyframes typing {
   0%, 80%, 100% {
-    transform: scale(0);
-    opacity: 0.5;
+    transform: scale(0.6);
+    opacity: 0.4;
   }
   40% {
     transform: scale(1);
@@ -831,6 +1113,13 @@ watch(conversations, saveConversations, { deep: true });
 
 .question-input {
   resize: none;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.question-input:focus {
+  border-color: #409eff;
+  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.1);
 }
 
 .input-actions {
@@ -847,34 +1136,232 @@ watch(conversations, saveConversations, { deep: true });
 
 .send-btn {
   padding: 8px 24px;
+  border-radius: 20px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  background: linear-gradient(135deg, #409eff, #66b1ff);
+  border: none;
+}
+
+.send-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.3);
+}
+
+.send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 消息项动画 */
+.message-item {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 聊天气泡的细节优化 */
+.message-text {
+  position: relative;
+  overflow: hidden;
+}
+
+.message-text::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.message-text:hover::after {
+  opacity: 1;
+}
+
+/* 改进的滚动行为 */
+.chat-messages {
+  scroll-behavior: smooth;
+}
+
+/* 选择文本时的样式 */
+.message-text::selection {
+  background: rgba(64, 158, 255, 0.2);
+}
+
+.user-message .message-text::selection {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* 数学公式样式 */
 .math-inline {
-  font-family: 'KaTeX_Main', 'Times New Roman', serif;
-  font-style: italic;
-  color: #e91e63;
-  background: rgba(233, 30, 99, 0.1);
+  display: inline-block;
+  margin: 0 2px;
+  vertical-align: middle;
+  background: rgba(233, 30, 99, 0.05);
   padding: 2px 4px;
-  border-radius: 3px;
+  border-radius: 4px;
+  border: 1px solid rgba(233, 30, 99, 0.1);
+  transition: all 0.2s ease;
+}
+
+.math-inline:hover {
+  background: rgba(233, 30, 99, 0.1);
+  border-color: rgba(233, 30, 99, 0.2);
 }
 
 .math-block {
-  font-family: 'KaTeX_Main', 'Times New Roman', serif;
+  margin: 16px 0;
+  padding: 16px;
+  background: rgba(233, 30, 99, 0.03);
+  border: 1px solid rgba(233, 30, 99, 0.1);
+  border-left: 4px solid #e91e63;
+  border-radius: 8px;
   text-align: center;
-  margin: 12px 0;
-  padding: 8px;
+  overflow-x: auto;
+  transition: all 0.2s ease;
+}
+
+.math-block:hover {
   background: rgba(233, 30, 99, 0.05);
-  border-left: 3px solid #e91e63;
-  border-radius: 4px;
+  border-color: rgba(233, 30, 99, 0.15);
+  box-shadow: 0 2px 8px rgba(233, 30, 99, 0.1);
+}
+
+/* KaTeX 样式覆盖 */
+.math-inline .katex,
+.math-block .katex {
+  font-size: inherit !important;
+}
+
+.math-inline .katex {
+  font-size: 1em !important;
+}
+
+.math-block .katex {
+  font-size: 1.2em !important;
+}
+
+/* 数学公式错误样式 */
+.math-error {
+  color: #f56c6c !important;
+  background: rgba(245, 108, 108, 0.1) !important;
+  border-color: rgba(245, 108, 108, 0.3) !important;
+  font-family: 'Consolas', 'Monaco', 'Fira Code', monospace;
+  font-size: 0.9em;
+}
+
+/* 确保KaTeX字体正确显示 */
+.katex .katex-mathml {
+  display: none;
+}
+
+/* 用户消息中的数学公式样式调整 */
+.user-message .math-inline {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: inherit;
+}
+
+.user-message .math-inline:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.user-message .math-block {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  border-left-color: rgba(255, 255, 255, 0.4);
+  color: inherit;
+}
+
+.user-message .math-block:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 响应式数学公式 */
+@media (max-width: 768px) {
+  .math-block {
+    margin: 12px 0;
+    padding: 12px;
+    font-size: 0.9em;
+  }
+  
+  .math-inline {
+    font-size: 0.9em;
+  }
+  
+  .math-block .katex {
+    font-size: 1em !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .math-block {
+    margin: 8px 0;
+    padding: 8px;
+    font-size: 0.85em;
+  }
+  
+  .math-inline {
+    font-size: 0.85em;
+    margin: 0 1px;
+    padding: 1px 2px;
+  }
+  
+  .math-block .katex {
+    font-size: 0.9em !important;
+  }
 }
 
 .message-text code {
-  background: #f5f5f5;
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-family: 'Consolas', 'Monaco', monospace;
+  background: rgba(64, 158, 255, 0.1);
+  color: #409eff;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: 'Consolas', 'Monaco', 'Fira Code', monospace;
   font-size: 0.9em;
+  font-weight: 500;
+}
+
+.user-message .message-text code {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* 长文本样式优化 */
+.message-text p {
+  margin: 0 0 8px 0;
+  line-height: 1.6;
+}
+
+.message-text p:last-child {
+  margin-bottom: 0;
+}
+
+.message-text strong {
+  font-weight: 600;
+  color: inherit;
+}
+
+.message-text em {
+  font-style: italic;
+  color: inherit;
 }
 
 /* 响应式设计 */
@@ -905,19 +1392,72 @@ watch(conversations, saveConversations, { deep: true });
   }
   
   .message {
-    max-width: 95%;
+    max-width: calc(100% - 60px); /* 移动端留更少空间 */
+    min-width: 80px; /* 移动端最小宽度更小 */
+  }
+  
+  .message-text {
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 16px;
+  }
+  
+  .ai-message .message-text {
+    border-radius: 16px 16px 16px 4px;
+  }
+  
+  .user-message .message-text {
+    border-radius: 16px 16px 4px 16px;
   }
   
   .welcome-message {
     padding: 16px;
+    flex-direction: column;
+    text-align: center;
   }
   
   .quick-questions {
     flex-direction: column;
+    align-items: center;
   }
   
   .chat-input {
     padding: 12px 16px;
+  }
+  
+  .loading-container {
+    min-width: 150px;
+  }
+  
+  .loading-progress {
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .message-text {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  
+  .ai-avatar, .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .ai-avatar .avatar-image,
+  .user-avatar .avatar-image {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .message {
+    gap: 8px;
+  }
+  
+  .chat-messages {
+    padding: 16px 12px;
   }
 }
 

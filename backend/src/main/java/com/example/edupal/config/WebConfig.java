@@ -17,9 +17,11 @@ public class WebConfig {
 
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/auth/**")
+                registry.addMapping("/**")  // 允许所有路径
                         .allowedOrigins("http://localhost:5173") // 前端地址
-                        .allowedMethods("GET", "POST", "PUT", "DELETE");
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }
