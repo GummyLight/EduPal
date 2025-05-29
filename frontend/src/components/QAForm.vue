@@ -114,7 +114,7 @@
           <el-input
             v-model="currentQuestion"
             type="textarea"
-            placeholder="输入你的问题，按 Enter 发送，Ctrl+Enter 换行..."
+            placeholder="输入你的问题，按 Enter 发送，Ctrl+Enter 换行...&#10;"
             :rows="3"
             resize="none"
             @keydown="handleKeydown"
@@ -210,6 +210,9 @@ import axios, { CancelTokenSource } from 'axios';
 import userIconDefault from '../assets/userIconDefault.jpg';
 // 导入AI默认头像
 import aiIconDefault from '../assets/aiIconDefault.jpg';
+// 导入KaTeX用于LaTeX渲染
+import * as katex from 'katex';
+import 'katex/dist/katex.min.css';
 
 // 接口定义
 interface Message {
@@ -255,7 +258,8 @@ const quickQuestions = [
   '什么是余弦定理？',
   '如何解一元二次方程？',
   '牛顿第二定律是什么？',
-  '什么是递归算法？'
+  '什么是递归算法？',
+  '请解释积分 ∫x²dx 的计算过程'
 ];
 
 // 计算属性
@@ -418,28 +422,82 @@ const sendMessage = async () => {
 };
 
 const formatAIResponse = (content: string) => {
-  // 处理LaTeX数学公式
-  let formatted = content
-    // 处理行内公式 \(...\) 和 $...$
-    .replace(/\\\((.*?)\\\)/g, '<span class="math-inline">$1</span>')
-    .replace(/\$([^$]+)\$/g, '<span class="math-inline">$1</span>')
-    // 处理块级公式 \[...\] 和 $$...$$
-    .replace(/\\\[(.*?)\\\]/g, '<div class="math-block">$1</div>')
-    .replace(/\$\$(.*?)\$\$/g, '<div class="math-block">$1</div>')
-    // 处理markdown格式
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    // 处理换行
-    .replace(/\n\n/g, '</p><p>')
-    .replace(/\n/g, '<br>');
+  try {
+    // 处理LaTeX数学公式
+    let formatted = content
+      // 处理块级公式 \[...\] 和 $$...$$
+      .replace(/\\\[([\s\S]*?)\\\]/g, (match, formula) => {
+        try {
+          const html = katex.renderToString(formula.trim(), {
+            displayMode: true,
+            throwOnError: false,
+            errorColor: '#ff0000'
+          });
+          return `<div class="math-block">${html}</div>`;
+        } catch (error) {
+          console.warn('KaTeX块级公式渲染错误:', error);
+          return `<div class="math-block math-error">$$${formula}$$</div>`;
+        }
+      })
+      .replace(/\$\$([\s\S]*?)\$\$/g, (match, formula) => {
+        try {
+          const html = katex.renderToString(formula.trim(), {
+            displayMode: true,
+            throwOnError: false,
+            errorColor: '#ff0000'
+          });
+          return `<div class="math-block">${html}</div>`;
+        } catch (error) {
+          console.warn('KaTeX块级公式渲染错误:', error);
+          return `<div class="math-block math-error">$$${formula}$$</div>`;
+        }
+      })
+      // 处理行内公式 \(...\) 和 $...$
+      .replace(/\\\((.*?)\\\)/g, (match, formula) => {
+        try {
+          const html = katex.renderToString(formula.trim(), {
+            displayMode: false,
+            throwOnError: false,
+            errorColor: '#ff0000'
+          });
+          return `<span class="math-inline">${html}</span>`;
+        } catch (error) {
+          console.warn('KaTeX行内公式渲染错误:', error);
+          return `<span class="math-inline math-error">$${formula}$</span>`;
+        }
+      })
+      .replace(/\$([^$\n]+)\$/g, (match, formula) => {
+        try {
+          const html = katex.renderToString(formula.trim(), {
+            displayMode: false,
+            throwOnError: false,
+            errorColor: '#ff0000'
+          });
+          return `<span class="math-inline">${html}</span>`;
+        } catch (error) {
+          console.warn('KaTeX行内公式渲染错误:', error);
+          return `<span class="math-inline math-error">$${formula}$</span>`;
+        }
+      })
+      // 处理markdown格式
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      // 处理换行
+      .replace(/\n\n/g, '</p><p>')
+      .replace(/\n/g, '<br>');
 
-  // 包装在段落中
-  if (!formatted.includes('<p>')) {
-    formatted = '<p>' + formatted + '</p>';
+    // 包装在段落中
+    if (!formatted.includes('<p>')) {
+      formatted = '<p>' + formatted + '</p>';
+    }
+
+    return formatted;
+  } catch (error) {
+    console.error('格式化AI回答时出错:', error);
+    // 如果出现错误，返回原始内容
+    return content.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
   }
-
-  return formatted;
 };
 
 const formatTime = (date: Date) => {
@@ -475,7 +533,6 @@ const cancelRequest = () => {
   }
   isLoading.value = false;
   loadingProgress.value = 0;
-  loadingText.value = 'AI正在思考中...';
   ElMessage.info('已取消AI请求');
 };
 
@@ -1152,25 +1209,124 @@ watch(conversations, saveConversations, { deep: true });
 
 /* 数学公式样式 */
 .math-inline {
-  font-family: 'KaTeX_Main', 'Times New Roman', serif;
-  font-style: italic;
-  color: #e91e63;
+  display: inline-block;
+  margin: 0 2px;
+  vertical-align: middle;
+  background: rgba(233, 30, 99, 0.05);
+  padding: 2px 4px;
+  border-radius: 4px;
+  border: 1px solid rgba(233, 30, 99, 0.1);
+  transition: all 0.2s ease;
+}
+
+.math-inline:hover {
   background: rgba(233, 30, 99, 0.1);
-  padding: 2px 6px;
-  border-radius: 6px;
-  font-size: 0.95em;
-  margin: 0 1px;
+  border-color: rgba(233, 30, 99, 0.2);
 }
 
 .math-block {
-  font-family: 'KaTeX_Main', 'Times New Roman', serif;
-  text-align: center;
   margin: 16px 0;
-  padding: 12px;
-  background: rgba(233, 30, 99, 0.05);
-  border-left: 3px solid #e91e63;
+  padding: 16px;
+  background: rgba(233, 30, 99, 0.03);
+  border: 1px solid rgba(233, 30, 99, 0.1);
+  border-left: 4px solid #e91e63;
   border-radius: 8px;
-  font-size: 1.1em;
+  text-align: center;
+  overflow-x: auto;
+  transition: all 0.2s ease;
+}
+
+.math-block:hover {
+  background: rgba(233, 30, 99, 0.05);
+  border-color: rgba(233, 30, 99, 0.15);
+  box-shadow: 0 2px 8px rgba(233, 30, 99, 0.1);
+}
+
+/* KaTeX 样式覆盖 */
+.math-inline .katex,
+.math-block .katex {
+  font-size: inherit !important;
+}
+
+.math-inline .katex {
+  font-size: 1em !important;
+}
+
+.math-block .katex {
+  font-size: 1.2em !important;
+}
+
+/* 数学公式错误样式 */
+.math-error {
+  color: #f56c6c !important;
+  background: rgba(245, 108, 108, 0.1) !important;
+  border-color: rgba(245, 108, 108, 0.3) !important;
+  font-family: 'Consolas', 'Monaco', 'Fira Code', monospace;
+  font-size: 0.9em;
+}
+
+/* 确保KaTeX字体正确显示 */
+.katex .katex-mathml {
+  display: none;
+}
+
+/* 用户消息中的数学公式样式调整 */
+.user-message .math-inline {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: inherit;
+}
+
+.user-message .math-inline:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.user-message .math-block {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  border-left-color: rgba(255, 255, 255, 0.4);
+  color: inherit;
+}
+
+.user-message .math-block:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 响应式数学公式 */
+@media (max-width: 768px) {
+  .math-block {
+    margin: 12px 0;
+    padding: 12px;
+    font-size: 0.9em;
+  }
+  
+  .math-inline {
+    font-size: 0.9em;
+  }
+  
+  .math-block .katex {
+    font-size: 1em !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .math-block {
+    margin: 8px 0;
+    padding: 8px;
+    font-size: 0.85em;
+  }
+  
+  .math-inline {
+    font-size: 0.85em;
+    margin: 0 1px;
+    padding: 1px 2px;
+  }
+  
+  .math-block .katex {
+    font-size: 0.9em !important;
+  }
 }
 
 .message-text code {
