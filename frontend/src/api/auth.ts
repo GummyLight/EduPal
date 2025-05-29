@@ -113,7 +113,39 @@ export const register = async (userId: string, password: string, email: string, 
   }
 };
 
-export default {register,login};
+// 发送邮箱验证码函数
+export const sendEmailCode = async (email: string): Promise<ApiResponse> => {
+  try {
+    const requestData: EmailCodeRequest = { email };
+    const response = await axios.post<ApiResponse>('/api/auth/send-email-code', requestData);
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    throw error;
+  }
+};
+
+// 忘记密码函数
+export const forgetPassword = async (email: string, code: string, newPassword: string): Promise<ApiResponse> => {
+  try {
+    const requestData: ForgetPasswordRequest = {
+      email,
+      code,
+      newPassword
+    };
+    const response = await axios.post<ApiResponse>('/api/auth/forget-password', requestData);
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    throw error;
+  }
+};
+
+export default { register, login, sendEmailCode, forgetPassword };
 //  const login = (userId: string, password: string, type: number) => {
 //    return axios.post(`/api/auth/login`, { userId, password, type });
 //  };

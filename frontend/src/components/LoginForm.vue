@@ -97,7 +97,7 @@ const isFormValid = computed(() => {
          !userIdError.value;
 });
 
-// 用户名验证规则：只允许英文字母和数字
+// 账号验证规则：只允许英文字母和数字
 const isValidUsername = (username: string): boolean => {
   const usernameRegex = /^[a-zA-Z0-9]+$/;
   return usernameRegex.test(username);
@@ -115,7 +115,7 @@ const handleUserIdInput = (event: Event) => {
   let value = target.value;
   
   if (form.type === 0) {
-    // 用户名模式：只保留英文字母和数字
+    // 账号模式：只保留英文字母和数字
     value = value.replace(/[^a-zA-Z0-9]/g, '');
   } else {
     // 邮箱模式：不做特殊处理，保留原始输入
@@ -137,13 +137,13 @@ const validateUserId = () => {
   }
   
   if (form.type === 0) {
-    // 验证用户名
+    // 验证账号
     if (!isValidUsername(form.userId)) {
-      userIdError.value = '用户名只能包含英文字母和数字';
+      userIdError.value = '账号只能包含英文字母和数字';
     } else if (form.userId.length < 3) {
-      userIdError.value = '用户名至少3个字符';
+      userIdError.value = '账号至少3个字符';
     } else if (form.userId.length > 20) {
-      userIdError.value = '用户名不能超过20个字符';
+      userIdError.value = '账号不能超过20个字符';
     } else {
       userIdError.value = '';
     }

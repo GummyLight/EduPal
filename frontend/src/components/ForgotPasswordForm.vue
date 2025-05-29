@@ -29,7 +29,10 @@
               type="text" 
               id="emailCode"
               class="form-input"
+              :class="{ 'error': emailCodeError }"
               placeholder="请输入邮箱验证码"
+              maxlength="6"
+              @blur="validateEmailCode"
               required 
             />
             <button 
@@ -41,6 +44,7 @@
               {{ countdown > 0 ? `${countdown}s后重发` : (form.emailCode ? '重新发送' : '发送验证码') }}
             </button>
           </div>
+          <span v-if="emailCodeError" class="error-message">{{ emailCodeError }}</span>
         </div>
 
         <!-- 新密码 -->
@@ -88,6 +92,7 @@
 <script setup lang="ts">
 import { reactive, computed, ref } from 'vue';
 import { ElMessage } from 'element-plus';
+import { sendEmailCode, forgetPassword } from '../api/auth';
 
 // 表单数据
 const form = reactive({
@@ -101,6 +106,7 @@ const form = reactive({
 const emailError = ref('');
 const passwordError = ref('');
 const confirmPasswordError = ref('');
+const emailCodeError = ref('');
 
 // 倒计时
 const countdown = ref(0);
@@ -114,7 +120,8 @@ const isFormValid = computed(() => {
          form.confirmPassword &&
          !emailError.value &&
          !passwordError.value &&
-         !confirmPasswordError.value;
+         !confirmPasswordError.value &&
+         !emailCodeError.value;
 });
 
 // 验证规则
@@ -125,6 +132,12 @@ const isValidEmail = (email: string): boolean => {
 
 const isValidPassword = (password: string): boolean => {
   return password.length >= 6 && password.length <= 20;
+};
+
+const isValidEmailCode = (code: string): boolean => {
+  // 验证码通常是4-6位数字或字母
+  const codeRegex = /^[A-Za-z0-9]{4,6}$/;
+  return codeRegex.test(code);
 };
 
 // 处理邮箱输入
@@ -181,6 +194,20 @@ const validateConfirmPassword = () => {
   }
 };
 
+// 验证邮箱验证码
+const validateEmailCode = () => {
+  if (!form.emailCode) {
+    emailCodeError.value = '';
+    return;
+  }
+  
+  if (!isValidEmailCode(form.emailCode)) {
+    emailCodeError.value = '验证码格式不正确，应为4-6位数字或字母';
+  } else {
+    emailCodeError.value = '';
+  }
+};
+
 // 发送验证码
 const handleSendCode = async () => {
   validateEmail();
@@ -191,53 +218,71 @@ const handleSendCode = async () => {
   }
   
   try {
-    // 这里应该调用发送验证码的API
-    // const response = await api.sendEmailCode(form.email);
+    ElMessage.info('正在发送验证码...');
+    const response = await sendEmailCode(form.email);
     
-    // 模拟API调用成功
-    ElMessage.success('验证码已发送到您的邮箱，请查收');
-    startCountdown();
+    if (response.code === 200) {
+      ElMessage.success(response.message || '验证码已发送到您的邮箱，请查收');
+      startCountdown();
+    } else {
+      ElMessage.error(response.message || '发送验证码失败，请重试');
+    }
     
   } catch (error: any) {
     console.error('Send code failed:', error);
-    ElMessage.error('发送验证码失败，请重试');
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.message || '发送验证码失败，请检查网络连接');
+    } else {
+      ElMessage.error('发送验证码失败，请检查网络连接或联系管理员');
+    }
   }
 };
 
 // 重置密码
 const handleResetPassword = async () => {
+  // 验证所有字段
+  validateEmail();
+  validateEmailCode();
   validatePassword();
   validateConfirmPassword();
   
-  if (passwordError.value || confirmPasswordError.value) {
-    ElMessage.error('请检查密码格式');
+  if (emailError.value || emailCodeError.value || passwordError.value || confirmPasswordError.value) {
+    ElMessage.error('请检查表单输入');
+    return;
+  }
+  
+  if (!form.emailCode.trim()) {
+    ElMessage.error('请输入邮箱验证码');
     return;
   }
   
   try {
-    // 这里应该调用重置密码的API
-    // const response = await api.resetPassword(form.email, form.emailCode, form.newPassword);
+    ElMessage.info('正在重置密码...');
+    const response = await forgetPassword(form.email, form.emailCode, form.newPassword);
     
-    // 模拟API调用成功
-    ElMessage.success('密码重置成功，请使用新密码登录');
-    window.location.href = '/login';
+    if (response.code === 200) {
+      ElMessage.success(response.message || '密码重置成功，请使用新密码登录');
+      // 延迟跳转，让用户看到成功消息
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1500);
+    } else {
+      ElMessage.error(response.message || '密码重置失败，请检查验证码是否正确');
+    }
     
   } catch (error: any) {
     console.error('Reset password failed:', error);
-    ElMessage.error('密码重置失败，请重试');
+    if (error.response && error.response.data) {
+      ElMessage.error(error.response.data.message || '密码重置失败，请检查网络连接');
+    } else {
+      ElMessage.error('密码重置失败，请检查网络连接或联系管理员');
+    }
   }
 };
 
-// 重新发送验证码
+// 重新发送验证码（重用发送验证码逻辑）
 const handleResendCode = async () => {
-  try {
-    // 这里应该调用重新发送验证码的API
-    ElMessage.success('验证码已重新发送到您的邮箱');
-    startCountdown();
-  } catch (error: any) {
-    console.error('Resend code failed:', error);
-    ElMessage.error('重新发送失败，请重试');
-  }
+  await handleSendCode();
 };
 
 // 开始倒计时
