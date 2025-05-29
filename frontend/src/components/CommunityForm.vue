@@ -182,13 +182,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed,defineProps} from 'vue';
 import { ElMessage, ElNotification, ElMessageBox, FormInstance, UploadFile, UploadFiles } from 'element-plus';
 import { UploadFilled } from '@element-plus/icons-vue';
 
+const props = defineProps({
+  usertype: {
+    type: String as () => 'teacher' | 'student', // 明确类型
+    required: true,
+  },
+  username: { // 确保也接收 username，因为您在模板中也使用了它
+    type: String,
+    required: true,
+  },
+  userid: {
+    type: String,
+    required: true,
+    }
+});
+
+const userType = computed(() => props.usertype);
+
+const username = computed(() => props.username);
+const userId = computed(() => props.userid); // 同样处理 username
 // 模拟用户类型和用户名
-const userType = ref<'teacher' | 'student'>('student'); // 默认为 student，可以根据登录状态动态设置
-const username = ref('学生A'); // 模拟当前登录用户名
+//const userType = ref<'teacher' | 'student'>('student'); // 默认为 student，可以根据登录状态动态设置
+// const userType = ref('student');
+// const username = ref('学生A'); // 模拟当前登录用户名
 
 // 帖子数据结构
 interface Post {

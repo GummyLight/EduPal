@@ -3,7 +3,7 @@
     <el-header class="navbar" v-if="showTopBar">
       <div class="title">智慧教学系统</div>
       <div class="user-info">
-        <span>您好，{{ username }}{{ userType === 'teacher' ? '教师' : '学生' }}</span>
+        <span>您好，{{ username }} {{ userType === 'teacher' ? '教师' : '同学' }}</span>
         <el-button type="danger" @click="logout">退出登录</el-button>
       </div>
     </el-header>
@@ -90,13 +90,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed,defineProps } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router'; // 引入 useRouter
 
 const router = useRouter(); // 初始化 router 实例
-const userType = ref<'teacher' | 'student'>('student'); // 默认设置为 'teacher'
-const username = ref('张三');
+const props = defineProps({
+  usertype: {
+    type: String as () => 'teacher' | 'student', // 明确类型
+    required: true,
+  },
+  username: { // 确保也接收 username，因为您在模板中也使用了它
+    type: String,
+    required: true,
+  },
+  userid: {
+    type: String,
+    required: true,
+  }
+});
+
+const userType = computed(() => props.usertype);
+
+const username = computed(() => props.username);
+const userId = computed(() => props.userid);
+
+
+
 const showTopBar = ref(true); // 确保顶部导航栏显示
 
 

@@ -7,7 +7,7 @@
           <el-option label="班级 1" value="class1" />
           <el-option label="班级 2" value="class2" />
         </el-select>
-        <span>您好，{{ username }} ({{ userType === 'teacher' ? '教师' : '学生' }})</span> <el-button type="danger" size="small" @click="logout">退出登录</el-button>
+        <span>您好，{{ username }} {{ userType === 'teacher' ? '教师' : '同学' }}</span> <el-button type="danger" size="small" @click="logout">退出登录</el-button>
       </div>
     </el-header>
 
@@ -91,12 +91,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed ,defineProps} from 'vue';
 import { ElMessage } from 'element-plus';
 
-// 模拟用户类型和用户名
-const userType = ref<'teacher' | 'student'>('student'); // 默认设置为 'student'，用于测试
-const username = ref('张三');
+
+//接收props
+const props = defineProps({
+  usertype: {
+    type: String as () => 'teacher' | 'student', // 明确类型
+    required: true,
+  },
+  username: { // 确保也接收 username，因为您在模板中也使用了它
+    type: String,
+    required: true,
+  },
+  userid: {
+    type: String,
+    required: true,
+  }
+});
+
+const userType = computed(() => props.usertype);
+
+const username = computed(() => props.username);
+const userId = computed(() => props.userid);
+
 
 const currentClass = ref('class1'); // 模拟班级选择
 

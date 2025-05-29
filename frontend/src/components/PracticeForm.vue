@@ -3,7 +3,7 @@
     <el-header class="navbar">
       <div class="title">智慧教学系统</div>
       <div class="user-info">
-        <span>您好，{{ username }}{{ userType === 'teacher' ? '老师' : '同学' }} ({{ userType }})</span>
+        <span>您好，{{ username }} {{ userType === 'teacher' ? '老师' : '同学' }} </span>
         <el-button type="danger" @click="logout">退出登录</el-button>
       </div>
     </el-header>
@@ -105,14 +105,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed ,defineProps} from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus'; // 导入 ElMessage 和 ElMessageBox
 
 const router = useRouter();
 
-const userType = ref<'teacher' | 'student'>('student');
-const username = ref('张三');
+const props = defineProps({
+  usertype: {
+    type: String as () => 'teacher' | 'student', // 明确类型
+    required: true,
+  },
+  username: { // 确保也接收 username，因为您在模板中也使用了它
+    type: String,
+    required: true,
+  },
+  userid: {
+    type: String,
+    required: true,
+  }
+});
+
+const userType = computed(() => props.usertype);
+
+const username = computed(() => props.username);
+const userId = computed(() => props.userid);
+
 
 const filters = ref({
   keyword: '',

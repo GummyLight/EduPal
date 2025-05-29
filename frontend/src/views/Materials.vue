@@ -1,12 +1,36 @@
 <template>
   <div class="materials-view">
-    <router-view />
+    <router-view
+        :usertype="props.usertype" :username="props.username"
+        :userid="props.userid"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-// 这里不再直接导入 MaterialsForm，因为它会由 <router-view /> 渲染
-// import MaterialsForm from '../components/MaterialsForm.vue';
+import { defineProps } from 'vue'; // 确保导入 defineProps
+
+// Community.vue 需要定义 props 来接收 Home.vue 传递过来的值
+const props = defineProps({
+  usertype: {
+    type: String as () => 'teacher' | 'student',
+    required: true,
+  },
+  username: {
+    type: String,
+    required: true,
+  },
+  userid: {
+    type: String,
+    required: true,
+  }
+});
+
+// 您可以在这里再次添加 console.log 来验证 .vue 是否收到了 props
+// 这次应该会显示正确的值
+console.log('Materials.vue received usertype (from props):', props.usertype);
+console.log('Materials.vue received username (from props):', props.username);
+console.log('Materials.vue received userid (from props):', props.userid);
 </script>
 
 <style scoped>
