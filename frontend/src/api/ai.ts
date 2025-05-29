@@ -1,5 +1,6 @@
 // src/api/ai.ts
 import request from './request';
+import axios from 'axios';
 
 // AI问答请求接口 - 与后端QuestionRequest匹配
 interface AIQuestionRequest {
@@ -29,7 +30,9 @@ const subjectMap: Record<string, number> = {
 export const askAI = async (
   studentId: string,
   questionContent: string,
-  questionSubject: string = 'other'
+  questionSubject: string = 'other',
+  timeoutMs: number = 120000, // 默认60秒超时
+  onCancel?: () => void
 ): Promise<AIQuestionResponse> => {
   try {
     const requestData: AIQuestionRequest = {
@@ -41,13 +44,38 @@ export const askAI = async (
 
     console.log('发送AI问答请求:', requestData);
 
-    const response = await request.post<AIQuestionResponse>('/ai/ask', requestData);
+    // 创建取消令牌
+    const cancelTokenSource = axios.CancelToken.source();
+    
+    // 设置超时定时器
+    const timeoutId = setTimeout(() => {
+      cancelTokenSource.cancel('请求超时，AI响应时间过长，请稍后重试');
+      if (onCancel) onCancel();
+    }, timeoutMs);
+
+    const response = await request.post<AIQuestionResponse>('/ai/ask', requestData, {
+      timeout: timeoutMs,
+      cancelToken: cancelTokenSource.token
+    });
+    
+    // 清除超时定时器
+    clearTimeout(timeoutId);
     
     console.log('AI回答响应:', response.data);
     
     return response.data;
   } catch (error: any) {
     console.error('AI问答请求失败:', error);
+    
+    // 处理取消请求
+    if (axios.isCancel(error)) {
+      throw new Error('请求已取消: ' + error.message);
+    }
+    
+    // 处理超时
+    if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+      throw new Error('AI响应超时，请稍后重试');
+    }
     
     if (error.response?.data) {
       throw new Error(error.response.data.message || 'AI服务暂时不可用');
