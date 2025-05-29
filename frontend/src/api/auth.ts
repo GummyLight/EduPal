@@ -117,7 +117,7 @@ export const register = async (userId: string, password: string, email: string, 
 export const sendEmailCode = async (email: string): Promise<ApiResponse> => {
   try {
     const requestData: EmailCodeRequest = { email };
-    const response = await axios.post<ApiResponse>('/api/auth/send-email-code', requestData);
+    const response = await axios.post<ApiResponse>('/api/auth/send-code', requestData);
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -135,7 +135,7 @@ export const forgetPassword = async (email: string, code: string, newPassword: s
       code,
       newPassword
     };
-    const response = await axios.post<ApiResponse>('/api/auth/forget-password', requestData);
+    const response = await axios.post<ApiResponse>('/api/auth/reset-password', requestData);
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
