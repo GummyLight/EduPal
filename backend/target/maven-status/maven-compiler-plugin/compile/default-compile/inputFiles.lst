@@ -1,16 +1,39 @@
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\config\SecurityConfig.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\config\WebConfig.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\controller\User\UserController.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\EduPalApplication.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\model\Answer.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\model\LearningProgress.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\model\Question.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\model\Quiz.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\model\Resource.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\model\Speech.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\model\Student.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\model\Teacher.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\model\User.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\repository\UserRepository.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\service\UserService.java
-E:\01-08 大三春\01 软件工程 刘光迟\实验\EduPal\backend\src\main\java\com\example\edupal\service\UserServiceImpl.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/EduPalApplication.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/common/ApiResponse.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/common/Result.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/config/SecurityConfig.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/config/WebConfig.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/controller/AIController.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/controller/AuthController.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/request/EmailCodeRequest.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/request/LoginRequest.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/request/QuestionRequest.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/request/RegisterRequest.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/request/ResetPasswordRequest.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/response/AnswerResponse.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/response/LoginResponse.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/exception/GlobalExceptionHandler.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/exception/InvalidPasswordException.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/exception/UserAlreadyExistsException.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/exception/UserNotFoundException.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/handler/MyWebSocketHandler.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/Answer.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/LearningProgress.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/Question.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/Quiz.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/Resource.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/Speech.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/Student.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/Teacher.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/User.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/Validation.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/repository/AnswerRepository.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/repository/QuestionRepository.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/repository/UserRepository.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/repository/ValidationRepository.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/service/AIService.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/service/AIServiceImpl.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/service/AuthService.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/service/AuthServiceImpl.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/service/EmailService.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/service/EmailServiceImpl.java
