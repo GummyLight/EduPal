@@ -150,7 +150,7 @@ public class AuthServiceImpl implements AuthService {
             return "验证码错误，请重新输入";
         }
 
-        return "验证码验证成功，请重新登录"; // 假设验证成功
+        return "验证码验证成功"; // 假设验证成功
     }
 
     private boolean isExpired(Date time) {
