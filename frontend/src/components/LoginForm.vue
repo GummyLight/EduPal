@@ -44,13 +44,18 @@
               type="text" 
               id="verifyCode"
               class="form-input"
+              :class="{ 'error': verifyCodeError }"
               placeholder="请输入验证码"
+              maxlength="4"
+              @input="validateVerifyCode"
+              @blur="validateVerifyCode"
               required 
             />
             <span @click="refreshCode" style="cursor: pointer; margin-left: 10px;">
               <s-identify :identifyCode="identifyCode" ></s-identify>
             </span>
           </div>
+          <span v-if="verifyCodeError" class="error-message">{{ verifyCodeError }}</span>
         </div>
         <div class="button-group">
           <button type="submit" class="login-button" :disabled="!isFormValid">登录</button>
@@ -76,6 +81,7 @@ const form = reactive({
 
 // 错误信息
 const userIdError = ref('');
+const verifyCodeError = ref('');
 
 const userIdLabel = computed(() => {
   return form.type === 1 ? '邮箱：' : '账号：';
@@ -94,7 +100,8 @@ const isFormValid = computed(() => {
   return form.userId && 
          form.password && 
          form.verifyCode && 
-         !userIdError.value;
+         !userIdError.value &&
+         !verifyCodeError.value;
 });
 
 // 账号验证规则：只允许英文字母和数字
@@ -157,10 +164,29 @@ const validateUserId = () => {
   }
 };
 
+// 验证验证码
+const validateVerifyCode = () => {
+  if (!form.verifyCode) {
+    verifyCodeError.value = '';
+    return;
+  }
+  
+  if (form.verifyCode.length !== 4) {
+    verifyCodeError.value = '验证码为4位字符';
+  } else if (form.verifyCode.toUpperCase() !== identifyCode.value.toUpperCase()) {
+    verifyCodeError.value = '验证码输入错误';
+  } else {
+    verifyCodeError.value = '';
+  }
+};
+
 // 监听登录方式切换，清除输入和错误信息
 const handleTypeChange = () => {
   form.userId = '';
   userIdError.value = '';
+  form.verifyCode = '';
+  verifyCodeError.value = '';
+  refreshCode(); // 切换登录方式时也刷新验证码
 };
 
 // 添加监听器来处理类型切换
@@ -178,14 +204,23 @@ const handleSubmit = async () => {
     return;
   }
   
+  // 验证码检查
+  if (form.verifyCode.toUpperCase() !== identifyCode.value.toUpperCase()) {
+    ElMessage.error('验证码输入错误，请重新输入');
+    refreshCode(); // 验证码错误时刷新验证码
+    form.verifyCode = ''; // 清空验证码输入
+    return;
+  }
+  
   try {
-    const response = await ex.login(form.userId, form.password, form.type); // 添加验证码参数
+    const response = await ex.login(form.userId, form.password, form.type);
     if (response.code==200) {
       ElMessage.success(response.message);
       window.location.href = '/home';
     } else {
       ElMessage.error(response.message);
       refreshCode(); // 登录失败时刷新验证码
+      form.verifyCode = ''; // 清空验证码输入
     }
   } catch (error: any) {
     console.error('Login failed:', error);
@@ -195,6 +230,7 @@ const handleSubmit = async () => {
       ElMessage.error('登录失败，请检查网络连接或联系管理员');
     }
     refreshCode(); // 登录失败时刷新验证码
+    form.verifyCode = ''; // 清空验证码输入
   }
 };
 
