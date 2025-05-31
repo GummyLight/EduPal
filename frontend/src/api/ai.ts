@@ -162,9 +162,38 @@ export const uploadLocalConversation = async (
   }
 };
 
+// 删除历史对话
+export const deleteConversation = async (
+  userId: string, 
+  questionId: string
+): Promise<{ status: string; message: string }> => {
+  try {
+    console.log('开始发送删除请求:', { userId, questionId });
+    const url = `/ai/delete?userId=${userId}&questionId=${questionId}`;
+    console.log('请求URL:', url);
+    
+    const response = await request.post(url);
+    console.log('删除历史对话成功:', response);
+    console.log('响应数据:', response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error('删除历史对话失败 - 详细错误:', error);
+    console.error('错误响应:', error.response);
+    console.error('错误状态码:', error.response?.status);
+    console.error('错误数据:', error.response?.data);
+    
+    if (error.response?.data) {
+      throw new Error(error.response.data.message || '删除对话失败');
+    }
+    
+    throw new Error('删除对话失败，请稍后重试');
+  }
+};
+
 export default {
   askAI,
-  getConversationHistory
+  getConversationHistory,
+  deleteConversation
 };
 
 // 导出类型定义
