@@ -186,14 +186,26 @@ public class AIServiceImpl implements AIService {
         if (question == null) {
             return new Result(false, "问题不存在");
         }
-        // 删除相关的答案
-        List<Answer> answers = answerRepository.findAnswersByQuestionId(questionId);
-        if (answers != null && !answers.isEmpty()) {
-            answerRepository.deleteAll(answers);
+        
+        // 验证问题所有者
+        if (!question.getStudentId().equals(userId)) {
+            return new Result(false, "无权删除此问题");
         }
-        // 删除问题
-        questionRepository.delete(question);
-        return new Result(true, "问题删除成功");
+
+        try {
+            // 先删除相关的答案（外键约束要求先删除子表）
+            List<Answer> answers = answerRepository.findAnswersByQuestionId(questionId);
+            if (answers != null && !answers.isEmpty()) {
+                answerRepository.deleteAll(answers);
+            }
+            
+            // 再删除问题
+            questionRepository.delete(question);
+            
+            return new Result(true, "问题删除成功");
+        } catch (Exception e) {
+            return new Result(false, "删除失败: " + e.getMessage());
+        }
     }
 }
 
