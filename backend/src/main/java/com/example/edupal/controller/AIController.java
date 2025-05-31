@@ -1,11 +1,14 @@
 package com.example.edupal.controller;
 
+import com.example.edupal.common.ApiResponse;
+import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.QuestionRequest;
 import com.example.edupal.dto.response.AnswerResponse;
 import com.example.edupal.dto.response.HistoryResponse;
 import com.example.edupal.service.AIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -35,5 +38,16 @@ public class AIController {
         }
     }
 
-
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteHistory(@RequestParam("userId") String userId, @RequestParam("questionId") String questionId) {
+        if (userId == null || userId.isEmpty() || questionId == null || questionId.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(400, "用户名或问题为空"));
+        }
+        Result result = aIService.deleteHistory(userId, questionId);
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
+        } else {
+            return ResponseEntity.status(400).body(result.getMessage());
+        }
+    }
 }
