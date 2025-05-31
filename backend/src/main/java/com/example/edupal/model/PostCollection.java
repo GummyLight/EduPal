@@ -1,25 +1,28 @@
-// PostCollection.java
 package com.example.edupal.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "post_collection")
+@Table(name = "postcollect")
 @Data
 @IdClass(PostCollection.PostCollectionId.class)
 public class PostCollection {
     @Id
-    @Column(name = "user_id", length = 36)
+    @Column(name = "userId", length = 255)
     private String userId;
 
     @Id
-    @Column(name = "post_id", length = 36)
+    @Column(name = "postId", length = 36)
     private String postId;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id", insertable = false, updatable = false)
+    @Column(name = "createdAt", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "postId", insertable = false, updatable = false)
     private Post post;
 
     @Data
