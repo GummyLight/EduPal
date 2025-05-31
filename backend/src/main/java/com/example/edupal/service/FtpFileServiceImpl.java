@@ -57,69 +57,6 @@ public class FtpFileServiceImpl implements FileService {
         }
     }
 
-//    @Override
-//    public void previewFile(String filename, HttpServletResponse response) throws IOException {
-//        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
-//        File file = new File("d:/Projects/practice/test-springboot/src/main/resources/file/" + filename);
-//
-//        if (!file.exists()) {
-//            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//            return;
-//        }
-//
-//        try (ServletOutputStream ros = response.getOutputStream();
-//             FileInputStream fis = new FileInputStream(file)) {
-//            byte[] buffer = new byte[4 * 1024];
-//            int bytesRead;
-//            while ((bytesRead = fis.read(buffer)) != -1) {
-//                ros.write(buffer, 0, bytesRead);
-//            }
-//            ros.flush();
-//        }
-//    }
-
-//    @Override
-//    public Result previewFile(String filename, HttpServletResponse response) throws IOException {
-//        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
-//        File file = new File(uploadDir+filename);
-//
-//        if (!file.exists()) {
-//            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//            return new Result(false, "File not found: " + filename);
-//        }
-//
-//        try (ServletOutputStream ros = response.getOutputStream();
-//             FileInputStream fis = new FileInputStream(file)) {
-//            byte[] buffer = new byte[4 * 1024];
-//            int bytesRead;
-//            while ((bytesRead = fis.read(buffer)) != -1) {
-//                ros.write(buffer, 0, bytesRead);
-//            }
-//            ros.flush();
-//            return new Result(true, "Preview successful: " + filename);
-//        } catch (IOException e) {
-//            return new Result(false, "Preview failed: " + filename);
-//        }
-//    }
-//    @Override
-//    public Result previewFile(String filename, HttpServletResponse response) throws IOException {
-//        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
-//
-//        try (ServletOutputStream ros = response.getOutputStream()) {
-//            boolean success = ftpUtil.downloadFile(uploadDir + filename, ros);
-//            if (success) {
-//                ros.flush();
-//                return new Result(true, "Preview successful: " + filename);
-//            } else {
-//                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//                return new Result(false, "File not found or preview failed: " + filename);
-//            }
-//        } catch (IOException e) {
-//            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//            return new Result(false, "Preview failed: " + filename);
-//        }
-//    }
-
     @Override
     public StreamingResponseBody previewFile(String filename) throws IOException {
         return outputStream -> {

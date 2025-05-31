@@ -4,6 +4,9 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import com.example.edupal.dto.request.QuestionRequest;
 import com.example.edupal.dto.response.AnswerResponse;
+import com.example.edupal.dto.response.HistoryResponse;
+import com.example.edupal.model.User;
+import com.example.edupal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.edupal.model.Question;
@@ -17,6 +20,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -29,6 +34,8 @@ public class AIServiceImpl implements AIService {
     private QuestionRepository questionRepository;
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     private String saveAnswer(AnswerResponse answerResponse, String questionId) {
 
@@ -143,5 +150,28 @@ public class AIServiceImpl implements AIService {
         }
             return answerResponse;
         }
+
+    @Override
+    public HistoryResponse getHistory(String userId) {
+        // Step 1: Get studentID from userId
+        User user = userRepository.findByUserId(userId);
+        if (user == null) {
+            return new HistoryResponse("error", "用户不存在", null, null);
+        }
+        String studentId = user.getUserId();
+
+        // Step 2: Get all questions for the studentID
+        List<Question> questions = questionRepository.findQuestionByStudentId(studentId);
+
+        // Step 3: For each question, get corresponding answers
+        List<HistoryResponse.QA> questionSet = questions.stream().map(question -> {
+            List<Answer> answers = answerRepository.findAnswersByQuestionId(question.getQuestionId());
+            return new HistoryResponse.QA(question, answers);
+        }).collect(Collectors.toList());
+
+        // Step 4: Build and return the response
+        return new HistoryResponse("success", "问答历史获取成功", studentId, questionSet);
     }
+
+}
 
