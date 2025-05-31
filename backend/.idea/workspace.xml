@@ -5,7 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(document):建立了一个文件夹放文档们">
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/HistoryResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/HistoryResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../document/开发类文档/登录模块接口文档.md" beforeDir="false" afterPath="$PROJECT_DIR$/../document/开发类文档/登录模块接口文档.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -204,7 +209,7 @@
       <workItem from="1748617399659" duration="3791000" />
       <workItem from="1748650200423" duration="12606000" />
       <workItem from="1748664375756" duration="173000" />
-      <workItem from="1748670340519" duration="643000" />
+      <workItem from="1748670340519" duration="3560000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />

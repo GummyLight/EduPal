@@ -25,6 +25,7 @@ public class HistoryResponse {
 
     @Data
     public static class QA {
+        private String questionId;
         private String questionContent;
         private String questionSubject;
         private Date questionTime;
@@ -32,6 +33,7 @@ public class HistoryResponse {
         private List<AnswerDetail> answers;
 
         public QA(Question question, List<Answer> answers) {
+            this.questionId = question.getQuestionId();
             this.questionContent = question.getQuestionContent();
             this.questionSubject = question.getQuestionSubject();
             this.questionTime = question.getQuestionTime();
@@ -41,12 +43,14 @@ public class HistoryResponse {
 
         @Data
         public static class AnswerDetail {
+            private String answerId;
             private String answerContent;
             private Integer answerType;
             private String teacherId;
             private Date answerTime;
 
             public AnswerDetail(Answer answer) {
+                this.answerId = answer.getAnswerId();
                 this.answerContent = answer.getAnswerContent();
                 this.answerType = answer.getAnswerType();
                 this.teacherId = answer.getTeacherId();
