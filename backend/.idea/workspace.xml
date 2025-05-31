@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(file):完成了后端与远程服务器交互，上传、下载、删除文件的基本逻辑，请求接口已完成，响应接口未完善。">
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(file):完善了上传、下载、删除文件的请求和响应接口，preview功能还未测试">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/common/FtpUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/common/FtpUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java" afterDir="false" />
@@ -206,7 +206,7 @@
       <workItem from="1748515798790" duration="5525000" />
       <workItem from="1748569837066" duration="23862000" />
       <workItem from="1748617399659" duration="3791000" />
-      <workItem from="1748650200423" duration="4936000" />
+      <workItem from="1748650200423" duration="7618000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />
@@ -368,7 +368,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748621156521</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="feat(file):完善了上传、下载、删除文件的请求和响应接口，preview功能还未测试">
+      <option name="closed" value="true" />
+      <created>1748655242944</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1748655242944</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -416,7 +424,8 @@
     <MESSAGE value="fix(auth):修复了重置密码result始终为false的问题" />
     <MESSAGE value="同步一下" />
     <MESSAGE value="feat(file):完成了后端与远程服务器交互，上传、下载、删除文件的基本逻辑，请求接口已完成，响应接口未完善。" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(file):完成了后端与远程服务器交互，上传、下载、删除文件的基本逻辑，请求接口已完成，响应接口未完善。" />
+    <MESSAGE value="feat(file):完善了上传、下载、删除文件的请求和响应接口，preview功能还未测试" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(file):完善了上传、下载、删除文件的请求和响应接口，preview功能还未测试" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -687,38 +696,23 @@
           <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
-          <line>30</line>
-          <option name="timeStamp" value="132" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
-          <line>47</line>
-          <option name="timeStamp" value="135" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
-          <line>31</line>
-          <option name="timeStamp" value="140" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>34</line>
+          <line>35</line>
           <option name="timeStamp" value="143" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>35</line>
+          <line>36</line>
           <option name="timeStamp" value="144" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>36</line>
+          <line>37</line>
           <option name="timeStamp" value="145" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>29</line>
+          <line>30</line>
           <option name="timeStamp" value="165" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -897,13 +891,8 @@
           <option name="timeStamp" value="234" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
-          <line>61</line>
-          <option name="timeStamp" value="237" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/common/FtpUtil.java</url>
-          <line>91</line>
+          <line>112</line>
           <option name="timeStamp" value="242" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -923,38 +912,133 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
-          <line>67</line>
+          <line>53</line>
           <option name="timeStamp" value="247" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
-          <line>69</line>
+          <line>55</line>
           <option name="timeStamp" value="248" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
-          <line>65</line>
+          <line>51</line>
           <option name="timeStamp" value="249" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>90</line>
+          <line>95</line>
           <option name="timeStamp" value="250" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>92</line>
+          <line>97</line>
           <option name="timeStamp" value="251" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>97</line>
+          <line>102</line>
           <option name="timeStamp" value="252" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>94</line>
+          <line>99</line>
           <option name="timeStamp" value="253" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
+          <line>79</line>
+          <option name="timeStamp" value="254" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>87</line>
+          <option name="timeStamp" value="255" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>86</line>
+          <option name="timeStamp" value="256" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>83</line>
+          <option name="timeStamp" value="257" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>91</line>
+          <option name="timeStamp" value="258" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>100</line>
+          <option name="timeStamp" value="259" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>110</line>
+          <option name="timeStamp" value="260" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>111</line>
+          <option name="timeStamp" value="261" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>113</line>
+          <option name="timeStamp" value="262" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>114</line>
+          <option name="timeStamp" value="263" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>117</line>
+          <option name="timeStamp" value="264" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>118</line>
+          <option name="timeStamp" value="265" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>108</line>
+          <option name="timeStamp" value="266" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/common/FtpUtil.java</url>
+          <line>117</line>
+          <option name="timeStamp" value="267" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/common/FtpUtil.java</url>
+          <line>118</line>
+          <option name="timeStamp" value="268" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/common/FtpUtil.java</url>
+          <line>119</line>
+          <option name="timeStamp" value="269" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>124</line>
+          <option name="timeStamp" value="271" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>126</line>
+          <option name="timeStamp" value="272" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/FtpFileServiceImpl.java</url>
+          <line>127</line>
+          <option name="timeStamp" value="273" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java</url>
@@ -967,7 +1051,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>33</line>
+          <line>34</line>
           <properties class="com.example.edupal.controller.FileController" method="upload">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -976,7 +1060,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>28</line>
+          <line>29</line>
           <properties class="com.example.edupal.controller.FileController" method="upload">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />

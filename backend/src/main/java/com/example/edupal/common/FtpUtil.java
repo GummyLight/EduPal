@@ -2,15 +2,13 @@ package com.example.edupal.common;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.ConnectException;
 
 @Component
@@ -77,6 +75,29 @@ public class FtpUtil {
         } finally {
             if (output != null) {
                 output.close();
+            }
+            if (ftpClient != null && ftpClient.isConnected()) {
+                ftpClient.logout();
+                ftpClient.disconnect();
+            }
+        }
+    }
+
+    public boolean downloadFile(String remotePath, OutputStream outputStream) throws IOException {
+        FTPClient ftpClient = null;
+        InputStream inputStream = null;
+        try {
+            ftpClient = connect();
+            inputStream = ftpClient.retrieveFileStream(remotePath);
+            if (inputStream != null) {
+                IOUtils.copy(inputStream, outputStream);
+                return ftpClient.completePendingCommand();
+            } else {
+                return false;
+            }
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
             }
             if (ftpClient != null && ftpClient.isConnected()) {
                 ftpClient.logout();

@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -74,14 +75,18 @@ public class FileController {
         }
     }
 
+//    @GetMapping("/previewFile")
+//    public ResponseEntity<?> previewFile(@RequestParam("fileName") String filename, @RequestParam("path") String path, HttpServletResponse response) throws IOException {
+//        Result result = fileService.previewFile(path + filename, response);
+//        if (result.isSuccess()) {
+//            return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
+//        } else {
+//            return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));
+//        }
+//    }
     @GetMapping("/previewFile")
-    public ResponseEntity<?> previewFile(@RequestParam("filename") String filename, HttpServletResponse response) throws IOException {
-        Result result = fileService.previewFile(filename, response);
-        if (result.isSuccess()) {
-            return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
-        } else {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));
-        }
+    public StreamingResponseBody previewFile(@RequestParam("fileName") String filename,@RequestParam("path") String path) throws IOException {
+    return fileService.previewFile(path+filename);
     }
 
     @PostMapping("/delete")
