@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(file):删掉了一些测试用注释">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/HistoryResponse.java" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(document):建立了一个文件夹放文档们">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/AnswerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/AnswerRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/QuestionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/QuestionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,47 +52,47 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "JUnit.AuthControllerTest.executor": "Run",
-    "JUnit.AuthControllerTest.testRegisterUser_Success.executor": "Run",
-    "JUnit.AuthServiceImplIntegrationTest.executor": "Run",
-    "JUnit.AuthServiceImplTest.executor": "Run",
-    "JUnit.AuthServiceImplTest.loginUserByEmailSuccess.executor": "Run",
-    "JUnit.AuthServiceImplTest.loginUserByEmail_ReturnsError_WhenEmailIsNull.executor": "Run",
-    "JUnit.SecurityConfigTest.executor": "Run",
-    "JUnit.UserControllerTest.executor": "Run",
-    "JUnit.UserServiceImplIntegrationTest.executor": "Run",
-    "JUnit.UserServiceImplTest.executor": "Run",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.EduPalApplication.executor": "Debug",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "E:/01-08 大三春/01 软件工程 刘光迟/实验/参考/springboot-vue/Shiro+Jwt+Vue各种文件上传预览下载/shiro_jwt_vue",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "reference.settings.project.maven.runner",
-    "ts.external.directory.path": "D:\\Program Files\\JetBrains\\IntelliJ IDEA 2023.3.5\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;JUnit.AuthControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthControllerTest.testRegisterUser_Success.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplIntegrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplTest.loginUserByEmailSuccess.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplTest.loginUserByEmail_ReturnsError_WhenEmailIsNull.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.SecurityConfigTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.UserControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.UserServiceImplIntegrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.UserServiceImplTest.executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Spring Boot.EduPalApplication.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/01-08 大三春/01 软件工程 刘光迟/临时测试/EduPal-main (7)/EduPal-main/backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.runner&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Program Files\\JetBrains\\IntelliJ IDEA 2023.3.5\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql_aurora_aws"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql_aurora_aws&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.example.edupal.service" />
@@ -208,7 +202,9 @@
       <workItem from="1748515798790" duration="5525000" />
       <workItem from="1748569837066" duration="23862000" />
       <workItem from="1748617399659" duration="3791000" />
-      <workItem from="1748650200423" duration="12122000" />
+      <workItem from="1748650200423" duration="12606000" />
+      <workItem from="1748664375756" duration="173000" />
+      <workItem from="1748670340519" duration="643000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />
@@ -394,7 +390,23 @@
       <option name="project" value="LOCAL" />
       <updated>1748659016967</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="feat(ai):添加了获取问答历史的功能，响应采用3层json嵌套，返回一些必要元素">
+      <option name="closed" value="true" />
+      <created>1748662494509</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1748662494509</updated>
+    </task>
+    <task id="LOCAL-00025" summary="feat(document):建立了一个文件夹放文档们">
+      <option name="closed" value="true" />
+      <created>1748671070187</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1748671070187</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -445,7 +457,9 @@
     <MESSAGE value="feat(file):完善了上传、下载、删除文件的请求和响应接口，preview功能还未测试" />
     <MESSAGE value="feat(file):完成了文件预览功能，返回流式数据，需要前端依赖第三方pdf预览功能实现" />
     <MESSAGE value="feat(file):删掉了一些测试用注释" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(file):删掉了一些测试用注释" />
+    <MESSAGE value="feat(ai):添加了获取问答历史的功能，响应采用3层json嵌套，返回一些必要元素" />
+    <MESSAGE value="feat(document):建立了一个文件夹放文档们" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(document):建立了一个文件夹放文档们" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
