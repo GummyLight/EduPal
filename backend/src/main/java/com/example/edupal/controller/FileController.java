@@ -23,36 +23,6 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
-
-    //file是文件，path是文件所在你机子上的目录
-//    @PostMapping("/upload")
-//    public String upload(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) throws IOException {
-//        return fileService.upload(path, file.getOriginalFilename(), file);
-//    }
-//
-//    @GetMapping("/download")
-//    public void download(@RequestParam("fileName") String fileName, @RequestParam("path") String path,
-//                         @RequestParam("outFile") String outFile) throws IOException {
-//        File downloadFile = new File(outFile);
-//        fileService.download(path, fileName, downloadFile);
-//    }
-//
-//
-//    @GetMapping("/previewFile")
-//    public void previewFile(@RequestParam("filename") String filename, HttpServletResponse response) throws IOException {
-//        fileService.previewFile(filename, response);
-//    }
-//
-//    @PostMapping("/delete")
-//    public String delete(@RequestParam("fileName") String fileName, @RequestParam("path") String path) throws IOException {
-//        fileService.delete(path,fileName);
-//        File file = new File(path, fileName);
-//        if (file.exists() && file.delete()) {
-//            return "File deleted successfully: " + fileName;
-//        } else {
-//            return "Failed to delete file: " + fileName;
-//        }
-//    }
     @PostMapping("/upload")
     public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) throws IOException {
         Result result = fileService.upload(path, file.getOriginalFilename(), file);
@@ -75,15 +45,6 @@ public class FileController {
         }
     }
 
-//    @GetMapping("/previewFile")
-//    public ResponseEntity<?> previewFile(@RequestParam("fileName") String filename, @RequestParam("path") String path, HttpServletResponse response) throws IOException {
-//        Result result = fileService.previewFile(path + filename, response);
-//        if (result.isSuccess()) {
-//            return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
-//        } else {
-//            return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));
-//        }
-//    }
     @GetMapping("/previewFile")
     public StreamingResponseBody previewFile(@RequestParam("fileName") String filename,@RequestParam("path") String path) throws IOException {
     return fileService.previewFile(path+filename);
