@@ -46,20 +46,16 @@ public class FtpUtil {
         return ftpClient;
     }
 
-    public void uploadFile(String remoteFilePath, File localFile) throws IOException {
+    public boolean uploadFile(String remoteFilePath, File localFile) throws IOException {
         FTPClient ftpClient = null;
         FileInputStream input = null;
         try {
             ftpClient = connect();
             input = new FileInputStream(localFile);
-            if (!ftpClient.storeFile(remoteFilePath, input)) {
-                String reply = ftpClient.getReplyString();
-                log.error("Failed to upload file. FTP server reply: {}", reply);
-                throw new IOException("FTP error: " + reply);
-            }
+            return ftpClient.storeFile(remoteFilePath, input);
         } catch (IOException e) {
             log.error("An error occurred during file upload: {}", e.getMessage());
-            throw e; // Rethrow the exception if needed
+            throw e;
         } finally {
             if (input != null) {
                 input.close();
@@ -71,13 +67,13 @@ public class FtpUtil {
         }
     }
 
-    public void downloadFile(String remoteFilePath, File localFile) throws IOException {
+    public boolean downloadFile(String remoteFilePath, File localFile) throws IOException {
         FTPClient ftpClient = null;
         FileOutputStream output = null;
         try {
             ftpClient = connect();
             output = new FileOutputStream(localFile);
-            ftpClient.retrieveFile(remoteFilePath, output);
+            return ftpClient.retrieveFile(remoteFilePath, output);
         } finally {
             if (output != null) {
                 output.close();
@@ -89,18 +85,14 @@ public class FtpUtil {
         }
     }
 
-    public void deleteFile(String remoteFilePath) throws IOException {
+    public boolean deleteFile(String remoteFilePath) throws IOException {
         FTPClient ftpClient = null;
         try {
             ftpClient = connect();
-            if (!ftpClient.deleteFile(remoteFilePath)) {
-                String reply = ftpClient.getReplyString();
-                log.error("Failed to delete file. FTP server reply: {}", reply);
-                throw new IOException("FTP error: " + reply);
-            }
+            return ftpClient.deleteFile(remoteFilePath);
         } catch (IOException e) {
             log.error("An error occurred during file deletion: {}", e.getMessage());
-            throw e; // Rethrow the exception if needed
+            throw e;
         } finally {
             if (ftpClient != null && ftpClient.isConnected()) {
                 ftpClient.logout();
