@@ -76,12 +76,14 @@ public class FileController {
     }
 
     @GetMapping("/previewFile")
-    public StreamingResponseBody previewFile(@RequestParam("fileName") String filename,@RequestParam("path") String path) throws IOException {
-    return fileService.previewFile(path+filename);
+    public StreamingResponseBody previewFile(@RequestParam("fileId") String fileId,
+                                             @RequestParam("path") String path) throws IOException {
+    return fileService.previewFile(path+fileId);
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<?> delete(@RequestParam("fileId") String fileId, @RequestParam("path") String path) throws IOException {
+    public ResponseEntity<?> delete(@RequestParam("fileId") String fileId,
+                                    @RequestParam("path") String path) throws IOException {
         Result result = fileService.delete(path, fileId);
         if (result.isSuccess()) {
             File file = new File(path, fileId);
