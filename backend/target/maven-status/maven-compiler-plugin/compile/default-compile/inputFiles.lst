@@ -20,6 +20,7 @@
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/request/ResourceRequest.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/request/SubmitAnswerRequest.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/response/AnswerResponse.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/response/AttachedFileDTO.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/response/HistoryResponse.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/response/LoginResponse.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/dto/response/PostDTO.java
@@ -36,6 +37,7 @@
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/LearningProgress.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/Post.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/PostCollection.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/PostFile.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/Question.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/Quiz.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/Reply.java
@@ -47,6 +49,7 @@
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/model/Validation.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/repository/AnswerRepository.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/repository/PostCollectionRepository.java
+/home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/repository/PostFileRepository.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/repository/PostRepository.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/repository/QuestionRepository.java
 /home/suzuki/codes/EduPal/backend/src/main/java/com/example/edupal/repository/QuizRepository.java

@@ -595,10 +595,7 @@ const handleDeleteConversation = async (conv: Conversation) => {
       }
     }
     
-    const successMessage = questionIds.length > 1 
-      ? `历史对话分组删除成功（${questionIds.length} 个问题）`
-      : '历史对话删除成功';
-    ElMessage.success(successMessage);
+    ElMessage.success('历史对话删除成功');
     
   } catch (error: any) {
     if (error === 'cancel') {
