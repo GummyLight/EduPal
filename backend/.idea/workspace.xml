@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(ai):添加了获取问答历史的功能，响应采用3层json嵌套，返回一些必要元素">
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(document):建立了一个文件夹放文档们">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -204,6 +204,7 @@
       <workItem from="1748617399659" duration="3791000" />
       <workItem from="1748650200423" duration="12606000" />
       <workItem from="1748664375756" duration="173000" />
+      <workItem from="1748670340519" duration="643000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />
@@ -397,7 +398,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748662494509</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="feat(document):建立了一个文件夹放文档们">
+      <option name="closed" value="true" />
+      <created>1748671070187</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1748671070187</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -449,7 +458,8 @@
     <MESSAGE value="feat(file):完成了文件预览功能，返回流式数据，需要前端依赖第三方pdf预览功能实现" />
     <MESSAGE value="feat(file):删掉了一些测试用注释" />
     <MESSAGE value="feat(ai):添加了获取问答历史的功能，响应采用3层json嵌套，返回一些必要元素" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(ai):添加了获取问答历史的功能，响应采用3层json嵌套，返回一些必要元素" />
+    <MESSAGE value="feat(document):建立了一个文件夹放文档们" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(document):建立了一个文件夹放文档们" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
