@@ -3,11 +3,16 @@ package com.example.edupal.controller;
 import com.example.edupal.dto.request.PostForm;
 import com.example.edupal.dto.request.ReplyForm;
 import com.example.edupal.dto.response.PostDTO;
+import com.example.edupal.model.User;
+import com.example.edupal.repository.UserRepository;
 import com.example.edupal.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/community")
@@ -15,8 +20,18 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
 
+    private UserRepository userRepository;
+
     private String getCurrentUserId() {
-        return "user123"; // 实际项目应从安全上下文获取
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        // 直接调用返回User的方法
+        User user = userRepository.findByUserEmail(username);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        return user.getUserId();
     }
 
     @PostMapping("/post")
