@@ -7,11 +7,12 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, String> {
 
-    // 基本CRUD方法已由JpaRepository提供
-
     @Query("SELECT p FROM Post p ORDER BY p.publishTime DESC")
     List<Post> findAllByOrderByPublishTimeDesc();
 
-    // 根据标题搜索（匹配您的数据库字段名）
-    List<Post> findByTitleContainingIgnoreCase(String keyword);
+    @Query("SELECT p FROM Post p WHERE p.title LIKE %:keyword% ORDER BY p.publishTime DESC")
+    List<Post> findByTitleContaining(String keyword);
+
+    @Query("SELECT p FROM Post p WHERE p.authorId = :userId ORDER BY p.publishTime DESC")
+    List<Post> findByAuthorId(String userId);
 }
