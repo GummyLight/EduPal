@@ -11,10 +11,6 @@ import java.io.File;
 import java.io.IOException;
 
 public interface FileService {
-//    String upload(String dest, String name, MultipartFile file) throws IOException;
-//    void download(String dest, String fileName, File outFile) throws IOException;
-//    void delete(String dest,String fileName) throws IOException;
-//    void previewFile(String filename, HttpServletResponse response) throws IOException;
     Result upload(String dest, String name, MultipartFile file) throws IOException;
     Result download(String dest, String fileName, File outFile) throws IOException;
     Result delete(String dest,String fileName) throws IOException;

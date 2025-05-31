@@ -2,6 +2,7 @@ package com.example.edupal.controller;
 
 import com.example.edupal.dto.request.QuestionRequest;
 import com.example.edupal.dto.response.AnswerResponse;
+import com.example.edupal.dto.response.HistoryResponse;
 import com.example.edupal.service.AIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,15 @@ public class AIController {
     public AnswerResponse askQuestion(@RequestBody QuestionRequest questionRequest) {
         try {
             return aIService.askQuestion(questionRequest);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
+        }
+    }
+
+    @PostMapping("/history")
+    public HistoryResponse getHistory(@RequestParam("userId") String userId) {
+        try {
+            return aIService.getHistory(userId);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
         }
