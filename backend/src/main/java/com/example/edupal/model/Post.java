@@ -1,4 +1,3 @@
-// Post.java
 package com.example.edupal.model;
 
 import jakarta.persistence.*;
@@ -16,21 +15,27 @@ public class Post {
     @Column(name = "title", nullable = false, length = 255)
     private String title;
 
-    @Column(name = "content", columnDefinition = "TEXT")
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "author_id", nullable = false, length = 36)
+    @Column(name = "authorId", nullable = false, length = 255)
     private String authorId;
 
-    @Column(name = "author_name", nullable = false, length = 100)
+    @Column(name = "authorName", nullable = false, length = 255)
     private String authorName;
 
-    @Column(name = "publish_time", nullable = false)
+    @Column(name = "publishTime", nullable = false)
     private LocalDateTime publishTime;
 
-    @Column(name = "attached_file_name", length = 255)
+    @Column(name = "attachedFileName", length = 255)
     private String attachedFileName;
 
-    @Column(name = "attached_file_url", columnDefinition = "TEXT")
+    @Column(name = "attachedFileUrl", columnDefinition = "TEXT")
     private String attachedFileUrl;
+
+    @Column(name = "createdAt", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updatedAt", nullable = false)
+    private LocalDateTime updatedAt = LocalDateTime.now();
 }

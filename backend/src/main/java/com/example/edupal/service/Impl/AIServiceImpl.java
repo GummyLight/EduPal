@@ -186,14 +186,13 @@ public class AIServiceImpl implements AIService {
         if (question == null) {
             return new Result(false, "问题不存在");
         }
-
-        // 删除问题
-        questionRepository.delete(question);
         // 删除相关的答案
         List<Answer> answers = answerRepository.findAnswersByQuestionId(questionId);
         if (answers != null && !answers.isEmpty()) {
             answerRepository.deleteAll(answers);
         }
+        // 删除问题
+        questionRepository.delete(question);
         return new Result(true, "问题删除成功");
     }
 }

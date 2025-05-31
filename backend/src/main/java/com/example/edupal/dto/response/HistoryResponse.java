@@ -25,7 +25,7 @@ public class HistoryResponse {
 
     @Data
     public static class QA {
-        private String questionId;
+        private String questionId;       // 问题ID
         private String questionContent;
         private String questionSubject;
         private Date questionTime;

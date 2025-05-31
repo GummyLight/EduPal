@@ -159,21 +159,32 @@
       <div v-else class="sidebar-content">
         <div class="sidebar-header">
           <h3>对话历史</h3>
-          <el-button 
-            text 
-            @click="toggleSidebar" 
-            class="collapse-btn"
-            title="收起侧边栏"
-          >
-            <el-icon><ArrowRight /></el-icon>
-          </el-button>
+          <div class="header-actions">
+            <el-button 
+              text 
+              @click="refreshBackendHistory" 
+              :loading="isRefreshing"
+              class="refresh-btn"
+              title="同步云端历史"
+            >
+              <el-icon><Refresh /></el-icon>
+            </el-button>
+            <el-button 
+              text 
+              @click="toggleSidebar" 
+              class="collapse-btn"
+              title="收起侧边栏"
+            >
+              <el-icon><ArrowRight /></el-icon>
+            </el-button>
+          </div>
         </div>
         
         <div class="conversation-list">
           <div class="new-chat-btn">
             <el-button type="primary" @click="startNewConversation" style="width: 100%;">
-              <el-icon><Plus /></el-icon>
-              新对话
+              <el-icon></el-icon>
+              提问
             </el-button>
           </div>
           
@@ -183,10 +194,29 @@
               :key="conv.id"
               class="conversation-item"
               :class="{ 'active': currentConversationId === conv.id }"
-              @click="selectConversation(conv.id)"
             >
-              <div class="conversation-title">{{ conv.title }}</div>
-              <div class="conversation-time">{{ formatTime(conv.lastTime) }}</div>
+              <div class="conversation-content" @click="selectConversation(conv.id)">
+                <div class="conversation-header">
+                  <div class="conversation-title">{{ conv.title }}</div>
+                  <div class="conversation-badges">
+                    <el-tag v-if="conv.isFromBackend" size="small" type="success">云端</el-tag>
+                    <el-tag v-if="conv.subject" size="small" type="info">{{ getSubjectName(conv.subject) }}</el-tag>
+                  </div>
+                </div>
+                <div class="conversation-time">{{ formatTime(conv.lastTime) }}</div>
+              </div>
+              <div class="conversation-actions">
+                <el-button 
+                  v-if="conv.isFromBackend"
+                  text 
+                  size="small"
+                  @click.stop="handleDeleteConversation(conv)"
+                  class="delete-btn"
+                  title="删除历史记录"
+                >
+                  <el-icon><Delete /></el-icon>
+                </el-button>
+              </div>
             </div>
           </div>
         </div>
@@ -197,13 +227,13 @@
 
 <script setup lang="ts">
 import { ref, computed, nextTick, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { 
   Plus, UserFilled, Delete, DocumentCopy, Star, 
-  Paperclip, Promotion, ArrowLeft, ArrowRight, Service, Operation, Close
+  Paperclip, Promotion, ArrowLeft, ArrowRight, Service, Operation, Close, Refresh
 } from '@element-plus/icons-vue';
-// 导入真实的AI API
-import { askAI, getConversationHistory } from '../api/ai';
+// 导入真实的AI API和类型
+import { askAI, getConversationHistory, deleteConversation, type HistoryResponse, type QA, type AnswerDetail } from '../api/ai';
 // 导入axios用于取消令牌
 import axios, { CancelTokenSource } from 'axios';
 // 导入用户默认头像
@@ -222,6 +252,7 @@ interface Message {
   timestamp: Date;
   questionId?: string;
   answerId?: string;
+  subject?: string;
 }
 
 interface Conversation {
@@ -229,12 +260,16 @@ interface Conversation {
   title: string;
   lastTime: Date;
   messages: Message[];
+  subject?: string;
+  isFromBackend?: boolean; // 标记是否来自后端
 }
 
 // 响应式数据
 const currentQuestion = ref('');
 const currentSubject = ref('math');
 const isLoading = ref(false);
+const isRefreshing = ref(false);
+const isSyncing = ref(false); // 同步状态
 const loadingProgress = ref(0);
 const loadingText = ref('AI正在思考中...');
 const sidebarCollapsed = ref(false);
@@ -286,6 +321,149 @@ const selectConversation = (id: string) => {
   currentConversationId.value = id;
 };
 
+// 从后端加载历史对话并整合到本地对话列表
+const loadAndMergeBackendHistory = async () => {
+  try {
+    const historyResponse = await getConversationHistory(currentUser.value.studentId);
+    
+    if (historyResponse.status === 'success' && historyResponse.questionSet.length > 0) {
+      // 将后端历史对话转换为本地对话格式
+      const backendConversations: Conversation[] = historyResponse.questionSet.map((qa: QA) => {
+        const conversation: Conversation = {
+          id: `backend-${qa.questionId}`, // 使用问题ID作为唯一标识符
+          title: qa.questionContent.length > 30 
+            ? qa.questionContent.substring(0, 30) + '...' 
+            : qa.questionContent,
+          lastTime: new Date(qa.questionTime),
+          subject: qa.questionSubject,
+          isFromBackend: true,
+          messages: []
+        };
+        
+        // 添加用户问题
+        const userMessage: Message = {
+          id: generateId(),
+          type: 'user',
+          content: qa.questionContent,
+          timestamp: new Date(qa.questionTime),
+          subject: qa.questionSubject,
+          questionId: qa.questionId // 添加问题ID
+        };
+        conversation.messages.push(userMessage);
+        
+        // 添加所有答案
+        qa.answers.forEach((answer: AnswerDetail) => {
+          const aiMessage: Message = {
+            id: generateId(),
+            type: 'ai',
+            content: answer.answerContent,
+            timestamp: new Date(answer.answerTime),
+            subject: qa.questionSubject,
+            questionId: qa.questionId, // 添加问题ID
+            answerId: answer.answerId  // 添加回答ID
+          };
+          conversation.messages.push(aiMessage);
+        });
+        
+        return conversation;
+      });
+      
+      // 智能去重：移除本地对话中已在云端的对话
+      const localConversations = conversations.value.filter(conv => {
+        if (conv.isFromBackend) return false; // 移除之前的后端对话
+        
+        // 检查本地对话是否已存在于云端
+        const hasMatchInBackend = backendConversations.some(backendConv => {
+          const localFirstMessage = conv.messages.find(m => m.type === 'user');
+          const backendFirstMessage = backendConv.messages.find(m => m.type === 'user');
+          
+          // 如果问题内容相同，认为是重复对话
+          return localFirstMessage && backendFirstMessage && 
+                 localFirstMessage.content.trim() === backendFirstMessage.content.trim();
+        });
+        
+        return !hasMatchInBackend; // 只保留云端没有的本地对话
+      });
+      
+      // 合并去重后的对话并按时间倒序排列（最新的在上面）
+      const allConversations = [...localConversations, ...backendConversations];
+      conversations.value = allConversations.sort((a, b) => 
+        new Date(b.lastTime).getTime() - new Date(a.lastTime).getTime()
+      );
+      
+      console.log(`成功整合 ${backendConversations.length} 条后端历史对话，去重后保留 ${localConversations.length} 条本地对话，总共 ${conversations.value.length} 条对话`);
+    }
+  } catch (error: any) {
+    console.error('加载后端历史对话失败:', error);
+    // 不影响用户使用，静默失败
+  }
+};
+
+// 获取学科中文名称
+const getSubjectName = (subject: string): string => {
+  const subjectNames: Record<string, string> = {
+    'math': '数学',
+    'physics': '物理', 
+    'chemistry': '化学',
+    'programming': '编程',
+    'other': '其他'
+  };
+  return subjectNames[subject] || subject;
+};
+
+// 手动刷新后端历史对话
+const refreshBackendHistory = async () => {
+  if (isRefreshing.value) return;
+  
+  isRefreshing.value = true;
+  try {
+    await loadAndMergeBackendHistory();
+    ElMessage.success('历史对话已同步');
+  } catch (error) {
+    ElMessage.error('同步历史对话失败');
+  } finally {
+    isRefreshing.value = false;
+  }
+};
+
+// 实时同步功能：在成功发送消息后同步到云端
+const syncAfterMessage = async (questionContent: string, answerContent: string, questionId?: string, answerId?: string) => {
+  if (isSyncing.value) return;
+  
+  isSyncing.value = true;
+  try {
+    // 给后端更多时间保存数据
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // 保存当前对话ID，用于后续切换
+    const currentLocalConvId = currentConversationId.value;
+    
+    // 重新加载后端历史
+    await loadAndMergeBackendHistory();
+    
+    // 智能切换：如果当前本地对话已被同步到云端，切换到云端版本
+    if (questionId) {
+      const matchingBackendConv = conversations.value.find(conv => 
+        conv.isFromBackend && conv.id === `backend-${questionId}`
+      );
+      
+      if (matchingBackendConv) {
+        // 找到匹配的云端对话，切换到云端版本
+        currentConversationId.value = matchingBackendConv.id;
+        console.log('已切换到云端同步版本');
+      }
+    }
+    
+    console.log('实时同步完成');
+    
+  } catch (error) {
+    console.warn('实时同步失败，但不影响用户使用:', error);
+    // 不显示错误消息，避免干扰用户体验
+  } finally {
+    isSyncing.value = false;
+  }
+};
+
 const toggleSidebar = () => {
   sidebarCollapsed.value = !sidebarCollapsed.value;
 };
@@ -295,6 +473,64 @@ const clearCurrentConversation = () => {
   if (conv) {
     conv.messages = [];
     ElMessage.success('对话已清空');
+  }
+};
+
+// 删除历史对话
+const handleDeleteConversation = async (conv: Conversation) => {
+  console.log('开始删除对话:', conv);
+  
+  if (!conv.isFromBackend) {
+    ElMessage.warning('只能删除云端历史记录');
+    return;
+  }
+
+  // 从conversation ID中提取questionId (格式: "backend-{questionId}")
+  const questionId = conv.id.replace('backend-', '');
+  console.log('提取的questionId:', questionId);
+  console.log('当前用户ID:', currentUser.value.studentId);
+  
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除这条历史对话吗？\n"${conv.title}"`,
+      '删除确认',
+      {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        type: 'warning',
+        dangerouslyUseHTMLString: false
+      }
+    );
+
+    console.log('用户确认删除，开始调用API');
+    // 调用删除API
+    const result = await deleteConversation(currentUser.value.studentId, questionId);
+    console.log('删除API返回结果:', result);
+    
+    // 从本地对话列表中移除
+    const index = conversations.value.findIndex(c => c.id === conv.id);
+    if (index !== -1) {
+      conversations.value.splice(index, 1);
+    }
+    
+    // 如果删除的是当前选中的对话，切换到其他对话
+    if (currentConversationId.value === conv.id) {
+      if (conversations.value.length > 0) {
+        currentConversationId.value = conversations.value[0].id;
+      } else {
+        startNewConversation();
+      }
+    }
+    
+    ElMessage.success('历史对话删除成功');
+    
+  } catch (error: any) {
+    if (error === 'cancel') {
+      // 用户取消删除，不做任何操作
+      return;
+    }
+    console.error('删除历史对话失败:', error);
+    ElMessage.error(error.message || '删除历史对话失败');
   }
 };
 
@@ -377,12 +613,23 @@ const sendMessage = async () => {
       content: aiResponse.answerContent,
       timestamp: new Date(),
       questionId: aiResponse.questionId,
-      answerId: aiResponse.answerId
+      answerId: aiResponse.answerId,
+      subject: currentSubject.value
     };
 
     conv.messages.push(aiMessage);
     
     ElMessage.success('AI回答已生成');
+    
+    // 实时同步到云端（异步执行，不阻塞用户操作）
+    syncAfterMessage(
+      questionContent, 
+      aiResponse.answerContent,
+      aiResponse.questionId,
+      aiResponse.answerId
+    ).catch(error => {
+      console.warn('同步失败但不影响使用:', error);
+    });
     
   } catch (error: any) {
     console.error('AI回答失败:', error);
@@ -587,12 +834,16 @@ onMounted(() => {
     // 没有保存的对话时创建默认对话
     startNewConversation();
   }
+  
+  // 异步加载并整合后端历史对话
+  loadAndMergeBackendHistory();
 });
 
-// 保存对话历史到localStorage
+// 保存对话历史到localStorage（只保存本地对话，不保存后端对话）
 const saveConversations = () => {
   try {
-    localStorage.setItem('qa-conversations', JSON.stringify(conversations.value));
+    const localConversations = conversations.value.filter(conv => !conv.isFromBackend);
+    localStorage.setItem('qa-conversations', JSON.stringify(localConversations));
   } catch (error) {
     console.error('保存对话历史失败:', error);
   }
@@ -746,12 +997,19 @@ watch(conversations, saveConversations, { deep: true });
   color: #303133;
 }
 
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.refresh-btn,
 .collapse-btn {
   padding: 4px;
   min-height: auto;
   color: #606266;
 }
 
+.refresh-btn:hover,
 .collapse-btn:hover {
   color: #409eff;
 }
@@ -780,9 +1038,12 @@ watch(conversations, saveConversations, { deep: true });
   padding: 12px;
   margin-bottom: 4px;
   border-radius: 8px;
-  cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .conversation-item:hover {
@@ -795,19 +1056,89 @@ watch(conversations, saveConversations, { deep: true });
   border-color: #91caff;
 }
 
+.conversation-content {
+  flex: 1;
+  cursor: pointer;
+  min-width: 0; /* 允许flex子项收缩 */
+}
+
+.conversation-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.conversation-item:hover .conversation-actions {
+  opacity: 1;
+}
+
+.delete-btn {
+  color: #f56c6c;
+  padding: 4px;
+  min-height: auto;
+  font-size: 14px;
+}
+
+.delete-btn:hover {
+  color: #e55353;
+  background-color: rgba(245, 108, 108, 0.1);
+}
+
+/* 侧边栏会话项样式 */
+.conversation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  gap: 8px;
+}
+
 .conversation-title {
   font-size: 14px;
+  font-weight: 500;
   color: #303133;
-  margin-bottom: 4px;
+  line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+}
+
+.conversation-badges {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .conversation-time {
-  font-size: 12px;
+  font-size: 11px;
   color: #909399;
+  font-weight: 400;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+  background: rgba(144, 147, 153, 0.08);
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(144, 147, 153, 0.15);
+  display: inline-block;
+  line-height: 1.2;
+}
+
+.conversation-item:hover .conversation-time {
+  opacity: 1;
+  background: rgba(64, 158, 255, 0.1);
+  border-color: rgba(64, 158, 255, 0.2);
+  color: #409eff;
+}
+
+.conversation-item.active .conversation-time {
+  background: rgba(64, 158, 255, 0.15);
+  border-color: rgba(64, 158, 255, 0.3);
+  color: #409eff;
+  opacity: 1;
 }
 
 /* 消息区域 */
@@ -985,10 +1316,37 @@ watch(conversations, saveConversations, { deep: true });
 }
 
 .message-time {
-  font-size: 12px;
+  font-size: 11px;
   color: #909399;
   margin-top: 6px;
   opacity: 0.7;
+  transition: all 0.2s ease;
+  background: rgba(144, 147, 153, 0.06);
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(144, 147, 153, 0.12);
+  display: inline-block;
+  line-height: 1.3;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+}
+
+.user-message .message-time {
+  background: rgba(64, 158, 255, 0.08);
+  border-color: rgba(64, 158, 255, 0.15);
+  color: #409eff;
+}
+
+.ai-message .message-time {
+  background: rgba(103, 194, 58, 0.08);
+  border-color: rgba(103, 194, 58, 0.15);
+  color: #67c23a;
+}
+
+.message:hover .message-time {
+  opacity: 1;
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .message-actions {
@@ -1389,6 +1747,29 @@ watch(conversations, saveConversations, { deep: true });
     width: 100%;
     height: 100vh;
     height: 100dvh;
+  }
+  
+  /* 移动端时间显示优化 */
+  .conversation-time {
+    font-size: 10px;
+    padding: 1px 5px;
+  }
+  
+  .conversation-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .conversation-badges {
+    order: -1;
+    margin-bottom: 2px;
+  }
+  
+  .message-time {
+    font-size: 10px;
+    padding: 1px 6px;
+    margin-top: 4px;
   }
   
   .message {

@@ -23,9 +23,35 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
+//    @PostMapping("/upload")
+//    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) throws IOException {
+//        Result result = fileService.upload(path, file.getOriginalFilename(), file);
+//        if (result.isSuccess()) {
+//            return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
+//        } else {
+//            return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));
+//        }
+//    }
+//
+//    @GetMapping("/download")
+//    public ResponseEntity<?> download(@RequestParam("fileName") String fileName, @RequestParam("path") String path,
+//                                      @RequestParam("outFile") String outFile) throws IOException {
+//        File downloadFile = new File(outFile);
+//        Result result = fileService.download(path, fileName, downloadFile);
+//        if (result.isSuccess()) {
+//            return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
+//        } else {
+//            return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));
+//        }
+//    }
+    // 上传文件
     @PostMapping("/upload")
-    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) throws IOException {
-        Result result = fileService.upload(path, file.getOriginalFilename(), file);
+    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file,
+                                    @RequestParam("path") String path,
+                                    @RequestParam("fileId") String fileId) throws IOException {
+        // 使用 fileId 重命名文件
+        String newFileName = fileId + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        Result result = fileService.upload(path, newFileName, file);
         if (result.isSuccess()) {
             return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
         } else {
@@ -33,11 +59,15 @@ public class FileController {
         }
     }
 
+    // 下载文件
     @GetMapping("/download")
-    public ResponseEntity<?> download(@RequestParam("fileName") String fileName, @RequestParam("path") String path,
+    public ResponseEntity<?> download(@RequestParam("fileName") String fileName,
+                                      @RequestParam("path") String path,
+                                      @RequestParam("fileId") String fileId,
                                       @RequestParam("outFile") String outFile) throws IOException {
-        File downloadFile = new File(outFile);
-        Result result = fileService.download(path, fileName, downloadFile);
+        // 根据 fileId 找到文件
+        String serverFileName = fileId + fileName.substring(fileName.lastIndexOf("."));
+        Result result = fileService.download(path, serverFileName, new File(outFile+fileName));
         if (result.isSuccess()) {
             return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
         } else {
@@ -46,19 +76,21 @@ public class FileController {
     }
 
     @GetMapping("/previewFile")
-    public StreamingResponseBody previewFile(@RequestParam("fileName") String filename,@RequestParam("path") String path) throws IOException {
-    return fileService.previewFile(path+filename);
+    public StreamingResponseBody previewFile(@RequestParam("fileId") String fileId,
+                                             @RequestParam("path") String path) throws IOException {
+    return fileService.previewFile(path+fileId);
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<?> delete(@RequestParam("fileName") String fileName, @RequestParam("path") String path) throws IOException {
-        Result result = fileService.delete(path, fileName);
+    public ResponseEntity<?> delete(@RequestParam("fileId") String fileId,
+                                    @RequestParam("path") String path) throws IOException {
+        Result result = fileService.delete(path, fileId);
         if (result.isSuccess()) {
-            File file = new File(path, fileName);
+            File file = new File(path, fileId);
             if (!file.exists() || file.delete()) {
-                return ResponseEntity.ok(new ApiResponse<>(200, "File deleted successfully: " + fileName));
+                return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
             } else {
-                return ResponseEntity.badRequest().body(new ApiResponse<>(400, "Failed to delete file: " + fileName));
+                return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));
             }
         } else {
             return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));

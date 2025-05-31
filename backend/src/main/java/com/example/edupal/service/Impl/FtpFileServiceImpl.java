@@ -32,9 +32,9 @@ public class FtpFileServiceImpl implements FileService {
         file.transferTo(uploadFile);
         boolean success = ftpUtil.uploadFile(uploadDir + name, uploadFile);
         if (success) {
-            return new Result(true, "Upload successful: " + name);
+            return new Result(true, "上传成功: " + name);
         } else {
-            return new Result(false, "Upload failed: " + name);
+            return new Result(false, "上传失败: " + name);
         }
     }
 
@@ -42,9 +42,9 @@ public class FtpFileServiceImpl implements FileService {
     public Result download(String dest, String fileName, File outFile) throws IOException {
         boolean success = ftpUtil.downloadFile(uploadDir + fileName, outFile);
         if (success) {
-            return new Result(true, "Download successful: " + fileName);
+            return new Result(true, "下载成功: " + fileName);
         } else {
-            return new Result(false, "Download failed: " + fileName);
+            return new Result(false, "下载失败: " + fileName);
         }
     }
 
@@ -52,9 +52,9 @@ public class FtpFileServiceImpl implements FileService {
     public Result delete(String dest, String fileName) throws IOException {
         boolean success = ftpUtil.deleteFile(uploadDir + dest + fileName);
         if (success) {
-            return new Result(true, "Delete successful: " + fileName);
+            return new Result(true, "删除成功: " + fileName);
         } else {
-            return new Result(false, "Delete failed: " + fileName);
+            return new Result(false, "删除失败: " + fileName);
         }
     }
 
@@ -63,7 +63,7 @@ public class FtpFileServiceImpl implements FileService {
         return outputStream -> {
             boolean success = ftpUtil.downloadFile(uploadDir + filename, outputStream);
             if (!success) {
-                throw new IOException("Failed to preview file from remote server: " + filename);
+                throw new IOException("预览失败: " + filename);
             }
         };
     }

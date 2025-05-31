@@ -17,6 +17,32 @@ interface AIQuestionResponse {
   answerContent: string;    // 回答内容
 }
 
+// 历史对话响应接口 - 与后端HistoryResponse匹配
+interface HistoryResponse {
+  status: string;
+  message: string;
+  studentId: string;
+  questionNum: number;
+  questionSet: QA[];
+}
+
+interface QA {
+  questionId: string;       // 问题ID
+  questionContent: string;
+  questionSubject: string;
+  questionTime: string;     // Date 转换为字符串
+  answerNum: number;
+  answers: AnswerDetail[];
+}
+
+interface AnswerDetail {
+  answerId: string;         // 回答ID
+  answerContent: string;
+  answerType: number;       // 0-AI回答，1-教师回答
+  teacherId?: string;       // 教师ID（可能为空）
+  answerTime: string;       // Date 转换为字符串
+}
+
 // 学科映射
 const subjectMap: Record<string, number> = {
   'math': 0,
@@ -86,18 +112,95 @@ export const askAI = async (
   }
 };
 
-// 获取历史对话（如果后端支持）
-export const getConversationHistory = async (studentId: string): Promise<any[]> => {
+// 获取历史对话
+export const getConversationHistory = async (studentId: string): Promise<HistoryResponse> => {
   try {
-    const response = await request.get(`/ai/history/${studentId}`);
-    return response.data || [];
-  } catch (error) {
+    const response = await request.post(`/ai/history?userId=${studentId}`);
+    console.log('获取历史对话成功:', response.data);
+    return response.data;
+  } catch (error: any) {
     console.error('获取历史对话失败:', error);
-    return [];
+    
+    // 如果是404错误，说明还没有历史对话，返回空的HistoryResponse
+    if (error.response?.status === 404) {
+      return {
+        status: 'success',
+        message: '暂无历史对话',
+        studentId: studentId,
+        questionNum: 0,
+        questionSet: []
+      };
+    }
+    
+    // 其他错误也返回空的HistoryResponse，不影响用户使用
+    return {
+      status: 'error',
+      message: error.message || '获取历史对话失败',
+      studentId: studentId,
+      questionNum: 0,
+      questionSet: []
+    };
+  }
+};
+
+// 上传本地对话到云端（为将来扩展准备）
+export const uploadLocalConversation = async (
+  studentId: string,
+  questionContent: string,
+  questionSubject: string,
+  answerContent?: string,
+  questionId?: string,
+  answerId?: string
+): Promise<void> => {
+  try {
+    // 注意：这个功能需要后端支持，目前只是预留接口
+    // 实际上，当前的AI问答流程已经自动将对话保存到后端了
+    console.log('本地对话已通过AI问答自动同步到云端');
+  } catch (error: any) {
+    console.error('同步本地对话失败:', error);
+    // 不抛出错误，避免影响用户体验
+  }
+};
+
+// 删除历史对话
+export const deleteConversation = async (
+  userId: string, 
+  questionId: string
+): Promise<{ status: string; message: string }> => {
+  try {
+    console.log('开始发送删除请求:', { userId, questionId });
+    const url = `/ai/delete?userId=${userId}&questionId=${questionId}`;
+    console.log('请求URL:', url);
+    
+    const response = await request.post(url);
+    console.log('删除历史对话成功:', response);
+    console.log('响应数据:', response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error('删除历史对话失败 - 详细错误:', error);
+    console.error('错误响应:', error.response);
+    console.error('错误状态码:', error.response?.status);
+    console.error('错误数据:', error.response?.data);
+    
+    if (error.response?.data) {
+      throw new Error(error.response.data.message || '删除对话失败');
+    }
+    
+    throw new Error('删除对话失败，请稍后重试');
   }
 };
 
 export default {
   askAI,
-  getConversationHistory
+  getConversationHistory,
+  deleteConversation
+};
+
+// 导出类型定义
+export type { 
+  AIQuestionRequest, 
+  AIQuestionResponse, 
+  HistoryResponse, 
+  QA, 
+  AnswerDetail 
 };
