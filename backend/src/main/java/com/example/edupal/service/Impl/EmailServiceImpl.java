@@ -1,5 +1,6 @@
-package com.example.edupal.service;
+package com.example.edupal.service.Impl;
 
+import com.example.edupal.service.EmailService;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;

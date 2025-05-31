@@ -1,7 +1,8 @@
-package com.example.edupal.service;
+package com.example.edupal.service.Impl;
 
 import com.example.edupal.common.FtpUtil;
 import com.example.edupal.common.Result;
+import com.example.edupal.service.FileService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

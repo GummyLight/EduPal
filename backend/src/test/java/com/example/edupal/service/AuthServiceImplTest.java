@@ -3,6 +3,7 @@ package com.example.edupal.service;
 import com.example.edupal.common.Result;
 import com.example.edupal.model.User;
 import com.example.edupal.repository.UserRepository;
+import com.example.edupal.service.Impl.AuthServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
