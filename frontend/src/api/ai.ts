@@ -27,6 +27,7 @@ interface HistoryResponse {
 }
 
 interface QA {
+  questionId: string;       // 问题ID
   questionContent: string;
   questionSubject: string;
   questionTime: string;     // Date 转换为字符串
@@ -35,6 +36,7 @@ interface QA {
 }
 
 interface AnswerDetail {
+  answerId: string;         // 回答ID
   answerContent: string;
   answerType: number;       // 0-AI回答，1-教师回答
   teacherId?: string;       // 教师ID（可能为空）
@@ -113,7 +115,7 @@ export const askAI = async (
 // 获取历史对话
 export const getConversationHistory = async (studentId: string): Promise<HistoryResponse> => {
   try {
-    const response = await request.get(`/ai/history/${studentId}`);
+    const response = await request.post(`/ai/history?userId=${studentId}`);
     console.log('获取历史对话成功:', response.data);
     return response.data;
   } catch (error: any) {
@@ -138,6 +140,25 @@ export const getConversationHistory = async (studentId: string): Promise<History
       questionNum: 0,
       questionSet: []
     };
+  }
+};
+
+// 上传本地对话到云端（为将来扩展准备）
+export const uploadLocalConversation = async (
+  studentId: string,
+  questionContent: string,
+  questionSubject: string,
+  answerContent?: string,
+  questionId?: string,
+  answerId?: string
+): Promise<void> => {
+  try {
+    // 注意：这个功能需要后端支持，目前只是预留接口
+    // 实际上，当前的AI问答流程已经自动将对话保存到后端了
+    console.log('本地对话已通过AI问答自动同步到云端');
+  } catch (error: any) {
+    console.error('同步本地对话失败:', error);
+    // 不抛出错误，避免影响用户体验
   }
 };
 

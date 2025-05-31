@@ -163,9 +163,9 @@
             <el-button 
               text 
               @click="refreshBackendHistory" 
+              :loading="isRefreshing"
               class="refresh-btn"
               title="同步云端历史"
-              :loading="isRefreshing"
             >
               <el-icon><Refresh /></el-icon>
             </el-button>
@@ -193,15 +193,17 @@
               v-for="conv in conversations" 
               :key="conv.id"
               class="conversation-item"
-              :class="{ 'active': currentConversationId === conv.id, 'from-backend': conv.isFromBackend }"
+              :class="{ 'active': currentConversationId === conv.id }"
               @click="selectConversation(conv.id)"
             >
-              <div class="conversation-title">{{ conv.title }}</div>
-              <div class="conversation-meta">
-                <span v-if="conv.subject" class="conversation-subject">{{ getSubjectName(conv.subject) }}</span>
-                <span v-if="conv.isFromBackend" class="backend-badge">云端</span>
-                <span class="conversation-time">{{ formatTime(conv.lastTime) }}</span>
+              <div class="conversation-header">
+                <div class="conversation-title">{{ conv.title }}</div>
+                <div class="conversation-badges">
+                  <el-tag v-if="conv.isFromBackend" size="small" type="success">云端</el-tag>
+                  <el-tag v-if="conv.subject" size="small" type="info">{{ getSubjectName(conv.subject) }}</el-tag>
+                </div>
               </div>
+              <div class="conversation-time">{{ formatTime(conv.lastTime) }}</div>
             </div>
           </div>
         </div>
@@ -254,6 +256,7 @@ const currentQuestion = ref('');
 const currentSubject = ref('math');
 const isLoading = ref(false);
 const isRefreshing = ref(false);
+const isSyncing = ref(false); // 同步状态
 const loadingProgress = ref(0);
 const loadingText = ref('AI正在思考中...');
 const sidebarCollapsed = ref(false);
@@ -314,7 +317,7 @@ const loadAndMergeBackendHistory = async () => {
       // 将后端历史对话转换为本地对话格式
       const backendConversations: Conversation[] = historyResponse.questionSet.map((qa: QA) => {
         const conversation: Conversation = {
-          id: generateId(),
+          id: `backend-${qa.questionId}`, // 使用问题ID作为唯一标识符
           title: qa.questionContent.length > 30 
             ? qa.questionContent.substring(0, 30) + '...' 
             : qa.questionContent,
@@ -330,7 +333,8 @@ const loadAndMergeBackendHistory = async () => {
           type: 'user',
           content: qa.questionContent,
           timestamp: new Date(qa.questionTime),
-          subject: qa.questionSubject
+          subject: qa.questionSubject,
+          questionId: qa.questionId // 添加问题ID
         };
         conversation.messages.push(userMessage);
         
@@ -341,7 +345,9 @@ const loadAndMergeBackendHistory = async () => {
             type: 'ai',
             content: answer.answerContent,
             timestamp: new Date(answer.answerTime),
-            subject: qa.questionSubject
+            subject: qa.questionSubject,
+            questionId: qa.questionId, // 添加问题ID
+            answerId: answer.answerId  // 添加回答ID
           };
           conversation.messages.push(aiMessage);
         });
@@ -349,11 +355,30 @@ const loadAndMergeBackendHistory = async () => {
         return conversation;
       });
       
-      // 移除之前的后端对话，添加新的后端对话到对话列表的末尾（本地对话优先显示）
-      const localConversations = conversations.value.filter(conv => !conv.isFromBackend);
-      conversations.value = [...localConversations, ...backendConversations];
+      // 智能去重：移除本地对话中已在云端的对话
+      const localConversations = conversations.value.filter(conv => {
+        if (conv.isFromBackend) return false; // 移除之前的后端对话
+        
+        // 检查本地对话是否已存在于云端
+        const hasMatchInBackend = backendConversations.some(backendConv => {
+          const localFirstMessage = conv.messages.find(m => m.type === 'user');
+          const backendFirstMessage = backendConv.messages.find(m => m.type === 'user');
+          
+          // 如果问题内容相同，认为是重复对话
+          return localFirstMessage && backendFirstMessage && 
+                 localFirstMessage.content.trim() === backendFirstMessage.content.trim();
+        });
+        
+        return !hasMatchInBackend; // 只保留云端没有的本地对话
+      });
       
-      console.log(`成功整合 ${backendConversations.length} 条后端历史对话`);
+      // 合并去重后的对话并按时间倒序排列（最新的在上面）
+      const allConversations = [...localConversations, ...backendConversations];
+      conversations.value = allConversations.sort((a, b) => 
+        new Date(b.lastTime).getTime() - new Date(a.lastTime).getTime()
+      );
+      
+      console.log(`成功整合 ${backendConversations.length} 条后端历史对话，去重后保留 ${localConversations.length} 条本地对话，总共 ${conversations.value.length} 条对话`);
     }
   } catch (error: any) {
     console.error('加载后端历史对话失败:', error);
@@ -385,6 +410,44 @@ const refreshBackendHistory = async () => {
     ElMessage.error('同步历史对话失败');
   } finally {
     isRefreshing.value = false;
+  }
+};
+
+// 实时同步功能：在成功发送消息后同步到云端
+const syncAfterMessage = async (questionContent: string, answerContent: string, questionId?: string, answerId?: string) => {
+  if (isSyncing.value) return;
+  
+  isSyncing.value = true;
+  try {
+    // 给后端更多时间保存数据
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // 保存当前对话ID，用于后续切换
+    const currentLocalConvId = currentConversationId.value;
+    
+    // 重新加载后端历史
+    await loadAndMergeBackendHistory();
+    
+    // 智能切换：如果当前本地对话已被同步到云端，切换到云端版本
+    if (questionId) {
+      const matchingBackendConv = conversations.value.find(conv => 
+        conv.isFromBackend && conv.id === `backend-${questionId}`
+      );
+      
+      if (matchingBackendConv) {
+        // 找到匹配的云端对话，切换到云端版本
+        currentConversationId.value = matchingBackendConv.id;
+        console.log('已切换到云端同步版本');
+      }
+    }
+    
+    console.log('实时同步完成');
+    
+  } catch (error) {
+    console.warn('实时同步失败，但不影响用户使用:', error);
+    // 不显示错误消息，避免干扰用户体验
+  } finally {
+    isSyncing.value = false;
   }
 };
 
@@ -421,16 +484,14 @@ const sendMessage = async () => {
     id: generateId(),
     type: 'user',
     content: currentQuestion.value,
-    timestamp: new Date(),
-    subject: currentSubject.value
+    timestamp: new Date()
   };
 
   conv.messages.push(userMessage);
   
-  // 更新对话标题和学科信息（使用问题的前20个字符）
+  // 更新对话标题（使用问题的前20个字符）
   if (conv.messages.length === 1) {
     conv.title = currentQuestion.value.substring(0, 20) + (currentQuestion.value.length > 20 ? '...' : '');
-    conv.subject = currentSubject.value;
   }
   
   conv.lastTime = new Date();
@@ -489,6 +550,16 @@ const sendMessage = async () => {
     
     ElMessage.success('AI回答已生成');
     
+    // 实时同步到云端（异步执行，不阻塞用户操作）
+    syncAfterMessage(
+      questionContent, 
+      aiResponse.answerContent,
+      aiResponse.questionId,
+      aiResponse.answerId
+    ).catch(error => {
+      console.warn('同步失败但不影响使用:', error);
+    });
+    
   } catch (error: any) {
     console.error('AI回答失败:', error);
     clearInterval(progressInterval);
@@ -514,8 +585,7 @@ const sendMessage = async () => {
       id: generateId(),
       type: 'ai',
       content: errorMessage,
-      timestamp: new Date(),
-      subject: currentSubject.value
+      timestamp: new Date()
     };
     conv.messages.push(errorMsg);
   } finally {
@@ -662,8 +732,8 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 // 生命周期
-onMounted(async () => {
-  // 尝试从localStorage恢复本地对话历史
+onMounted(() => {
+  // 尝试从localStorage恢复对话历史
   const savedConversations = localStorage.getItem('qa-conversations');
   if (savedConversations) {
     try {
@@ -695,7 +765,7 @@ onMounted(async () => {
   }
   
   // 异步加载并整合后端历史对话
-  await loadAndMergeBackendHistory();
+  loadAndMergeBackendHistory();
 });
 
 // 保存对话历史到localStorage（只保存本地对话，不保存后端对话）
@@ -849,22 +919,6 @@ watch(conversations, saveConversations, { deep: true });
   background: #fafbfc;
 }
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.refresh-btn, .collapse-btn {
-  padding: 4px;
-  color: #606266;
-  transition: color 0.2s ease;
-}
-
-.refresh-btn:hover, .collapse-btn:hover {
-  color: #409eff;
-}
-
 .sidebar-header h3 {
   margin: 0;
   font-size: 16px;
@@ -872,12 +926,19 @@ watch(conversations, saveConversations, { deep: true });
   color: #303133;
 }
 
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.refresh-btn,
 .collapse-btn {
   padding: 4px;
   min-height: auto;
   color: #606266;
 }
 
+.refresh-btn:hover,
 .collapse-btn:hover {
   color: #409eff;
 }
@@ -921,51 +982,33 @@ watch(conversations, saveConversations, { deep: true });
   border-color: #91caff;
 }
 
+.conversation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
 .conversation-title {
   font-size: 14px;
   color: #303133;
-  margin-bottom: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 500;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.conversation-badges {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .conversation-time {
   font-size: 12px;
   color: #909399;
-}
-
-.conversation-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 4px;
-  font-size: 12px;
-}
-
-.conversation-subject {
-  background: #e8f4ff;
-  color: #409eff;
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.backend-badge {
-  background: #f0f9ff;
-  color: #10b981;
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 500;
-  border: 1px solid #10b981;
-}
-
-.conversation-item.from-backend {
-  border-left: 3px solid #10b981;
-  background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
 }
 
 /* 消息区域 */
