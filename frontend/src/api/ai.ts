@@ -17,6 +17,30 @@ interface AIQuestionResponse {
   answerContent: string;    // 回答内容
 }
 
+// 历史对话响应接口 - 与后端HistoryResponse匹配
+interface HistoryResponse {
+  status: string;
+  message: string;
+  studentId: string;
+  questionNum: number;
+  questionSet: QA[];
+}
+
+interface QA {
+  questionContent: string;
+  questionSubject: string;
+  questionTime: string;     // Date 转换为字符串
+  answerNum: number;
+  answers: AnswerDetail[];
+}
+
+interface AnswerDetail {
+  answerContent: string;
+  answerType: number;       // 0-AI回答，1-教师回答
+  teacherId?: string;       // 教师ID（可能为空）
+  answerTime: string;       // Date 转换为字符串
+}
+
 // 学科映射
 const subjectMap: Record<string, number> = {
   'math': 0,
@@ -86,18 +110,47 @@ export const askAI = async (
   }
 };
 
-// 获取历史对话（如果后端支持）
-export const getConversationHistory = async (studentId: string): Promise<any[]> => {
+// 获取历史对话
+export const getConversationHistory = async (studentId: string): Promise<HistoryResponse> => {
   try {
     const response = await request.get(`/ai/history/${studentId}`);
-    return response.data || [];
-  } catch (error) {
+    console.log('获取历史对话成功:', response.data);
+    return response.data;
+  } catch (error: any) {
     console.error('获取历史对话失败:', error);
-    return [];
+    
+    // 如果是404错误，说明还没有历史对话，返回空的HistoryResponse
+    if (error.response?.status === 404) {
+      return {
+        status: 'success',
+        message: '暂无历史对话',
+        studentId: studentId,
+        questionNum: 0,
+        questionSet: []
+      };
+    }
+    
+    // 其他错误也返回空的HistoryResponse，不影响用户使用
+    return {
+      status: 'error',
+      message: error.message || '获取历史对话失败',
+      studentId: studentId,
+      questionNum: 0,
+      questionSet: []
+    };
   }
 };
 
 export default {
   askAI,
   getConversationHistory
+};
+
+// 导出类型定义
+export type { 
+  AIQuestionRequest, 
+  AIQuestionResponse, 
+  HistoryResponse, 
+  QA, 
+  AnswerDetail 
 };
