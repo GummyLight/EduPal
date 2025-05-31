@@ -1,10 +1,11 @@
-package com.example.edupal.service;
+package com.example.edupal.service.Impl;
 
 import cn.hutool.core.util.RandomUtil;
 import com.example.edupal.model.User;
 import com.example.edupal.model.Validation;
 import com.example.edupal.repository.UserRepository;
 import com.example.edupal.repository.ValidationRepository;
+import com.example.edupal.service.AuthService;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
