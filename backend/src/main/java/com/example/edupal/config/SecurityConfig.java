@@ -29,6 +29,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll() // 允许对/auth路径下的所有请求无需认证
                         .requestMatchers("/ai/**").permitAll() // 允许对/ai路径下的所有请求无需认证
                         .requestMatchers("/file/**").permitAll() // 允许对/file路径下的所有请求无需认证
+                        .requestMatchers("/api/quiz/**").permitAll() // ✅ 加这一行，放行 quiz 模块接口
+
                         .anyRequest().authenticated() // 其他所有请求都需要认证
                 );
         return http.build(); // 构建并返回HTTP安全配置对象
