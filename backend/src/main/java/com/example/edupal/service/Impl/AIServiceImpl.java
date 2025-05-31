@@ -1,12 +1,14 @@
-package com.example.edupal.service;
+package com.example.edupal.service.Impl;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
+import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.QuestionRequest;
 import com.example.edupal.dto.response.AnswerResponse;
 import com.example.edupal.dto.response.HistoryResponse;
 import com.example.edupal.model.User;
 import com.example.edupal.repository.UserRepository;
+import com.example.edupal.service.AIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.edupal.model.Question;
@@ -173,5 +175,26 @@ public class AIServiceImpl implements AIService {
         return new HistoryResponse("success", "问答历史获取成功", studentId, questionSet);
     }
 
+    @Override
+    public Result deleteHistory(String userId, String questionId){
+        User user = userRepository.findByUserId(userId);
+        if (user == null) {
+            return new Result(false, "用户不存在");
+        }
+
+        Question question = questionRepository.findByQuestionId(questionId);
+        if (question == null) {
+            return new Result(false, "问题不存在");
+        }
+
+        // 删除问题
+        questionRepository.delete(question);
+        // 删除相关的答案
+        List<Answer> answers = answerRepository.findAnswersByQuestionId(questionId);
+        if (answers != null && !answers.isEmpty()) {
+            answerRepository.deleteAll(answers);
+        }
+        return new Result(true, "问题删除成功");
+    }
 }
 

@@ -1,4 +1,4 @@
-package com.example.edupal.service;
+package com.example.edupal.service.Impl;
 
 import com.example.edupal.dto.request.PostForm;
 import com.example.edupal.dto.request.ReplyForm;
@@ -6,6 +6,7 @@ import com.example.edupal.dto.response.PostDTO;
 import com.example.edupal.dto.response.ReplyDTO;
 import com.example.edupal.model.*;
 import com.example.edupal.repository.*;
+import com.example.edupal.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

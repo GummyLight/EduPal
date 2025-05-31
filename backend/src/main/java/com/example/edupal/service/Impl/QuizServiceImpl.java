@@ -1,4 +1,4 @@
-package com.example.edupal.service;
+package com.example.edupal.service.Impl;
 
 import com.example.edupal.dto.response.QuizResponse;
 import com.example.edupal.model.Quiz;
