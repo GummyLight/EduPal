@@ -1,5 +1,5 @@
 package com.example.edupal.controller;
-
+import com.example.edupal.dto.response.ResourceResponse;
 import com.example.edupal.common.ApiResponse;
 import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.ResourceRequest;
