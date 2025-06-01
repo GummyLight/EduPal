@@ -1,4 +1,5 @@
 package com.example.edupal.controller;
+
 import com.example.edupal.dto.response.ResourceResponse;
 import com.example.edupal.common.ApiResponse;
 import com.example.edupal.common.Result;
@@ -11,16 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-
-
-
-
-
 @RequestMapping("/resource")
-
 @CrossOrigin
 public class ResourceController {
 
@@ -40,6 +36,9 @@ public class ResourceController {
         resource.setTeacher_id(request.getTeacher_id());
         resource.setResource_content(request.getResource_content());
         resource.setClass_id(request.getClass_id());
+        resource.setName(request.getName());
+        resource.setUpload_time(request.getUpload_time() != null ? request.getUpload_time() : LocalDateTime.now());
+        resource.setDescription(request.getDescription());
 
         Result result = resourceService.saveResource(resource);
 
@@ -68,7 +67,7 @@ public class ResourceController {
     }
 
     // ✅ 3. 删除资源
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteResource(@PathVariable("id") String resourceId) {
         try {
             resourceService.deleteResource(resourceId);
