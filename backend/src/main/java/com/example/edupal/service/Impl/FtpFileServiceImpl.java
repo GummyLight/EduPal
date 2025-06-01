@@ -40,7 +40,7 @@ public class FtpFileServiceImpl implements FileService {
 
     @Override
     public Result download(String dest, String fileName, File outFile) throws IOException {
-        boolean success = ftpUtil.downloadFile(uploadDir + fileName, outFile);
+        boolean success = ftpUtil.downloadFile(uploadDir +dest+ fileName, outFile);
         if (success) {
             return new Result(true, "下载成功: " + fileName);
         } else {
