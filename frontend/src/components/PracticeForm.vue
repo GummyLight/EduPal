@@ -3,7 +3,7 @@
     <el-header class="navbar">
       <div class="title">智慧教学系统</div>
       <div class="user-info">
-        <span>您好，{{ username }} {{ userType === 'teacher' ? '老师' : '同学' }} </span>
+        <span>您好，{{ username }} {{ userType === 2 ? '老师' : '同学' }} </span>
         <el-button type="danger" @click="logout">退出登录</el-button>
       </div>
     </el-header>
@@ -33,7 +33,7 @@
               <el-option label="数学" value="math" />
               <el-option label="物理" value="physics">物理</el-option> <el-option label="化学" value="chemistry">化学</el-option> </el-select>
           </el-form-item>
-          <el-form-item v-if="userType === 'teacher'" label="选择班级">
+          <el-form-item v-if="userType === 2" label="选择班级">
             <el-select v-model="filters.classId" placeholder="请选择班级" clearable @change="handleSelectClass">
               <el-option label="高一(1)班" value="class1" />
               <el-option label="高一(2)班" value="class2" />
@@ -41,24 +41,24 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="handleSearch">
-              {{ userType === 'teacher' ? '搜索试卷' : '搜索任务' }}
+              {{ userType === 2 ? '搜索试卷' : '搜索任务' }}
             </el-button>
           </el-form-item>
         </el-form>
       </el-card>
 
       <div class="actions">
-        <template v-if="userType === 'teacher'">
+        <template v-if="userType === 2">
           <el-button type="success" icon="el-icon-plus" @click="handleAdd">添加练习</el-button>
           <el-button type="primary" icon="el-icon-pie-chart" @click="handleViewAnalytics">查看学情分析</el-button>
         </template>
 
-        <template v-if="userType === 'student'">
+        <template v-if="userType === 1">
           <el-button type="primary" icon="el-icon-data-analysis" @click="handleViewProgress">查看学习进度</el-button>
         </template>
 
         <el-button type="warning" icon="el-icon-download" @click="handleExport">
-          {{ userType === 'teacher' ? '导出练习完成情况' : '导出我的练习情况' }}
+          {{ userType === 2 ? '导出练习完成情况' : '导出我的练习情况' }}
         </el-button>
       </div>
 
@@ -72,27 +72,27 @@
           <el-table-column prop="难度" label="难度等级" />
           <el-table-column prop="知识点" label="关联知识点" />
 
-          <el-table-column v-if="userType === 'teacher'" prop="已提交人数" label="已提交人数" />
-          <el-table-column v-if="userType === 'teacher'" prop="未提交人数" label="未提交人数" />
-          <el-table-column v-if="userType === 'teacher'" prop="已批改人数" label="已批改人数" />
-          <el-table-column v-if="userType === 'teacher'" prop="发布时间" label="发布日期" />
-          <el-table-column v-if="userType === 'teacher'" prop="截止时间" label="截止日期" />
-          <el-table-column v-if="userType === 'teacher'" prop="发布人" label="发布教师" />
+          <el-table-column v-if="userType === 2" prop="已提交人数" label="已提交人数" />
+          <el-table-column v-if="userType === 2" prop="未提交人数" label="未提交人数" />
+          <el-table-column v-if="userType === 2" prop="已批改人数" label="已批改人数" />
+          <el-table-column v-if="userType === 2" prop="发布时间" label="发布日期" />
+          <el-table-column v-if="userType === 2" prop="截止时间" label="截止日期" />
+          <el-table-column v-if="userType === 2" prop="发布人" label="发布教师" />
 
-          <el-table-column v-if="userType === 'student'" prop="发布时间" label="发布日期" />
-          <el-table-column v-if="userType === 'student'" prop="截止时间" label="截止日期" />
-          <el-table-column v-if="userType === 'student'" prop="我的状态" label="我的状态" />
-          <el-table-column v-if="userType === 'student'" prop="我的分数" label="我的分数" />
+          <el-table-column v-if="userType === 1" prop="发布时间" label="发布日期" />
+          <el-table-column v-if="userType === 1" prop="截止时间" label="截止日期" />
+          <el-table-column v-if="userType === 1" prop="我的状态" label="我的状态" />
+          <el-table-column v-if="userType === 1" prop="我的分数" label="我的分数" />
 
-          <el-table-column label="操作" width="200" v-if="userType === 'teacher' || userType === 'student'">
+          <el-table-column label="操作" width="200" v-if="userType === 2 || userType === 1">
             <template #default="scope">
-              <div v-if="userType === 'teacher'" class="operation-buttons-horizontal">
-                <el-button type="text" size="small" @click="handleViewSubmissions(scope.row)">查看提交</el-button>
-                <el-button type="text" size="small" @click="handleEdit(scope.row)">编辑</el-button>
-                <el-button type="text" size="small" danger @click="handleDelete(scope.row)">删除</el-button>
+              <div v-if="userType === 2" class="operation-buttons-horizontal">
+                <el-button link size="small" @click="handleViewSubmissions(scope.row)">查看提交</el-button>
+                <el-button link size="small" @click="handleEdit(scope.row)">编辑</el-button>
+                <el-button link size="small" danger @click="handleDelete(scope.row)">删除</el-button>
               </div>
-              <div v-if="userType === 'student'" class="operation-buttons-horizontal">
-                <el-button type="text" size="small" @click="handleGoToPracticeDetail(scope.row)">
+              <div v-if="userType === 1" class="operation-buttons-horizontal">
+                <el-button link size="small" @click="handleGoToPracticeDetail(scope.row)">
                   {{ scope.row.我的状态 === '已提交' ? '查看详情' : '开始练习' }}
                 </el-button>
               </div>
@@ -113,7 +113,7 @@ const router = useRouter();
 
 const props = defineProps({
   usertype: {
-    type: String as () => 'teacher' | 'student', // 明确类型
+    type: Number, // 明确类型
     required: true,
   },
   username: { // 确保也接收 username，因为您在模板中也使用了它
@@ -221,7 +221,7 @@ function handleAdd() {
 }
 
 function handleExport() {
-  if (userType.value === 'teacher') {
+  if (userType.value === 2) {
     console.log('教师操作: 导出练习完成情况', filteredData.value);
     ElMessage.success('正在导出练习完成情况...');
   } else {

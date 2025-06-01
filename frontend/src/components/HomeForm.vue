@@ -1,24 +1,3 @@
-<!-- 本页面需要后端提供以下数据（括号中为数据来源表名）：用户名（学生）、已完成讲义数（学情信息）、已完成习题数（学情信息）、学情评级（学情信息）、答疑通过率（提问表）、待完成习题（习题）、提问通知（提问） -->
-
-<!-- 后端返回数据应该是这个样子的
-{
-  "username": "张三同学",
-  "finishedLectures": 10,
-  "finishedExercises": 20,
-  "gradeLevel": "A+",
-  "answerRate": "90%",
-  "todayTasks": [
-    "完成《线性代数》第三章练习题（10题）",
-    "观看《概率论》第五节视频（20分钟）"
-  ],
-  "notifications": [
-    "2025-05-23：题库已更新，新增 300 题",
-    "2025-05-22：新增“社区交流”模块，欢迎体验"
-  ]
-}
--->
-
-<!-- HomeForm.vue -->
 <template>
   <div class="home-form">
     <el-card class="welcome-card" shadow="hover">
@@ -28,16 +7,16 @@
 
     <el-row :gutter="20" class="overview">
       <el-col :span="6">
-        <el-card shadow="hover"><strong>📚 已完成讲义：</strong> {{ Finished_lectures }} 篇</el-card>
+        <el-card shadow="hover"><strong>📚 已完成讲义：</strong> {{ finishedLectures }} 篇</el-card>
       </el-col>
       <el-col :span="6">
-        <el-card shadow="hover"><strong>📝 已完成习题数：</strong> {{ Finished_exercises }} 题</el-card>
+        <el-card shadow="hover"><strong>📝 已完成习题数：</strong> {{ finishedExercises }} 题</el-card>
       </el-col>
       <el-col :span="6">
-        <el-card shadow="hover"><strong>🕒 学情评级：</strong> {{ Grade_level }}</el-card>
+        <el-card shadow="hover"><strong>🕒 学情评级：</strong> {{ gradeLevel }}</el-card>
       </el-col>
       <el-col :span="6">
-        <el-card shadow="hover"><strong>🎯 答疑通过率：</strong> {{ Answer_rate }}</el-card>
+        <el-card shadow="hover"><strong>🎯 提问数量：</strong> {{ formattedAnswerRate }} 个</el-card>
       </el-col>
     </el-row>
 
@@ -46,16 +25,18 @@
         <el-card shadow="always" class="task-card">
           <h3> 待完成习题</h3>
           <ul>
-            <li v-for="task in todayTasks" :key="task">{{ task }}</li>
+            <li v-for="(task, index) in todayTasks" :key="index">{{ task }}</li>
           </ul>
+          <el-empty v-if="todayTasks.length === 0" description="暂无待完成习题"></el-empty>
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card shadow="always" class="notice-card">
           <h3>📣 提问通知 </h3>
           <ul>
-            <li v-for="notice in notifications" :key="notice">{{ notice }}</li>
+            <li v-for="(notice, index) in notifications" :key="index">{{ notice }}</li>
           </ul>
+          <el-empty v-if="notifications.length === 0" description="暂无通知"></el-empty>
         </el-card>
       </el-col>
     </el-row>
@@ -63,10 +44,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps } from 'vue';
+import { ref, defineProps, onMounted, watch, computed } from 'vue';
+import { HomeService, HomeData } from '../api/home';
 
 const props = defineProps({
   username: {
+    type: String,
+    required: true
+  },
+  usertype: {
+    type: Number as () => 0 | 1 | 2, // 确保这里也是 0 | 1 | 2
+    required: true
+  },
+  userid: {
     type: String,
     required: true
   }
@@ -78,20 +68,55 @@ const today = new Date().toLocaleDateString('zh-CN', {
   day: 'numeric',
 });
 
-const Finished_lectures = ref(10);
-const Finished_exercises = ref(20);
-const Grade_level = ref('A+');
-const Answer_rate = ref('90%');
+const finishedLectures = ref(0);
+const finishedExercises = ref(0);
+const gradeLevel = ref('');
+const rawAnswerRate = ref(0); // 存储原始数字，因为 HomeData 中是 number
+const todayTasks = ref<string[]>([]);
+const notifications = ref<string[]>([]);
 
-const todayTasks = ref<string[]>([
-  "完成《线性代数》第三章练习题（10题）",
-  "观看《概率论》第五节视频（20分钟）"
-]);
+// 使用 computed 属性来格式化 answerRate 以便显示
+const formattedAnswerRate = computed(() => {
+  return `${rawAnswerRate.value}`;
+});
 
-const notifications = ref<string[]>([
-  "2025-05-23：题库已更新，新增 300 题",
-  "2025-05-22：新增“社区交流”模块，欢迎体验"
-]);
+// **关键改动：将 loadHomeData 函数移动到 watch 和 onMounted 之前**
+const loadHomeData = async (userId: string, userType: 0 | 1 | 2) => {
+  try {
+    const data: HomeData = await HomeService.getHomeData(userId, userType);
+
+    finishedLectures.value = data.finishedLectures;
+    finishedExercises.value = data.finishedExercises;
+    gradeLevel.value = data.gradeLevel;
+    rawAnswerRate.value = data.answerRate;
+    todayTasks.value = data.todayTasks;
+    notifications.value = data.notifications;
+
+  } catch (error) {
+    console.error('HomeForm.vue - 加载首页数据失败:', error);
+    finishedLectures.value = 0;
+    finishedExercises.value = 0;
+    gradeLevel.value = 'N/A';
+    rawAnswerRate.value = 0;
+    todayTasks.value = ['加载失败，请刷新'];
+    notifications.value = ['加载失败，请刷新'];
+  }
+};
+
+
+// 监听 props.userid 和 props.usertype 的变化，确保两者都有值才加载数据
+watch(() => [props.userid, props.usertype], ([newUserId, newUsertype]) => {
+  if (newUserId && (newUsertype === 0 || newUsertype === 1 || newUsertype === 2)) {
+    loadHomeData(newUserId as string, newUsertype);
+  }
+}, { immediate: true });
+
+// 在组件挂载时也尝试加载一次
+onMounted(() => {
+  if (props.userid && (props.usertype === 0 || props.usertype === 1 || props.usertype === 2)) {
+    loadHomeData(props.userid, props.usertype);
+  }
+});
 </script>
 
 <style scoped>

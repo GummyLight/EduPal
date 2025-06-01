@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, computed, ref } from 'vue';
+import { reactive, computed, ref ,watch  } from 'vue';
 import { ElMessage } from 'element-plus';
 import ex from '../api/auth';
 import SIdentify from './identify/identify.vue'; // 引入图片验证码组件
@@ -246,6 +246,10 @@ const handleSubmit = async () => {
     if (response.code==200) {
       ElMessage.success(response.message);
       window.location.href = '/home';
+
+      localStorage.setItem('user_id', form.userId);
+      localStorage.setItem('user_type', response.data?.userType);
+
     } else {
       ElMessage.error(response.message);
       refreshCode(); // 登录失败时刷新验证码

@@ -3,7 +3,7 @@
     <el-header class="navbar" v-if="showTopBar">
       <div class="title">智慧教学系统</div>
       <div class="user-info">
-        <span>您好，{{ username }} {{ userType === 'teacher' ? '教师' : '同学' }}</span>
+        <span>您好，{{ username }} {{ userType === 2 ? '教师' : '同学' }}</span>
         <el-button type="danger" @click="logout">退出登录</el-button>
       </div>
     </el-header>
@@ -47,7 +47,7 @@
         </el-form>
       </el-card>
 
-      <div class="actions" v-if="userType === 'teacher'">
+      <div class="actions" v-if="userType === 2">
         <el-button type="success" icon="el-icon-upload" @click="handleUpload">上传资料</el-button>
       </div>
 
@@ -72,11 +72,11 @@
           </el-table-column>
           <el-table-column label="操作" width="180">
             <template #default="{ row }">
-              <div v-if="userType === 'student'" class="operation-buttons">
+              <div v-if="userType === 1" class="operation-buttons">
                 <el-button type="primary" text size="small" @click="handlePreview(row)">预览</el-button>
                 <el-button type="success" text size="small" @click="handleDownload(row)">下载</el-button>
               </div>
-              <div v-else-if="userType === 'teacher'" class="operation-buttons">
+              <div v-else-if="userType === 2" class="operation-buttons">
                 <el-button type="primary" text size="small" @click="handlePreview(row)">预览</el-button>
                 <el-button type="success" text size="small" @click="handleDownload(row)">下载</el-button>
                 <el-button type="danger" text size="small" @click="handleDelete(row)">删除</el-button>
@@ -97,7 +97,7 @@ import { useRouter } from 'vue-router'; // 引入 useRouter
 const router = useRouter(); // 初始化 router 实例
 const props = defineProps({
   usertype: {
-    type: String as () => 'teacher' | 'student', // 明确类型
+    type: Number, // 明确类型
     required: true,
   },
   username: { // 确保也接收 username，因为您在模板中也使用了它
@@ -267,7 +267,7 @@ const handleBatchDownload = () => {
 };
 
 const handlePreview = (row: any) => {
-  console.log(`${userType.value === 'teacher' ? '教师操作' : '学生操作'}: 预览资料:`, row.name, row.filePath);
+  console.log(`${userType.value === 2 ? '教师操作' : '学生操作'}: 预览资料:`, row.name, row.filePath);
   if (row.filePath) {
     window.open(row.filePath, '_blank');
   } else {
@@ -276,7 +276,7 @@ const handlePreview = (row: any) => {
 };
 
 const handleDownload = (row: any) => {
-  console.log(`${userType.value === 'teacher' ? '教师操作' : '学生操作'}: 下载资料:`, row.name, row.filePath);
+  console.log(`${userType.value === 2 ? '教师操作' : '学生操作'}: 下载资料:`, row.name, row.filePath);
   if (row.filePath) {
     const link = document.createElement('a');
     link.href = row.filePath;

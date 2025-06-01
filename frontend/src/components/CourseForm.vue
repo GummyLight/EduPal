@@ -7,7 +7,7 @@
           <el-option label="班级 1" value="class1" />
           <el-option label="班级 2" value="class2" />
         </el-select>
-        <span>您好，{{ username }} {{ userType === 'teacher' ? '教师' : '同学' }}</span> <el-button type="danger" size="small" @click="logout">退出登录</el-button>
+        <span>您好，{{ username }} {{ userType === 2 ? '教师' : '同学' }}</span> <el-button type="danger" size="small" @click="logout">退出登录</el-button>
       </div>
     </el-header>
 
@@ -76,7 +76,7 @@
             <el-button :disabled="!hasSelection" @click="handlePreviewSelected">预览</el-button>
             <el-button type="success" :disabled="!hasSelection" @click="handleDownloadSelected">下载</el-button>
           </div>
-          <div class="right-actions" v-if="userType === 'teacher'">
+          <div class="right-actions" v-if="userType === 2">
             <el-select v-model="generateType" placeholder="生成文件类型" style="width: 160px;" clearable>
               <el-option label="文档" value="doc" />
               <el-option label="视频" value="video" />
@@ -98,7 +98,7 @@ import { ElMessage } from 'element-plus';
 //接收props
 const props = defineProps({
   usertype: {
-    type: String as () => 'teacher' | 'student', // 明确类型
+    type: Number, // 明确类型
     required: true,
   },
   username: { // 确保也接收 username，因为您在模板中也使用了它

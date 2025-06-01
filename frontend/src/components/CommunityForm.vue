@@ -24,7 +24,7 @@
             <el-button v-if="post.attachedFile" type="success" text size="small">
               <el-link :href="post.attachedFile.url" target="_blank">查看附件</el-link>
             </el-button>
-            <el-button v-if="userType === 'teacher' || post.authorId === userId" type="danger" text size="small" @click="deletePost(post)">删除</el-button>
+            <el-button v-if="userType === 2 || post.authorId === userId" type="danger" text size="small" @click="deletePost(post)">删除</el-button>
           </div>
         </el-card>
         <el-empty v-if="posts.length === 0" description="暂无帖子"></el-empty>
@@ -119,7 +119,7 @@
             <div v-if="reply.attachedFile" class="attached-file">
               附件: <el-link type="primary" :href="reply.attachedFile.url" target="_blank">{{ reply.attachedFile.name }}</el-link>
             </div>
-            <el-button v-if="userType === 'teacher' || reply.authorId === userId" type="danger" text size="small" @click="deleteReply(detailPost, reply)">删除</el-button>
+            <el-button v-if="userType === 2 || reply.authorId === userId" type="danger" text size="small" @click="deleteReply(detailPost, reply)">删除</el-button>
           </div>
           <el-empty v-if="detailPost.replies.length === 0" description="暂无回复"></el-empty>
         </div>
@@ -171,7 +171,7 @@ import { CommunityService, Post, Reply, PostForm, ReplyForm, AttachedFile } from
 
 const props = defineProps({
   usertype: {
-    type: String as () => 'teacher' | 'student',
+    type: Number ,
     required: true,
   },
   username: {
@@ -187,6 +187,9 @@ const props = defineProps({
 const userType = computed(() => props.usertype);
 const username = computed(() => props.username);
 const userId = computed(() => props.userid);
+//控制台输出userType,username,userId
+console.log('userType:', userType.value, 'username:', username.value, 'userId:', userId.value);
+
 
 const posts = ref<Post[]>([]);
 const collectedPosts = computed(() => posts.value.filter(post => post.isCollected));
@@ -470,6 +473,13 @@ const handleExceed = () => {
   flex: 1;
 }
 
+.post-list-card, .collection-card {
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
+  width: 100%; /* <-- 确保这里是 100% */
+  box-sizing: border-box;
+}
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -479,11 +489,7 @@ const handleExceed = () => {
   color: #303133;
 }
 
-.post-list-card, .collection-card {
-  background-color: #fff;
-  border-radius: 4px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
-}
+
 
 .post-list {
   padding-top: 10px;
