@@ -28,6 +28,9 @@ public class LearningProgress {
     @Column(name = "unfinished_quiz", nullable = false)
     private Integer unfinishedQuiz;
 
-    @Column(name = "grade")
-    private Integer grade;
+    @Column(name = "grade",length = 4)
+    private String grade;
+
+    @Column(name="student_id", length = 10, nullable = false)
+    private String studentId;
 }

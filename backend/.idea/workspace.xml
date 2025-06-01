@@ -4,20 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(ai/delete):修复了先删除问题对象可能会导致的空指针问题">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AdminController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/TeacherAnswer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/StudentRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/TeacherAnswerRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/TeacherRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(ai/teacherAnswer):新增教师回答问题功能">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/HomeController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/HomeStudentResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/LearningProgressRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/HomeService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/Student.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/Student.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/Teacher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/Teacher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/LearningProgress.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/LearningProgress.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/model/LearningProgress.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/model/LearningProgress.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +80,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.EduPalApplication.executor": "Run",
+    "Spring Boot.EduPalApplication.executor": "Debug",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "E:/01-08 大三春/01 软件工程 刘光迟/临时测试/EduPal-main (7)/EduPal-main/backend",
@@ -217,7 +214,7 @@
       <workItem from="1748650200423" duration="12606000" />
       <workItem from="1748664375756" duration="173000" />
       <workItem from="1748670340519" duration="8128000" />
-      <workItem from="1748704535022" duration="7117000" />
+      <workItem from="1748704535022" duration="19076000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />
@@ -467,7 +464,55 @@
       <option name="project" value="LOCAL" />
       <updated>1748680845387</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="feat(ai/transTeacher):增加了问题转交的功能">
+      <option name="closed" value="true" />
+      <created>1748744618046</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1748744618046</updated>
+    </task>
+    <task id="LOCAL-00033" summary="fix(ai/transTeacher):修改了teacher_answer表的变量名格式">
+      <option name="closed" value="true" />
+      <created>1748746349016</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1748746349016</updated>
+    </task>
+    <task id="LOCAL-00034" summary="fix(ai/transTeacher):修复了报错信息与成功信息格式不匹配的问题">
+      <option name="closed" value="true" />
+      <created>1748746453614</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1748746453614</updated>
+    </task>
+    <task id="LOCAL-00035" summary="feat(ai/teacherView):增加了教师查看学生问题转交情况的功能">
+      <option name="closed" value="true" />
+      <created>1748754973854</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1748754973854</updated>
+    </task>
+    <task id="LOCAL-00036" summary="fix(url):修复了资源和作业模块的url错误">
+      <option name="closed" value="true" />
+      <created>1748755147814</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1748755147814</updated>
+    </task>
+    <task id="LOCAL-00037" summary="feat(ai/teacherAnswer):新增教师回答问题功能">
+      <option name="closed" value="true" />
+      <created>1748755864273</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1748755864273</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -500,12 +545,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="feat(db):将数据库部署在服务器上，更新数据库地址、用户名、密码等信息。" />
-    <MESSAGE value="feat:优化了response的格式，修改了登录的response接口，数据库增加了User类里面的user_name" />
-    <MESSAGE value="feat:加了一条惊天地泣鬼神的注释，增强了鼠鼠对json的理解" />
-    <MESSAGE value="feat(AI):接入讯飞星火大模型，创建AIController，AIService等模块。" />
-    <MESSAGE value="feat(auth):修改登录逻辑，将手机号改为邮箱，便于完成忘记密码的验证操作。" />
-    <MESSAGE value="feat(AI):完善学生向AI提问的response和request，以及Repository" />
     <MESSAGE value="feat(auth):前后端统一了接口内容" />
     <MESSAGE value="fix(auth):修复了邮箱登录报错的错误，修复了前端登录成功不能跳转的问题" />
     <MESSAGE value="fix(auth):增加了忘记密码功能：发送验证码，验证验证码" />
@@ -525,19 +564,25 @@
     <MESSAGE value="feat(file):给下载文件的端口增加了fileId键，用于上传下载的重命名" />
     <MESSAGE value="feat(file):给预览文件的端口增加了fileId键，用于上传下载的重命名" />
     <MESSAGE value="fix(ai/delete):修复了先删除问题对象可能会导致的空指针问题" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(ai/delete):修复了先删除问题对象可能会导致的空指针问题" />
+    <MESSAGE value="feat(ai/transTeacher):增加了问题转交的功能" />
+    <MESSAGE value="fix(ai/transTeacher):修改了teacher_answer表的变量名格式" />
+    <MESSAGE value="fix(ai/transTeacher):修复了报错信息与成功信息格式不匹配的问题" />
+    <MESSAGE value="feat(ai/teacherView):增加了教师查看学生问题转交情况的功能" />
+    <MESSAGE value="fix(url):修复了资源和作业模块的url错误" />
+    <MESSAGE value="feat(ai/teacherAnswer):新增教师回答问题功能" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(ai/teacherAnswer):新增教师回答问题功能" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java</url>
-          <line>29</line>
+          <line>30</line>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java</url>
-          <line>25</line>
+          <line>26</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -547,82 +592,82 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>112</line>
+          <line>113</line>
           <option name="timeStamp" value="40" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>107</line>
+          <line>108</line>
           <option name="timeStamp" value="41" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>81</line>
+          <line>82</line>
           <option name="timeStamp" value="42" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>82</line>
+          <line>83</line>
           <option name="timeStamp" value="43" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>86</line>
+          <line>87</line>
           <option name="timeStamp" value="44" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>94</line>
+          <line>95</line>
           <option name="timeStamp" value="45" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>106</line>
+          <line>107</line>
           <option name="timeStamp" value="46" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>95</line>
+          <line>96</line>
           <option name="timeStamp" value="47" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>96</line>
+          <line>97</line>
           <option name="timeStamp" value="48" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>98</line>
+          <line>99</line>
           <option name="timeStamp" value="51" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>100</line>
+          <line>101</line>
           <option name="timeStamp" value="52" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>101</line>
+          <line>102</line>
           <option name="timeStamp" value="53" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>99</line>
+          <line>100</line>
           <option name="timeStamp" value="54" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>108</line>
+          <line>109</line>
           <option name="timeStamp" value="55" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>109</line>
+          <line>110</line>
           <option name="timeStamp" value="61" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>110</line>
+          <line>111</line>
           <option name="timeStamp" value="62" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -632,107 +677,107 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>74</line>
+          <line>75</line>
           <option name="timeStamp" value="64" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>78</line>
+          <line>79</line>
           <option name="timeStamp" value="65" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java</url>
-          <line>27</line>
+          <line>28</line>
           <option name="timeStamp" value="66" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>79</line>
+          <line>80</line>
           <option name="timeStamp" value="67" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>67</line>
+          <line>68</line>
           <option name="timeStamp" value="68" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>65</line>
+          <line>66</line>
           <option name="timeStamp" value="69" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>63</line>
+          <line>64</line>
           <option name="timeStamp" value="70" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>61</line>
+          <line>62</line>
           <option name="timeStamp" value="71" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>60</line>
+          <line>61</line>
           <option name="timeStamp" value="72" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>59</line>
+          <line>60</line>
           <option name="timeStamp" value="73" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>62</line>
+          <line>63</line>
           <option name="timeStamp" value="74" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>43</line>
+          <line>44</line>
           <option name="timeStamp" value="80" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>50</line>
+          <line>51</line>
           <option name="timeStamp" value="81" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>53</line>
+          <line>54</line>
           <option name="timeStamp" value="82" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>52</line>
+          <line>53</line>
           <option name="timeStamp" value="83" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>45</line>
+          <line>46</line>
           <option name="timeStamp" value="84" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>44</line>
+          <line>45</line>
           <option name="timeStamp" value="85" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>138</line>
+          <line>139</line>
           <option name="timeStamp" value="88" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>140</line>
+          <line>141</line>
           <option name="timeStamp" value="89" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>141</line>
+          <line>142</line>
           <option name="timeStamp" value="90" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>142</line>
+          <line>143</line>
           <option name="timeStamp" value="91" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -1062,7 +1107,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
-          <line>174</line>
+          <line>175</line>
           <option name="timeStamp" value="281" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -1080,9 +1125,29 @@
           <line>73</line>
           <option name="timeStamp" value="284" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
+          <line>243</line>
+          <option name="timeStamp" value="285" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
+          <line>245</line>
+          <option name="timeStamp" value="286" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java</url>
+          <line>248</line>
+          <option name="timeStamp" value="287" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java</url>
+          <line>71</line>
+          <option name="timeStamp" value="288" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java</url>
-          <line>9</line>
+          <line>10</line>
           <properties class="com.example.edupal.service.AIService" method="askQuestion">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1100,7 +1165,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java</url>
-          <line>11</line>
+          <line>12</line>
           <properties class="com.example.edupal.service.AIService" method="getHistory">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
