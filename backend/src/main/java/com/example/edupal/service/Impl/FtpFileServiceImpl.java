@@ -27,10 +27,10 @@ public class FtpFileServiceImpl implements FileService {
     private String uploadDir;
 
     @Override
-    public Result upload(String dest, String name, MultipartFile file) throws IOException {
+    public Result upload(String dest, String toPath,String name, MultipartFile file) throws IOException {
         File uploadFile = new File(dest, file.getOriginalFilename());
         file.transferTo(uploadFile);
-        boolean success = ftpUtil.uploadFile(uploadDir + name, uploadFile);
+        boolean success = ftpUtil.uploadFile(uploadDir +toPath+ name, uploadFile);
         if (success) {
             return new Result(true, "上传成功: " + name);
         } else {

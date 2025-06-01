@@ -150,7 +150,7 @@ public class PostServiceImpl implements PostService {
         try {
             String fileName = file.getOriginalFilename();
             String dest = "posts/" + uploaderId + "/";
-            Result uploadResult = fileService.upload(dest, fileName, file);
+            Result uploadResult = fileService.upload(dest, "",fileName, file); //lcj：这个方法大概率废了
 
             if (!uploadResult.isSuccess()) {
                 throw new RuntimeException("File upload failed: " + uploadResult.getMessage());

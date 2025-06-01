@@ -4,17 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(ai/teacherAnswer):新增教师回答问题功能">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/HomeController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/HomeStudentResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/LearningProgressRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/HomeService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(ai/teacherView):补充了返回questionid">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/LearningProgress.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/LearningProgress.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/model/LearningProgress.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/model/LearningProgress.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/EduPalApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/EduPalApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/EduPalApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/EduPalApplication.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +74,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.EduPalApplication.executor": "Debug",
+    "Spring Boot.EduPalApplication.executor": "Run",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "E:/01-08 大三春/01 软件工程 刘光迟/临时测试/EduPal-main (7)/EduPal-main/backend",
@@ -214,7 +208,7 @@
       <workItem from="1748650200423" duration="12606000" />
       <workItem from="1748664375756" duration="173000" />
       <workItem from="1748670340519" duration="8128000" />
-      <workItem from="1748704535022" duration="19076000" />
+      <workItem from="1748704535022" duration="27054000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />
@@ -512,7 +506,31 @@
       <option name="project" value="LOCAL" />
       <updated>1748755864273</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="feat(home/student):新增学生首页显示功能">
+      <option name="closed" value="true" />
+      <created>1748759702278</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1748759702278</updated>
+    </task>
+    <task id="LOCAL-00039" summary="fix(ai/teacherView):修改请求类型为GET">
+      <option name="closed" value="true" />
+      <created>1748762437969</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1748762437969</updated>
+    </task>
+    <task id="LOCAL-00040" summary="fix(ai/teacherView):补充了返回questionid">
+      <option name="closed" value="true" />
+      <created>1748767080603</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1748767080603</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -545,9 +563,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="feat(auth):前后端统一了接口内容" />
-    <MESSAGE value="fix(auth):修复了邮箱登录报错的错误，修复了前端登录成功不能跳转的问题" />
-    <MESSAGE value="fix(auth):增加了忘记密码功能：发送验证码，验证验证码" />
     <MESSAGE value="fix(auth):统一了前后端忘记密码的router" />
     <MESSAGE value="fix(model):增加了 LearningProgress和Quiz的model和数据库的连接" />
     <MESSAGE value="fix(auth):修复了重置密码result始终为false的问题" />
@@ -570,7 +585,10 @@
     <MESSAGE value="feat(ai/teacherView):增加了教师查看学生问题转交情况的功能" />
     <MESSAGE value="fix(url):修复了资源和作业模块的url错误" />
     <MESSAGE value="feat(ai/teacherAnswer):新增教师回答问题功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(ai/teacherAnswer):新增教师回答问题功能" />
+    <MESSAGE value="feat(home/student):新增学生首页显示功能" />
+    <MESSAGE value="fix(ai/teacherView):修改请求类型为GET" />
+    <MESSAGE value="fix(ai/teacherView):补充了返回questionid" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(ai/teacherView):补充了返回questionid" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1144,6 +1162,26 @@
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java</url>
           <line>71</line>
           <option name="timeStamp" value="288" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/HomeController.java</url>
+          <line>21</line>
+          <option name="timeStamp" value="289" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java</url>
+          <line>54</line>
+          <option name="timeStamp" value="290" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java</url>
+          <line>38</line>
+          <option name="timeStamp" value="291" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java</url>
+          <line>37</line>
+          <option name="timeStamp" value="292" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java</url>

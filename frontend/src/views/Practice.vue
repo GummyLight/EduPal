@@ -15,7 +15,7 @@ import { defineProps } from 'vue'; // 确保导入 defineProps
 // Practice.vue 需要定义 props 来接收 Home.vue 传递过来的值
 const props = defineProps({
   usertype: {
-    type: String as () => 'teacher' | 'student',
+    type: Number,
     required: true,
   },
   username: {

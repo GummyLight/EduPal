@@ -17,7 +17,7 @@ import { defineProps } from 'vue'; // 确保导入 defineProps
 
 const props = defineProps({
   usertype: {
-    type: String as () => 'teacher' | 'student',
+    type: Number,
     required: true,
   },
   username: {
