@@ -93,7 +93,7 @@
               </div>
               <div v-if="userType === 1" class="operation-buttons-horizontal">
                 <el-button link size="small" @click="handleGoToPracticeDetail(scope.row)">
-                  {{ scope.row.我的状态 === '已提交' ? '查看详情' : '开始练习' }}
+                  {{ scope.row.我的状态 === '未提交' ? '开始练习' : '查看详情' }}
                 </el-button>
               </div>
             </template>
