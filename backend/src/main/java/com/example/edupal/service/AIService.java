@@ -17,4 +17,6 @@ public interface AIService {
     Result transTeacher(String userId, String questionId,String teacherId);
 
     ViewQuestionResponse viewQuestion(String teacherId);
+
+    Result teacherAnswer(String teacherId,String questionId,String answerContent);
 }

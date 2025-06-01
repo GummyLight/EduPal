@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(ai/teacherView):增加了教师查看学生问题转交情况的功能">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(url):修复了资源和作业模块的url错误">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/TeacherAnswerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/TeacherAnswerRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -207,7 +208,7 @@
       <workItem from="1748650200423" duration="12606000" />
       <workItem from="1748664375756" duration="173000" />
       <workItem from="1748670340519" duration="8128000" />
-      <workItem from="1748704535022" duration="14665000" />
+      <workItem from="1748704535022" duration="15259000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />
@@ -489,7 +490,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748754973854</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="fix(url):修复了资源和作业模块的url错误">
+      <option name="closed" value="true" />
+      <created>1748755147814</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1748755147814</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -522,7 +531,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="feat(auth):修改登录逻辑，将手机号改为邮箱，便于完成忘记密码的验证操作。" />
     <MESSAGE value="feat(AI):完善学生向AI提问的response和request，以及Repository" />
     <MESSAGE value="feat(auth):前后端统一了接口内容" />
     <MESSAGE value="fix(auth):修复了邮箱登录报错的错误，修复了前端登录成功不能跳转的问题" />
@@ -547,7 +555,8 @@
     <MESSAGE value="fix(ai/transTeacher):修改了teacher_answer表的变量名格式" />
     <MESSAGE value="fix(ai/transTeacher):修复了报错信息与成功信息格式不匹配的问题" />
     <MESSAGE value="feat(ai/teacherView):增加了教师查看学生问题转交情况的功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(ai/teacherView):增加了教师查看学生问题转交情况的功能" />
+    <MESSAGE value="fix(url):修复了资源和作业模块的url错误" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(url):修复了资源和作业模块的url错误" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -76,5 +76,13 @@ public class AIController {
     }
 //
 //
-//    @PostMapping("/teacherAnswer")
+    @PostMapping("/teacherAnswer")
+    public ResponseEntity<?> teacherAnswer(@RequestParam("teacherId") String teacherId, @RequestParam("questionId") String questionId, @RequestParam("answerContent") String answerContent) {
+        Result result= aIService.teacherAnswer(teacherId, questionId, answerContent);
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
+        } else {
+            return ResponseEntity.status(400).body(new ApiResponse<>(400,result.getMessage()));
+        }
+    }
 }

@@ -290,5 +290,42 @@ public class AIServiceImpl implements AIService {
 
         return new ViewQuestionResponse("success", "学生提问记录返回成功", teacherId, questionSet.size(), questionSet);
     }
+
+    @Override
+    public Result teacherAnswer(String teacherId,String questionId,String answerContent){
+        Teacher teacher = teacherRepository.findByTeacherId(teacherId);
+        if (teacher == null) {
+            return new Result(false, "教师不存在");
+        }
+        // 检查问题是否存在
+        Question question = questionRepository.findByQuestionId(questionId);
+        if (question == null) {
+            return new Result(false, "问题不存在");
+        }
+
+        //教师回答
+        TeacherAnswer teacherAnswer = teacherAnswerRepository.findByQuestionId(questionId);
+        if (teacherAnswer == null ||question.getQuestionType() != 2) {
+            return new Result(false, "该问题未被转交给教师");
+        }
+        //教师回答问题
+        Answer answer = new Answer();
+        answer.setAnswerContent(answerContent);
+        answer.setQuestionId(questionId);
+        answer.setRelatedQuestion(question.getQuestionContent());
+        answer.setAnswerType(1); // 1表示教师回答
+        answer.setAnswerTime(new Date());
+        answer.setTeacherId(teacherId);
+        answerRepository.save(answer);
+
+        // 更新教师回答记录
+        teacherAnswer.setAnswerId(answer.getAnswerId()); // 设置教师回答ID
+        teacherAnswer.setAnswerTime(new Date()); // 设置回答时间
+        teacherAnswerRepository.save(teacherAnswer);
+        // 更新问题状态为已回答
+        question.setIsAnswered(1); // 标记问题为已回答
+        questionRepository.save(question); // 更新问题状态
+        return new Result(true, "教师回答已成功提交");
+    }
 }
 
