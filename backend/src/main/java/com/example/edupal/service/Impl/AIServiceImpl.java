@@ -6,6 +6,7 @@ import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.QuestionRequest;
 import com.example.edupal.dto.response.AnswerResponse;
 import com.example.edupal.dto.response.HistoryResponse;
+import com.example.edupal.dto.response.ViewQuestionResponse;
 import com.example.edupal.model.*;
 import com.example.edupal.repository.*;
 import com.example.edupal.service.AIService;
@@ -241,12 +242,53 @@ public class AIServiceImpl implements AIService {
         teacherAnswer.setStudentId(userId);
         teacherAnswer.setQuestionId(questionId);
         teacherAnswer.setAnswerId(null); // 初始时没有答案ID
+        teacherAnswer.setTransTime(new Date());
         teacherAnswerRepository.save(teacherAnswer);
 
         // 更新问题类型为转交给教师
         question.setQuestionType(2); // 3表示问题已转交给教师
         questionRepository.save(question);
         return new Result(true, "问题已成功转交给教师");
+    }
+
+    @Override
+    public ViewQuestionResponse viewQuestion(String teacherId) {
+        Teacher teacher = teacherRepository.findByTeacherId(teacherId);
+        if (teacher == null) {
+            return new ViewQuestionResponse("error", "该教师不存在", teacherId, 0, List.of());
+        }
+
+        // 查询所有转交给该教师的问题
+        List<TeacherAnswer> teacherAnswers = teacherAnswerRepository.findByTeacherId(teacherId);
+
+        // 构建问题集合
+        List<ViewQuestionResponse.QA> questionSet = teacherAnswers.stream().map(ta -> {
+            Question question = questionRepository.findByQuestionId(ta.getQuestionId());
+            Student student = studentRepository.findByStudentId(ta.getStudentId());
+
+            // 获取教师回答集合
+            List<Answer> AnswerList = answerRepository.findAnswersByQuestionId(ta.getQuestionId());
+
+            // Map teacher answers to AnswerDetail objects
+            List<ViewQuestionResponse.QA.AnswerDetail> teacherAnswersDetails = AnswerList.stream()
+                    .map(answer -> new ViewQuestionResponse.QA.AnswerDetail(
+                            answer.getAnswerType(),
+                            answer.getAnswerContent(),
+                            answer.getAnswerTime()
+                    ))
+                    .collect(Collectors.toList());
+
+            return new ViewQuestionResponse.QA(
+                    student.getStudentName(),
+                    student.getStudentId(),
+                    student.getStudentClass(),
+                    question.getQuestionContent(),
+                    ta.getTransTime(), // 问题转交时间
+                    teacherAnswersDetails // 教师回答集合
+            );
+        }).collect(Collectors.toList());
+
+        return new ViewQuestionResponse("success", "学生提问记录返回成功", teacherId, questionSet.size(), questionSet);
     }
 }
 

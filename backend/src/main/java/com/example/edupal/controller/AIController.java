@@ -5,6 +5,7 @@ import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.QuestionRequest;
 import com.example.edupal.dto.response.AnswerResponse;
 import com.example.edupal.dto.response.HistoryResponse;
+import com.example.edupal.dto.response.ViewQuestionResponse;
 import com.example.edupal.service.AIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,7 +66,14 @@ public class AIController {
     }
 
 //    @PostMapping("/askTeacher")
-//    @PostMapping("/teacherView")
+    @PostMapping("/teacherView")
+    public ViewQuestionResponse teacherView(@RequestParam("teacherId") String teacherId) {
+        try {
+            return aIService.viewQuestion(teacherId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
+        }
+    }
 //
 //
 //    @PostMapping("/teacherAnswer")

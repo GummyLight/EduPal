@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Entity
 @Table(name = "teacher_answer")
@@ -27,4 +29,12 @@ public class TeacherAnswer {
 
     @Column(name = "answer_id", length = 36)
     private String answerId;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "trans_time", nullable = false)
+    private Date transTime;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "answer_time")
+    private Date answerTime;
 }
