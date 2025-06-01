@@ -47,7 +47,7 @@ public class AIController {
         if (result.isSuccess()) {
             return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
         } else {
-            return ResponseEntity.status(400).body(result.getMessage());
+            return ResponseEntity.status(400).body(new ApiResponse<>(400,result.getMessage()));
         }
     }
 
@@ -60,7 +60,7 @@ public class AIController {
         if (result.isSuccess()) {
             return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
         } else {
-            return ResponseEntity.status(400).body(result.getMessage());
+            return ResponseEntity.status(400).body(new ApiResponse<>(400,result.getMessage()));
         }
     }
 
