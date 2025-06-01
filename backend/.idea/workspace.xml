@@ -4,18 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(ai/transTeacher):修复了报错信息与成功信息格式不匹配的问题">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/ViewQuestionResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(ai/teacherView):增加了教师查看学生问题转交情况的功能">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AIController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/TeacherAnswer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/TeacherAnswer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/AnswerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/AnswerRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/TeacherAnswerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/TeacherAnswerRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/model/Student.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/model/Student.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/model/Teacher.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/model/Teacher.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -215,7 +207,7 @@
       <workItem from="1748650200423" duration="12606000" />
       <workItem from="1748664375756" duration="173000" />
       <workItem from="1748670340519" duration="8128000" />
-      <workItem from="1748704535022" duration="14382000" />
+      <workItem from="1748704535022" duration="14665000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />
@@ -489,7 +481,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748746453614</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="feat(ai/teacherView):增加了教师查看学生问题转交情况的功能">
+      <option name="closed" value="true" />
+      <created>1748754973854</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1748754973854</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -522,7 +522,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="feat(AI):接入讯飞星火大模型，创建AIController，AIService等模块。" />
     <MESSAGE value="feat(auth):修改登录逻辑，将手机号改为邮箱，便于完成忘记密码的验证操作。" />
     <MESSAGE value="feat(AI):完善学生向AI提问的response和request，以及Repository" />
     <MESSAGE value="feat(auth):前后端统一了接口内容" />
@@ -547,7 +546,8 @@
     <MESSAGE value="feat(ai/transTeacher):增加了问题转交的功能" />
     <MESSAGE value="fix(ai/transTeacher):修改了teacher_answer表的变量名格式" />
     <MESSAGE value="fix(ai/transTeacher):修复了报错信息与成功信息格式不匹配的问题" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(ai/transTeacher):修复了报错信息与成功信息格式不匹配的问题" />
+    <MESSAGE value="feat(ai/teacherView):增加了教师查看学生问题转交情况的功能" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(ai/teacherView):增加了教师查看学生问题转交情况的功能" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

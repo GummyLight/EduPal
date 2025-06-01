@@ -31,6 +31,7 @@ public class SecurityConfig {
                         .requestMatchers("/file/**").permitAll() // 允许对/file路径下的所有请求无需认证
                         .requestMatchers("/quiz/**").permitAll() // ✅ 加这一行，放行 quiz 模块接口
                         .requestMatchers("/community/**").permitAll()
+                        .requestMatchers("/resource/**").permitAll() // 允许对/resource路径下的所有请求无需认证
 
                         .anyRequest().authenticated() // 其他所有请求都需要认证
                 );
