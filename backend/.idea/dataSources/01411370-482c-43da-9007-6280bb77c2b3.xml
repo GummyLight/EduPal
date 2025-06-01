@@ -1062,7 +1062,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Charset>utf8mb4</Charset>
     </collation>
     <schema id="288" parent="1" name="edupal">
-      <LastIntrospectionLocalTimestamp>2025-06-01.01:35:21</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-06-01.02:48:52</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="289" parent="1" name="information_schema">
@@ -1831,23 +1831,23 @@ postId</ColNames>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="458" parent="313" name="teacherId">
-      <DasType>varchar(10)|0s</DasType>
-      <NotNull>1</NotNull>
+    <column id="458" parent="313" name="answer_id">
+      <DasType>varchar(36)|0s</DasType>
       <Position>2</Position>
     </column>
-    <column id="459" parent="313" name="studentId">
-      <DasType>varchar(10)|0s</DasType>
+    <column id="459" parent="313" name="question_id">
+      <DasType>varchar(36)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
     </column>
-    <column id="460" parent="313" name="QuestionId">
-      <DasType>varchar(36)|0s</DasType>
+    <column id="460" parent="313" name="student_id">
+      <DasType>varchar(10)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
     </column>
-    <column id="461" parent="313" name="AnswerId">
-      <DasType>varchar(36)|0s</DasType>
+    <column id="461" parent="313" name="teacher_id">
+      <DasType>varchar(10)|0s</DasType>
+      <NotNull>1</NotNull>
       <Position>5</Position>
     </column>
     <index id="462" parent="313" name="PRIMARY">

@@ -231,7 +231,7 @@ public class AIServiceImpl implements AIService {
             return new Result(false, "问题不存在");
         }
         // 检查问题是否已经被转交
-        if (question.getQuestionType() == 3) {
+        if (question.getQuestionType() == 2) {
             return new Result(false, "问题已经被转交或回答，无需再次转交");
         }
 
@@ -244,7 +244,7 @@ public class AIServiceImpl implements AIService {
         teacherAnswerRepository.save(teacherAnswer);
 
         // 更新问题类型为转交给教师
-        question.setQuestionType(3); // 3表示问题已转交给教师
+        question.setQuestionType(2); // 3表示问题已转交给教师
         questionRepository.save(question);
         return new Result(true, "问题已成功转交给教师");
     }
