@@ -5,6 +5,7 @@ import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.QuestionRequest;
 import com.example.edupal.dto.response.AnswerResponse;
 import com.example.edupal.dto.response.HistoryResponse;
+import com.example.edupal.dto.response.ViewQuestionResponse;
 
 public interface AIService {
     AnswerResponse askQuestion(QuestionRequest questionRequest);
@@ -14,4 +15,8 @@ public interface AIService {
     Result deleteHistory(String userId, String questionId);
 
     Result transTeacher(String userId, String questionId,String teacherId);
+
+    ViewQuestionResponse viewQuestion(String teacherId);
+
+    Result teacherAnswer(String teacherId,String questionId,String answerContent);
 }

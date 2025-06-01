@@ -1062,7 +1062,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Charset>utf8mb4</Charset>
     </collation>
     <schema id="288" parent="1" name="edupal">
-      <LastIntrospectionLocalTimestamp>2025-06-01.02:48:52</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-06-01.03:03:45</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="289" parent="1" name="information_schema">
@@ -1850,124 +1850,133 @@ postId</ColNames>
       <NotNull>1</NotNull>
       <Position>5</Position>
     </column>
-    <index id="462" parent="313" name="PRIMARY">
+    <column id="462" parent="313" name="trans_time">
+      <DasType>date|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>6</Position>
+    </column>
+    <column id="463" parent="313" name="answer_time">
+      <DasType>date|0s</DasType>
+      <Position>7</Position>
+    </column>
+    <index id="464" parent="313" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="463" parent="313" name="PRIMARY">
+    <key id="465" parent="313" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="464" parent="314" name="id">
+    <column id="466" parent="314" name="id">
       <AutoIncrement>2</AutoIncrement>
       <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="465" parent="314" name="created_at">
+    <column id="467" parent="314" name="created_at">
       <DasType>datetime(6)|0s</DasType>
       <Position>2</Position>
     </column>
-    <column id="466" parent="314" name="description">
+    <column id="468" parent="314" name="description">
       <DasType>varchar(255)|0s</DasType>
       <Position>3</Position>
     </column>
-    <column id="467" parent="314" name="grade">
+    <column id="469" parent="314" name="grade">
       <DasType>varchar(255)|0s</DasType>
       <Position>4</Position>
     </column>
-    <column id="468" parent="314" name="subject">
+    <column id="470" parent="314" name="subject">
       <DasType>varchar(255)|0s</DasType>
       <Position>5</Position>
     </column>
-    <column id="469" parent="314" name="title">
+    <column id="471" parent="314" name="title">
       <DasType>varchar(255)|0s</DasType>
       <Position>6</Position>
     </column>
-    <column id="470" parent="314" name="updated_at">
+    <column id="472" parent="314" name="updated_at">
       <DasType>datetime(6)|0s</DasType>
       <Position>7</Position>
     </column>
-    <index id="471" parent="314" name="PRIMARY">
+    <index id="473" parent="314" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="472" parent="314" name="PRIMARY">
+    <key id="474" parent="314" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="473" parent="315" name="user_id">
+    <column id="475" parent="315" name="user_id">
       <DasType>varchar(255)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="474" parent="315" name="user_password">
+    <column id="476" parent="315" name="user_password">
       <DasType>varchar(255)|0s</DasType>
       <Position>2</Position>
     </column>
-    <column id="475" parent="315" name="user_email">
+    <column id="477" parent="315" name="user_email">
       <DasType>varchar(255)|0s</DasType>
       <Position>3</Position>
     </column>
-    <column id="476" parent="315" name="user_type">
+    <column id="478" parent="315" name="user_type">
       <DasType>int|0s</DasType>
       <Position>4</Position>
     </column>
-    <column id="477" parent="315" name="create_time">
+    <column id="479" parent="315" name="create_time">
       <DasType>timestamp|0s</DasType>
       <Position>5</Position>
     </column>
-    <column id="478" parent="315" name="login_time">
+    <column id="480" parent="315" name="login_time">
       <DasType>timestamp|0s</DasType>
       <Position>6</Position>
     </column>
-    <column id="479" parent="315" name="user_name">
+    <column id="481" parent="315" name="user_name">
       <DasType>varchar(255)|0s</DasType>
       <Position>7</Position>
     </column>
-    <index id="480" parent="315" name="PRIMARY">
+    <index id="482" parent="315" name="PRIMARY">
       <ColNames>user_id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="481" parent="315" name="PRIMARY">
+    <key id="483" parent="315" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="482" parent="316" name="id">
+    <column id="484" parent="316" name="id">
       <AutoIncrement>18</AutoIncrement>
       <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="483" parent="316" name="email">
+    <column id="485" parent="316" name="email">
       <Comment>用户邮箱</Comment>
       <DasType>varchar(255)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
-    <column id="484" parent="316" name="code">
+    <column id="486" parent="316" name="code">
       <Comment>验证码</Comment>
       <DasType>varchar(255)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
     </column>
-    <column id="485" parent="316" name="time">
+    <column id="487" parent="316" name="time">
       <Comment>过期时间</Comment>
       <DasType>timestamp|0s</DasType>
       <Position>4</Position>
     </column>
-    <index id="486" parent="316" name="PRIMARY">
+    <index id="488" parent="316" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="487" parent="316" name="PRIMARY">
+    <key id="489" parent="316" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
