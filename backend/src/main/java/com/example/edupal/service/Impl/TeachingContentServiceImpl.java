@@ -1,58 +1,43 @@
 package com.example.edupal.service.Impl;
 
-import com.example.edupal.dto.request.TeachingContentRequest;
-import com.example.edupal.dto.response.TeachingContentResponse;
+import com.example.edupal.common.Result;
 import com.example.edupal.model.TeachingContent;
 import com.example.edupal.repository.TeachingContentRepository;
 import com.example.edupal.service.TeachingContentService;
-import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class TeachingContentServiceImpl implements TeachingContentService {
 
-    private final TeachingContentRepository repository;
+    @Autowired
+    private TeachingContentRepository teachingContentRepository;
 
     @Override
-    public TeachingContentResponse addContent(TeachingContentRequest request) {
-        TeachingContent content = TeachingContent.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .subject(request.getSubject())
-                .grade(request.getGrade())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        TeachingContent saved = repository.save(content);
-        return mapToResponse(saved);
+    public Result saveTeachingContent(TeachingContent teachingContent) {
+        try {
+            TeachingContent saved = teachingContentRepository.save(teachingContent);
+            return new Result(true, "保存成功", saved);
+        } catch (Exception e) {
+            return new Result(false, "保存失败：" + e.getMessage());
+        }
     }
 
     @Override
-    public void deleteContent(Long id) {
-        repository.deleteById(id);
+    public List<TeachingContent> getAllTeachingContents() {
+        return teachingContentRepository.findAll();
     }
 
     @Override
-    public List<TeachingContentResponse> getAllContent() {
-        return repository.findAll().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public void deleteTeachingContent(String teachingContentId) {
+        teachingContentRepository.deleteById(teachingContentId);
     }
 
-    private TeachingContentResponse mapToResponse(TeachingContent content) {
-        return TeachingContentResponse.builder()
-                .id(content.getId())
-                .title(content.getTitle())
-                .description(content.getDescription())
-                .subject(content.getSubject())
-                .grade(content.getGrade())
-                .createdAt(content.getCreatedAt())
-                .updatedAt(content.getUpdatedAt())
-                .build();
+    @Override
+    public List<TeachingContent> findTeachingContentsByName(String name) {
+        return teachingContentRepository.findByNameContaining(name);
     }
 }
