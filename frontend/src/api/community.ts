@@ -14,7 +14,7 @@ import { ElMessage } from 'element-plus'; // 导入 Element Plus 的消息提示
  */
 export interface AttachedFile {
     name: string;
-    url: string;
+    url: string; // 后端返回的文件URL
 }
 
 /**
@@ -50,8 +50,7 @@ export interface Post {
 export interface PostForm {
     title: string;
     content: string;
-    // authorId 和 authorName 通常由后端从认证信息中获取，无需前端传递
-    // file: File | null; // 文件对象，用于 FormData 上传
+    attachedFileUrl?: string; // 用于传递已上传文件的 URL
 }
 
 /**
@@ -59,8 +58,7 @@ export interface PostForm {
  */
 export interface ReplyForm {
     content: string;
-    // authorId 和 authorName 通常由后端从认证信息中获取，无需前端传递
-    // file: File | null; // 文件对象，用于 FormData 上传
+    attachedFileUrl?: string; // 用于传递已上传文件的 URL
 }
 
 
@@ -101,24 +99,13 @@ export const CommunityService = {
 
     /**
      * 发布新帖子
-     * @param postForm 帖子表单数据 (包含 title, content, 以及可选的文件)
-     * @param file 可选的文件对象
+     * @param postForm 帖子表单数据 (包含 title, content, 以及可选的 attachedFileUrl)
      * @returns {Promise<Post>} 新创建的帖子数据
      */
-    async createPost(postForm: PostForm, file?: File | null): Promise<Post> {
+    async createPost(postForm: PostForm): Promise<Post> { // 不再有 file 参数
         try {
-            const formData = new FormData();
-            formData.append('title', postForm.title);
-            formData.append('content', postForm.content);
-            if (file) {
-                formData.append('file', file); // 'file' 是后端接收文件字段的名称，请根据后端API调整
-            }
-
-            const response = await api.post<Post>('/community/posts', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data', // 确保文件上传时使用 multipart/form-data
-                },
-            });
+            // 直接发送 JSON 数据
+            const response = await api.post<Post>('/community/posts', postForm); // 发送 postForm
             ElMessage.success('帖子发布成功！');
             return response.data;
         } catch (error) {
@@ -126,6 +113,7 @@ export const CommunityService = {
             throw error;
         }
     },
+
 
     /**
      * 删除帖子
@@ -145,23 +133,12 @@ export const CommunityService = {
     /**
      * 提交回复
      * @param postId 帖子ID
-     * @param replyForm 回复表单数据 (包含 content, 以及可选的文件)
-     * @param file 可选的文件对象
+     * @param replyForm 回复表单数据 (包含 content, 以及可选的 attachedFileUrl)
      * @returns {Promise<Reply>} 新创建的回复数据
      */
-    async createReply(postId: string, replyForm: ReplyForm, file?: File | null): Promise<Reply> {
+    async createReply(postId: string, replyForm: ReplyForm): Promise<Reply> { // 不再接收 file 参数
         try {
-            const formData = new FormData();
-            formData.append('content', replyForm.content);
-            if (file) {
-                formData.append('file', file); // 'file' 是后端接收文件字段的名称，请根据后端API调整
-            }
-
-            const response = await api.post<Reply>(`/community/posts/${postId}/replies`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            const response = await api.post<Reply>(`/community/posts/${postId}/replies`, replyForm);
             ElMessage.success('回复成功！');
             return response.data;
         } catch (error) {
