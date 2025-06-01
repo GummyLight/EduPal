@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // 禁用CSRF保护
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/auth/**").permitAll() // 允许对/auth路径下的所有请求无需认证
+                        .requestMatchers("/home/**").permitAll()
                         .requestMatchers("/ai/**").permitAll() // 允许对/ai路径下的所有请求无需认证
                         .requestMatchers("/file/**").permitAll() // 允许对/file路径下的所有请求无需认证
                         .requestMatchers("/quiz/**").permitAll() // ✅ 加这一行，放行 quiz 模块接口
