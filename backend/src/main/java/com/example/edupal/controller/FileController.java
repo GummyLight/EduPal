@@ -51,6 +51,10 @@ public class FileController {
         if (result.isSuccess()) {
             return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
         } else {
+            File fileToDelete = new File(outFile + fileName);
+            if (fileToDelete.exists()) {
+                fileToDelete.delete();
+            }
             return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));
         }
     }
