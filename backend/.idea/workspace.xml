@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(home/student):新增学生首页显示功能">
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(ai/teacherView):修改请求类型为GET">
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/ViewQuestionResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/ViewQuestionResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -207,7 +210,7 @@
       <workItem from="1748650200423" duration="12606000" />
       <workItem from="1748664375756" duration="173000" />
       <workItem from="1748670340519" duration="8128000" />
-      <workItem from="1748704535022" duration="21819000" />
+      <workItem from="1748704535022" duration="25663000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />
@@ -513,7 +516,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748759702278</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="fix(ai/teacherView):修改请求类型为GET">
+      <option name="closed" value="true" />
+      <created>1748762437969</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1748762437969</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -546,7 +557,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix(auth):修复了邮箱登录报错的错误，修复了前端登录成功不能跳转的问题" />
     <MESSAGE value="fix(auth):增加了忘记密码功能：发送验证码，验证验证码" />
     <MESSAGE value="fix(auth):统一了前后端忘记密码的router" />
     <MESSAGE value="fix(model):增加了 LearningProgress和Quiz的model和数据库的连接" />
@@ -571,7 +581,8 @@
     <MESSAGE value="fix(url):修复了资源和作业模块的url错误" />
     <MESSAGE value="feat(ai/teacherAnswer):新增教师回答问题功能" />
     <MESSAGE value="feat(home/student):新增学生首页显示功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(home/student):新增学生首页显示功能" />
+    <MESSAGE value="fix(ai/teacherView):修改请求类型为GET" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(ai/teacherView):修改请求类型为GET" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
