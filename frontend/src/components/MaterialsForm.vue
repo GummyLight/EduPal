@@ -46,8 +46,8 @@
           </el-form-item>
         </el-form>
       </el-card>
-
-      <div class="actions" v-if="userType === 2">
+<!--      //由于本处要测试上传功能，故先对 userType 做改变（老师2，学生1）-->
+      <div class="actions" v-if="userType === 1">
         <el-button type="success" icon="el-icon-upload" @click="handleUpload">上传资料</el-button>
       </div>
 
