@@ -23,35 +23,15 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
-//    @PostMapping("/upload")
-//    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) throws IOException {
-//        Result result = fileService.upload(path, file.getOriginalFilename(), file);
-//        if (result.isSuccess()) {
-//            return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
-//        } else {
-//            return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));
-//        }
-//    }
-//
-//    @GetMapping("/download")
-//    public ResponseEntity<?> download(@RequestParam("fileName") String fileName, @RequestParam("path") String path,
-//                                      @RequestParam("outFile") String outFile) throws IOException {
-//        File downloadFile = new File(outFile);
-//        Result result = fileService.download(path, fileName, downloadFile);
-//        if (result.isSuccess()) {
-//            return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
-//        } else {
-//            return ResponseEntity.badRequest().body(new ApiResponse<>(400, result.getMessage()));
-//        }
-//    }
     // 上传文件
     @PostMapping("/upload")
     public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file,
                                     @RequestParam("path") String path,
+                                    @RequestParam("toPath") String toPath,
                                     @RequestParam("fileId") String fileId) throws IOException {
         // 使用 fileId 重命名文件
         String newFileName = fileId + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        Result result = fileService.upload(path, newFileName, file);
+        Result result = fileService.upload(path, toPath,newFileName, file);
         if (result.isSuccess()) {
             return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
         } else {
