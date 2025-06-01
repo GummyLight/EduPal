@@ -50,4 +50,23 @@ public class AIController {
             return ResponseEntity.status(400).body(result.getMessage());
         }
     }
+
+    @PostMapping("/transTeacher")
+    public ResponseEntity<?> transTeacher(@RequestParam("userId") String userId,@RequestParam("questionId") String questionId, @RequestParam("teacherId") String teacherId) {
+        if (userId == null || userId.isEmpty() || questionId == null || questionId.isEmpty() || teacherId == null || teacherId.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(400, "用户名、问题ID或教师账号不能为空"));
+        }
+        Result result = aIService.transTeacher(userId, questionId,teacherId);
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
+        } else {
+            return ResponseEntity.status(400).body(result.getMessage());
+        }
+    }
+
+//    @PostMapping("/askTeacher")
+//    @PostMapping("/teacherView")
+//
+//
+//    @PostMapping("/teacherAnswer")
 }

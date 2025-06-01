@@ -12,4 +12,6 @@ public interface AIService {
     HistoryResponse getHistory(String userId);
 
     Result deleteHistory(String userId, String questionId);
+
+    Result transTeacher(String userId, String questionId,String teacherId);
 }
