@@ -96,7 +96,7 @@ public class AIServiceImpl implements AIService {
 
                 jsonObject.set("messages", messagesArray);
                 jsonObject.set("stream", true);
-                jsonObject.set("max_tokens", 16384);
+                jsonObject.set("max_tokens", 4096);
 
                 // Set up the HTTP connection
                 URL url = new URL(API_URL);
@@ -282,6 +282,7 @@ public class AIServiceImpl implements AIService {
                     student.getStudentName(),
                     student.getStudentId(),
                     student.getStudentClass(),
+                    question.getQuestionId(),
                     question.getQuestionContent(),
                     ta.getTransTime(), // 问题转交时间
                     teacherAnswersDetails // 教师回答集合

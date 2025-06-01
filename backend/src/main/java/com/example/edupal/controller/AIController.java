@@ -66,7 +66,7 @@ public class AIController {
     }
 
 //    @PostMapping("/askTeacher")
-    @PostMapping("/teacherView")
+    @GetMapping("/teacherView")
     public ViewQuestionResponse teacherView(@RequestParam("teacherId") String teacherId) {
         try {
             return aIService.viewQuestion(teacherId);
