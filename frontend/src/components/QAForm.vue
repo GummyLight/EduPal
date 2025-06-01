@@ -469,7 +469,9 @@ const getSubjectName = (subject: string): string => {
     'math': '数学',
     'physics': '物理', 
     'chemistry': '化学',
+    'chem': '化学',        // 支持缩短的学科代码
     'programming': '编程',
+    'prog': '编程',        // 支持缩短的学科代码
     'other': '其他'
   };
   return subjectNames[subject] || subject;
