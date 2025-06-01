@@ -1,6 +1,5 @@
 package com.example.edupal.controller;
 
-import com.example.edupal.dto.response.ResourceResponse;
 import com.example.edupal.common.ApiResponse;
 import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.ResourceRequest;
@@ -23,7 +22,7 @@ public class ResourceController {
     @Autowired
     private ResourceService resourceService;
 
-    // ✅ 1. 创建资源
+    // 1. 创建资源
     @PostMapping("/create")
     public ResponseEntity<?> createResource(@RequestBody ResourceRequest request) {
         if (request == null) {
@@ -54,7 +53,7 @@ public class ResourceController {
         }
     }
 
-    // ✅ 2. 查询所有资源
+    // 2. 查询所有资源
     @GetMapping("/find")
     public ResponseEntity<?> getAllResources() {
         List<Resource> resources = resourceService.getAllResources();
@@ -66,7 +65,7 @@ public class ResourceController {
         }
     }
 
-    // ✅ 3. 删除资源
+    // 3. 删除资源
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteResource(@PathVariable("id") String resourceId) {
         try {
@@ -75,6 +74,18 @@ public class ResourceController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse<>(500, "删除失败：" + e.getMessage()));
+        }
+    }
+
+    // 4. 按name模糊查找资源
+    @GetMapping("/search")
+    public ResponseEntity<?> searchResourcesByName(@RequestParam("name") String name) {
+        List<Resource> resources = resourceService.findResourcesByName(name);
+
+        if (resources == null || resources.isEmpty()) {
+            return ResponseEntity.ok(new ApiResponse<>(200, "未找到相关资源", resources));
+        } else {
+            return ResponseEntity.ok(new ApiResponse<>(200, "资源列表获取成功", resources));
         }
     }
 }
