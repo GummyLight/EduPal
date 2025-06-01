@@ -6,15 +6,11 @@ import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.QuestionRequest;
 import com.example.edupal.dto.response.AnswerResponse;
 import com.example.edupal.dto.response.HistoryResponse;
-import com.example.edupal.model.User;
-import com.example.edupal.repository.UserRepository;
+import com.example.edupal.model.*;
+import com.example.edupal.repository.*;
 import com.example.edupal.service.AIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.edupal.model.Question;
-import com.example.edupal.model.Answer;
-import com.example.edupal.repository.QuestionRepository;
-import com.example.edupal.repository.AnswerRepository;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -38,6 +34,12 @@ public class AIServiceImpl implements AIService {
     private AnswerRepository answerRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private StudentRepository studentRepository;
+    @Autowired
+    private TeacherAnswerRepository teacherAnswerRepository;
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     private String saveAnswer(AnswerResponse answerResponse, String questionId) {
 
@@ -206,6 +208,45 @@ public class AIServiceImpl implements AIService {
         } catch (Exception e) {
             return new Result(false, "删除失败: " + e.getMessage());
         }
+    }
+
+    @Override
+    public Result transTeacher(String userId,String questionId,String teacherId){
+
+        Student student = studentRepository.findByStudentId(userId);
+        if (student == null) {
+            return new Result(false, "学生不存在");
+        }
+        Teacher teacher = teacherRepository.findByTeacherId(teacherId);
+        if (teacher == null) {
+            return new Result(false, "教师不存在");
+        }
+        //检查teacher的class和student的class是否相同
+        if (!teacher.getClass1().equals(student.getStudentClass())&& !teacher.getClass2().equals(student.getStudentClass())) {
+            return new Result(false, "教师和学生不在同一班级，无法转交问题");
+        }
+        // 检查问题是否存在
+        Question question = questionRepository.findByQuestionId(questionId);
+        if (question == null) {
+            return new Result(false, "问题不存在");
+        }
+        // 检查问题是否已经被转交
+        if (question.getQuestionType() == 3) {
+            return new Result(false, "问题已经被转交或回答，无需再次转交");
+        }
+
+        // 创建教师回答记录
+        TeacherAnswer teacherAnswer = new TeacherAnswer();
+        teacherAnswer.setTeacherId(teacherId);
+        teacherAnswer.setStudentId(userId);
+        teacherAnswer.setQuestionId(questionId);
+        teacherAnswer.setAnswerId(null); // 初始时没有答案ID
+        teacherAnswerRepository.save(teacherAnswer);
+
+        // 更新问题类型为转交给教师
+        question.setQuestionType(3); // 3表示问题已转交给教师
+        questionRepository.save(question);
+        return new Result(true, "问题已成功转交给教师");
     }
 }
 

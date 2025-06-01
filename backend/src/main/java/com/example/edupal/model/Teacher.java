@@ -15,18 +15,18 @@ import jakarta.persistence.Column;
 @Table(name = "teacher")
 public class Teacher {
     @Id
-    @Column(length = 10)
+    @Column(name="teacher_id",length = 10)
     private String teacherId;
 
-    @Column(length = 10)
+    @Column(name="teacher_name",length = 10)
     private String teacherName;
 
-    @Column(length = 8)
+    @Column(name="teaching_subject",length = 8)
     private String teachingSubject;
 
-    @Column(length = 4)
+    @Column(name="class1",length = 4)
     private String class1;
 
-    @Column(length = 4)
+    @Column(name="class2",length = 4)
     private String class2;
 }
