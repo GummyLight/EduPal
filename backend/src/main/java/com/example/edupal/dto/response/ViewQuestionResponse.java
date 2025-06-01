@@ -23,6 +23,7 @@ public class ViewQuestionResponse {
 
     @Data
     public static class QA {
+        private String questionId;        // 问题ID
         private String studentName;       // 提问学生姓名
         private String studentId;         // 提问学生ID
         private String studentClass;      // 提问学生班级
@@ -30,8 +31,9 @@ public class ViewQuestionResponse {
         private Date transferTime;        // 问题转交的时间
         private List<AnswerDetail> teacherAnswers; // 教师回答集合
 
-        public QA(String studentName, String studentId, String studentClass, String questionContent,
+        public QA(String questionId, String studentName, String studentId, String studentClass, String questionContent,
                   Date transferTime, List<AnswerDetail> teacherAnswers) {
+            this.questionId = questionId;
             this.studentName = studentName;
             this.studentId = studentId;
             this.studentClass = studentClass;
