@@ -12,17 +12,19 @@
         <el-card v-for="post in posts" :key="post.id" class="post-item" shadow="hover">
           <div class="post-header">
             <span class="post-title" @click="viewPostDetail(post)">{{ post.title }}</span>
-            <span class="post-author">发布人: {{ post.author }}</span>
+            <span class="post-author">发布人: {{ post.authorName }}</span>
             <span class="post-time">{{ post.publishTime }}</span>
           </div>
           <div class="post-content">{{ post.content.substring(0, 100) }}...</div>
           <div class="post-actions">
-            <el-button type="primary" text size="small" @click="viewPostDetail(post)">查看详情 ({{ post.replies.length }})</el-button>
+            <el-button type="primary" text size="small" @click="viewPostDetail(post)">查看详情 ({{ post.replies ? post.replies.length : 0 }})</el-button>
             <el-button type="info" text size="small" @click="toggleCollect(post)">
               {{ post.isCollected ? '取消收藏' : '收藏' }}
             </el-button>
-            <el-button type="success" text size="small" @click="handleUploadFileForPost(post)">上传文件</el-button>
-            <el-button v-if="userType === 'teacher'" type="danger" text size="small" @click="deletePost(post)">删除</el-button>
+            <el-button v-if="post.attachedFile" type="success" text size="small">
+              <el-link :href="post.attachedFile.url" target="_blank">查看附件</el-link>
+            </el-button>
+            <el-button v-if="userType === 2 || post.authorId === userId" type="danger" text size="small" @click="deletePost(post)">删除</el-button>
           </div>
         </el-card>
         <el-empty v-if="posts.length === 0" description="暂无帖子"></el-empty>
@@ -43,12 +45,12 @@
         <el-card v-for="post in collectedPosts" :key="post.id" class="post-item" shadow="hover">
           <div class="post-header">
             <span class="post-title" @click="viewPostDetail(post)">{{ post.title }}</span>
-            <span class="post-author">发布人: {{ post.author }}</span>
+            <span class="post-author">发布人: {{ post.authorName }}</span>
             <span class="post-time">{{ post.publishTime }}</span>
           </div>
           <div class="post-content">{{ post.content.substring(0, 50) }}...</div>
           <div class="post-actions">
-            <el-button type="primary" text size="small" @click="viewPostDetail(post)">查看详情 ({{ post.replies.length }})</el-button>
+            <el-button type="primary" text size="small" @click="viewPostDetail(post)">查看详情 ({{ post.replies ? post.replies.length : 0 }})</el-button>
             <el-button type="info" text size="small" @click="toggleCollect(post)">取消收藏</el-button>
           </div>
         </el-card>
@@ -68,7 +70,7 @@
               placeholder="请输入帖子内容"
           ></el-input>
         </el-form-item>
-        <el-form-item label="上传文件" v-if="userType === 'teacher' || userType === 'student'">
+        <el-form-item label="上传文件">
           <el-upload
               class="upload-demo"
               drag
@@ -86,18 +88,19 @@
               <div class="el-upload__tip">仅支持图片、PDF、DOCX 等文件，大小不超过 50MB</div>
             </template>
           </el-upload>
+          <el-progress v-if="newPostUploadProgress > 0 && newPostUploadProgress < 100" :percentage="newPostUploadProgress"></el-progress>
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showPostDialog = false">取消</el-button>
-        <el-button type="primary" @click="submitPost">发布</el-button>
+        <el-button @click="showPostDialog = false; resetPostForm()">取消</el-button>
+        <el-button type="primary" @click="submitPost" :loading="isPostSubmitting">发布</el-button>
       </template>
     </el-dialog>
 
     <el-dialog v-model="showPostDetailDialog" :title="detailPost.title" width="800px">
       <div class="detail-post-content">
         <div class="post-meta">
-          <span>发布人: {{ detailPost.author }}</span>
+          <span>发布人: {{ detailPost.authorName }}</span>
           <span>时间: {{ detailPost.publishTime }}</span>
           <span v-if="detailPost.attachedFile" class="attached-file">
             附件: <el-link type="primary" :href="detailPost.attachedFile.url" target="_blank">{{ detailPost.attachedFile.name }}</el-link>
@@ -109,15 +112,14 @@
         <div class="replies-section">
           <div v-for="reply in detailPost.replies" :key="reply.id" class="reply-item">
             <div class="reply-header">
-              <span class="reply-author">{{ reply.author }}</span>
-              <span class="reply-time">{{ reply.time }}</span>
+              <span class="reply-author">{{ reply.authorName }}</span>
+              <span class="reply-time">{{ reply.publishTime }}</span>
             </div>
             <p class="reply-content">{{ reply.content }}</p>
             <div v-if="reply.attachedFile" class="attached-file">
               附件: <el-link type="primary" :href="reply.attachedFile.url" target="_blank">{{ reply.attachedFile.name }}</el-link>
             </div>
-            <el-button v-if="userType === 'teacher'" type="success" text size="small" @click="handleUploadFileForReply(reply)">上传文件</el-button>
-            <el-button v-if="userType === 'teacher' || reply.author === username" type="danger" text size="small" @click="deleteReply(detailPost, reply)">删除</el-button>
+            <el-button v-if="userType === 2 || reply.authorId === userId" type="danger" text size="small" @click="deleteReply(detailPost, reply)">删除</el-button>
           </div>
           <el-empty v-if="detailPost.replies.length === 0" description="暂无回复"></el-empty>
         </div>
@@ -131,7 +133,7 @@
                 placeholder="发表你的回复..."
             ></el-input>
           </el-form-item>
-          <el-form-item v-if="userType === 'teacher' || userType === 'student'">
+          <el-form-item>
             <el-upload
                 class="upload-demo"
                 action="#"
@@ -147,184 +149,141 @@
                 <div class="el-upload__tip">支持图片、PDF、DOCX 等文件，大小不超过 50MB</div>
               </template>
             </el-upload>
+            <el-progress v-if="replyUploadProgress > 0 && replyUploadProgress < 100" :percentage="replyUploadProgress"></el-progress>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitReply(detailPost)">回复</el-button>
+            <el-button type="primary" @click="submitReply(detailPost)" :loading="isReplySubmitting">回复</el-button>
           </el-form-item>
         </el-form>
       </div>
     </el-dialog>
 
-    <el-dialog v-model="showFileUploadDialog" title="上传文件" width="500px">
-      <el-upload
-          class="upload-demo"
-          drag
-          action="#"
-          :auto-upload="false"
-          :on-change="handleFileUploadChange"
-          :on-remove="handleFileUploadRemove"
-          :file-list="currentFileUploadList"
-          :limit="1"
-          :on-exceed="handleExceed"
-      >
-        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-        <div class="el-upload__text">拖拽文件到此处，或 <em>点击上传</em></div>
-        <template #tip>
-          <div class="el-upload__tip">支持图片、PDF、DOCX 等文件，大小不超过 50MB</div>
-        </template>
-      </el-upload>
-      <template #footer>
-        <el-button @click="showFileUploadDialog = false">取消</el-button>
-        <el-button type="primary" @click="confirmFileUpload">确认上传</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed,defineProps} from 'vue';
-import { ElMessage, ElNotification, ElMessageBox, FormInstance, UploadFile, UploadFiles } from 'element-plus';
+import { ref, reactive, computed, onMounted, defineProps} from 'vue';
+import { useRouter } from 'vue-router';
+import { ElMessage, ElNotification, ElMessageBox, FormInstance, UploadFile } from 'element-plus';
 import { UploadFilled } from '@element-plus/icons-vue';
+
+import { CommunityService, Post, Reply, PostForm, ReplyForm, AttachedFile } from '../api/community'; // 确保导入 AttachedFile
 
 const props = defineProps({
   usertype: {
-    type: String as () => 'teacher' | 'student', // 明确类型
+    type: Number ,
     required: true,
   },
-  username: { // 确保也接收 username，因为您在模板中也使用了它
+  username: {
     type: String,
     required: true,
   },
   userid: {
     type: String,
     required: true,
-    }
+  }
 });
 
 const userType = computed(() => props.usertype);
-
 const username = computed(() => props.username);
-const userId = computed(() => props.userid); // 同样处理 username
-// 模拟用户类型和用户名
-//const userType = ref<'teacher' | 'student'>('student'); // 默认为 student，可以根据登录状态动态设置
-// const userType = ref('student');
-// const username = ref('学生A'); // 模拟当前登录用户名
+const userId = computed(() => props.userid);
+//控制台输出userType,username,userId
+console.log('userType:', userType.value, 'username:', username.value, 'userId:', userId.value);
 
-// 帖子数据结构
-interface Post {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-  publishTime: string;
-  isCollected: boolean;
-  attachedFile?: { name: string; url: string; raw: File | null };
-  replies: Reply[];
-}
 
-// 回复数据结构
-interface Reply {
-  id: string;
-  author: string;
-  time: string;
-  content: string;
-  attachedFile?: { name: string; url: string; raw: File | null };
-}
-
-// 模拟帖子数据
-const posts = ref<Post[]>([
-  {
-    id: 'p001',
-    title: '关于期末考试复习资料的讨论',
-    content: '同学们，大家觉得期末考试重点在哪里？有没有好的复习资料可以分享一下？',
-    author: '学生A',
-    publishTime: '2025-05-25 10:30',
-    isCollected: false,
-    replies: [
-      { id: 'r001', author: '学生B', time: '2025-05-25 10:45', content: '我觉得线性代数是重点，老师之前划过几个大题类型。' },
-      { id: 'r002', author: '张老师', time: '2025-05-25 11:00', content: '大家可以多关注平时作业中的易错点，那些很可能出题。', attachedFile: { name: '易错点汇总.pdf', url: '/mock-materials/yicuodian_huizong.pdf', raw: null } },
-    ],
-  },
-  {
-    id: 'p002',
-    title: '求助：物理实验报告怎么写？',
-    content: '第一次写物理实验报告，有点不知道从何下手，有模板或者范例可以参考吗？',
-    author: '学生C',
-    publishTime: '2025-05-24 15:00',
-    isCollected: false,
-    replies: [],
-  },
-  {
-    id: 'p003',
-    title: '数学建模竞赛组队',
-    content: '有没有对数学建模感兴趣的同学？我想组个队，我们还缺一个擅长编程的。',
-    author: '王老师',
-    publishTime: '2025-05-23 09:00',
-    isCollected: false,
-    attachedFile: { name: '竞赛介绍.docx', url: '/mock-materials/jingsai_jieshao.docx', raw: null },
-    replies: [
-      { id: 'r003', author: '学生D', time: '2025-05-23 09:30', content: '老师，我对编程比较熟悉，可以加入吗？' },
-    ],
-  },
-]);
-
-// 模拟已收藏的帖子
+const posts = ref<Post[]>([]);
 const collectedPosts = computed(() => posts.value.filter(post => post.isCollected));
-const showCollectedPosts = ref(false); // 控制收藏夹显示/隐藏
+const showCollectedPosts = ref(false);
 
 // 发布/编辑帖子相关
 const showPostDialog = ref(false);
 const postFormRef = ref<FormInstance>();
-const postForm = reactive({
+const postForm = reactive<PostForm>({ // PostForm 接口现在只包含 title, content, attachedFileUrl
   title: '',
   content: '',
-  attachedFile: null as File | null,
+  attachedFileUrl: undefined, // 初始化为 undefined
 });
-const newPostFileList = ref<UploadFile[]>([]);
-const currentPost = ref<Post | null>(null); // 用于判断是发布新帖还是编辑旧帖
+const newPostSelectedFile = ref<File | null>(null); // 存储新帖子待上传的文件对象
+const newPostFileList = ref<UploadFile[]>([]); // Element Plus 上传组件的文件列表
+const newPostUploadProgress = ref(0); // 新帖子文件上传进度
+const isPostSubmitting = ref(false); // 发布帖子按钮加载状态
+
+const currentPost = ref<Post | null>(null);
 
 const postRules = reactive({
   title: [{ required: true, message: '请输入帖子标题', trigger: 'blur' }],
   content: [{ required: true, message: '请输入帖子内容', trigger: 'blur' }],
 });
 
-// 帖子文件上传处理
+onMounted(() => {
+  fetchPosts();
+});
+
+const fetchPosts = async () => {
+  try {
+    const fetchedPosts = await CommunityService.getPosts();
+    posts.value = fetchedPosts;
+  } catch (error) {
+    console.error('获取帖子列表失败:', error);
+  }
+};
+
+// 帖子文件选择处理
 const handleNewPostFileChange = (uploadFile: UploadFile) => {
-  postForm.attachedFile = uploadFile.raw || null;
+  newPostSelectedFile.value = uploadFile.raw || null;
   newPostFileList.value = [uploadFile];
+  newPostUploadProgress.value = 0; // 重置进度
 };
 const handleNewPostFileRemove = () => {
-  postForm.attachedFile = null;
+  newPostSelectedFile.value = null;
   newPostFileList.value = [];
+  postForm.attachedFileUrl = undefined; // 清空已上传的 URL
+  newPostUploadProgress.value = 0;
 };
 
 const submitPost = async () => {
   if (!postFormRef.value) return;
-  await postFormRef.value.validate((valid) => {
+  await postFormRef.value.validate(async (valid) => {
     if (valid) {
-      const now = new Date();
-      const newPost: Post = {
-        id: `p${Date.now()}`, // 简单的ID生成
-        title: postForm.title,
-        content: postForm.content,
-        author: username.value,
-        publishTime: `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`,
-        isCollected: false,
-        replies: [],
-      };
+      isPostSubmitting.value = true; // 开始加载
+      try {
+        let finalAttachedFileUrl: string | undefined = undefined;
 
-      if (postForm.attachedFile) {
-        newPost.attachedFile = {
-          name: postForm.attachedFile.name,
-          url: URL.createObjectURL(postForm.attachedFile), // 创建一个临时的URL用于预览
-          raw: postForm.attachedFile,
-        };
+        // 如果有文件选中，先上传文件
+        if (newPostSelectedFile.value) {
+          ElMessage.info('正在上传文件，请稍候...');
+          newPostUploadProgress.value = 10; // 模拟开始上传
+          try {
+            const uploadedFileInfo: AttachedFile = await CommunityService.uploadFile(newPostSelectedFile.value);
+            finalAttachedFileUrl = uploadedFileInfo.url; // 获取后端返回的文件URL
+            newPostUploadProgress.value = 100; // 上传完成
+            ElMessage.success('文件上传完成，正在发布帖子...');
+          } catch (uploadError) {
+            ElMessage.error('文件上传失败，请重试！');
+            console.error('文件上传失败:', uploadError);
+            isPostSubmitting.value = false;
+            return; // 文件上传失败，不继续发布帖子
+          }
+        }
+
+        // 将文件URL绑定到帖子数据中
+        postForm.attachedFileUrl = finalAttachedFileUrl;
+
+        // 调用 CommunityService 的创建帖子方法，只传递 PostForm 对象
+        const newPost = await CommunityService.createPost(postForm);
+
+        posts.value.unshift({ ...newPost, isCollected: false }); // 假设后端返回的 Post 对象，默认未收藏
+        ElMessage.success('帖子发布成功！');
+        showPostDialog.value = false;
+        resetPostForm();
+        await fetchPosts(); // 重新加载帖子列表以确保最新数据
+
+      } catch (error) {
+        ElMessage.error('帖子发布失败，请检查填写内容！');
+        console.error('帖子发布失败:', error);
+      } finally {
+        isPostSubmitting.value = false; // 结束加载
       }
-
-      posts.value.unshift(newPost); // 新帖子放在最前面
-      ElMessage.success('帖子发布成功！');
-      showPostDialog.value = false;
-      resetPostForm();
     } else {
       ElMessage.error('请填写帖子标题和内容！');
     }
@@ -334,69 +293,106 @@ const submitPost = async () => {
 const resetPostForm = () => {
   if (postFormRef.value) {
     postFormRef.value.resetFields();
-    postForm.attachedFile = null;
+    postForm.title = '';
+    postForm.content = '';
+    postForm.attachedFileUrl = undefined;
+    newPostSelectedFile.value = null;
     newPostFileList.value = [];
+    newPostUploadProgress.value = 0;
   }
+  currentPost.value = null;
 };
 
 // 帖子详情相关
 const showPostDetailDialog = ref(false);
-const detailPost = ref<Post>({} as Post); // 当前查看详情的帖子
+const detailPost = ref<Post>({} as Post);
 
-const viewPostDetail = (post: Post) => {
-  detailPost.value = { ...post }; // 复制一份，避免直接修改原始数据
-  showPostDetailDialog.value = true;
+const viewPostDetail = async (post: Post) => {
+  try {
+    const fetchedDetail = await CommunityService.getPostDetail(post.id);
+    detailPost.value = { ...fetchedDetail, isCollected: post.isCollected };
+    showPostDetailDialog.value = true;
+  } catch (error) {
+    console.error('获取帖子详情失败:', error);
+  }
 };
 
 // 回复相关
 const replyFormRef = ref<FormInstance>();
-const replyForm = reactive({
+const replyForm = reactive<ReplyForm>({ // ReplyForm 接口现在只包含 content, attachedFileUrl
   content: '',
-  attachedFile: null as File | null,
+  attachedFileUrl: undefined,
 });
+const replySelectedFile = ref<File | null>(null); // 存储回复待上传的文件对象
 const replyFileList = ref<UploadFile[]>([]);
+const replyUploadProgress = ref(0); // 回复文件上传进度
+const isReplySubmitting = ref(false); // 回复按钮加载状态
+
 const replyRules = reactive({
   content: [{ required: true, message: '请输入回复内容', trigger: 'blur' }],
 });
 
-// 回复文件上传处理
+// 回复文件选择处理
 const handleReplyFileChange = (uploadFile: UploadFile) => {
-  replyForm.attachedFile = uploadFile.raw || null;
+  replySelectedFile.value = uploadFile.raw || null;
   replyFileList.value = [uploadFile];
+  replyUploadProgress.value = 0; // 重置进度
 };
 const handleReplyFileRemove = () => {
-  replyForm.attachedFile = null;
+  replySelectedFile.value = null;
   replyFileList.value = [];
+  replyForm.attachedFileUrl = undefined; // 清空已上传的 URL
+  replyUploadProgress.value = 0;
 };
 
 const submitReply = async (post: Post) => {
   if (!replyFormRef.value) return;
-  await replyFormRef.value.validate((valid) => {
+  await replyFormRef.value.validate(async (valid) => {
     if (valid) {
-      const now = new Date();
-      const newReply: Reply = {
-        id: `r${Date.now()}`,
-        author: username.value,
-        time: `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`,
-        content: replyForm.content,
-      };
+      isReplySubmitting.value = true; // 开始加载
+      try {
+        let finalAttachedFileUrl: string | undefined = undefined;
 
-      if (replyForm.attachedFile) {
-        newReply.attachedFile = {
-          name: replyForm.attachedFile.name,
-          url: URL.createObjectURL(replyForm.attachedFile),
-          raw: replyForm.attachedFile,
-        };
-      }
+        // 如果有文件选中，先上传文件
+        if (replySelectedFile.value) {
+          ElMessage.info('正在上传文件，请稍候...');
+          replyUploadProgress.value = 10; // 模拟开始上传
+          try {
+            const uploadedFileInfo: AttachedFile = await CommunityService.uploadFile(replySelectedFile.value);
+            finalAttachedFileUrl = uploadedFileInfo.url; // 获取后端返回的文件URL
+            replyUploadProgress.value = 100; // 上传完成
+            ElMessage.success('文件上传完成，正在提交回复...');
+          } catch (uploadError) {
+            ElMessage.error('文件上传失败，请重试！');
+            console.error('文件上传失败:', uploadError);
+            isReplySubmitting.value = false;
+            return; // 文件上传失败，不继续提交回复
+          }
+        }
 
-      // 找到原帖并添加回复
-      const targetPost = posts.value.find(p => p.id === post.id);
-      if (targetPost) {
-        targetPost.replies.push(newReply);
-        // 更新 detailPost，以在详情对话框中显示新回复
-        detailPost.value.replies.push(newReply);
+        // 将文件URL绑定到回复数据中
+        replyForm.attachedFileUrl = finalAttachedFileUrl;
+
+        // 调用 CommunityService 的创建回复方法，只传递 ReplyForm 对象
+        const newReply = await CommunityService.createReply(
+            post.id,
+            replyForm
+        );
+
+        const targetPost = posts.value.find(p => p.id === post.id);
+        if (targetPost) {
+          targetPost.replies.push(newReply);
+          detailPost.value.replies.push(newReply);
+        }
         ElMessage.success('回复成功！');
         resetReplyForm();
+        await viewPostDetail(post); // 重新加载帖子详情，确保回复列表是最新的
+
+      } catch (error) {
+        ElMessage.error('回复失败，请检查填写内容！');
+        console.error('回复失败:', error);
+      } finally {
+        isReplySubmitting.value = false; // 结束加载
       }
     } else {
       ElMessage.error('请输入回复内容！');
@@ -407,135 +403,83 @@ const submitReply = async (post: Post) => {
 const resetReplyForm = () => {
   if (replyFormRef.value) {
     replyFormRef.value.resetFields();
-    replyForm.attachedFile = null;
+    replyForm.content = '';
+    replyForm.attachedFileUrl = undefined;
+    replySelectedFile.value = null;
     replyFileList.value = [];
+    replyUploadProgress.value = 0;
   }
 };
 
-const deleteReply = (post: Post, replyToDelete: Reply) => {
+const deleteReply = async (post: Post, replyToDelete: Reply) => {
   ElMessageBox.confirm(`确定删除这条回复吗？`, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
-  }).then(() => {
-    const targetPost = posts.value.find(p => p.id === post.id);
-    if (targetPost) {
-      targetPost.replies = targetPost.replies.filter(reply => reply.id !== replyToDelete.id);
-      detailPost.value.replies = detailPost.value.replies.filter(reply => reply.id !== replyToDelete.id);
+  }).then(async () => {
+    try {
+      await CommunityService.deleteReply(post.id, replyToDelete.id);
+      const targetPost = posts.value.find(p => p.id === post.id);
+      if (targetPost) {
+        targetPost.replies = targetPost.replies.filter(reply => reply.id !== replyToDelete.id);
+        detailPost.value.replies = detailPost.value.replies.filter(reply => reply.id !== replyToDelete.id);
+      }
       ElMessage.success('回复删除成功！');
+    } catch (error) {
+      console.error('删除回复失败:', error);
     }
   }).catch(() => {
     // 用户取消删除
   });
 };
 
-
-// 收藏功能
-const toggleCollect = (post: Post) => {
-  post.isCollected = !post.isCollected;
-  ElMessage.success(post.isCollected ? `已收藏帖子：${post.title}` : `已取消收藏帖子：${post.title}`);
+const toggleCollect = async (post: Post) => {
+  try {
+    await CommunityService.toggleCollect(post.id, !post.isCollected);
+    post.isCollected = !post.isCollected;
+    ElMessage.success(post.isCollected ? `已收藏帖子：${post.title}` : `已取消收藏帖子：${post.title}`);
+  } catch (error) {
+    console.error('更新收藏状态失败:', error);
+  }
 };
 
-// 删除帖子功能 (仅教师)
 const deletePost = (postToDelete: Post) => {
   ElMessageBox.confirm(`确定删除帖子《${postToDelete.title}》吗？`, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
-  }).then(() => {
-    posts.value = posts.value.filter(post => post.id !== postToDelete.id);
-    ElMessage.success('帖子删除成功！');
+  }).then(async () => {
+    try {
+      await CommunityService.deletePost(postToDelete.id);
+      posts.value = posts.value.filter(post => post.id !== postToDelete.id);
+      ElMessage.success('帖子删除成功！');
+    } catch (error) {
+      console.error('删除帖子失败:', error);
+    }
   }).catch(() => {
     // 用户取消删除
   });
 };
 
-// 通用文件上传处理（用于帖子内或回复内的文件上传）
-const showFileUploadDialog = ref(false);
-const currentFileUploadList = ref<UploadFile[]>([]);
-let currentUploadTarget: Post | Reply | null = null; // 标记当前文件上传的目标是帖子还是回复
-
-const handleUploadFileForPost = (post: Post) => {
-  currentUploadTarget = post;
-  currentFileUploadList.value = post.attachedFile ? [{ name: post.attachedFile.name, url: post.attachedFile.url }] as UploadFile[] : [];
-  showFileUploadDialog.value = true;
-};
-
-const handleUploadFileForReply = (reply: Reply) => {
-  currentUploadTarget = reply;
-  currentFileUploadList.value = reply.attachedFile ? [{ name: reply.attachedFile.name, url: reply.attachedFile.url }] as UploadFile[] : [];
-  showFileUploadDialog.value = true;
-};
-
-
-const handleFileUploadChange = (uploadFile: UploadFile) => {
-  if (currentUploadTarget) {
-    // 这里实际上应该将文件上传到服务器，并获取到 URL
-    // 模拟：直接使用临时 URL
-    currentFileUploadList.value = [uploadFile];
-  }
-};
-
-const handleFileUploadRemove = () => {
-  currentFileUploadList.value = [];
-};
-
-const confirmFileUpload = () => {
-  if (currentUploadTarget && currentFileUploadList.value.length > 0) {
-    const uploadedFile = currentFileUploadList.value[0].raw;
-    if (uploadedFile) {
-      const fileInfo = {
-        name: uploadedFile.name,
-        url: URL.createObjectURL(uploadedFile), // 实际应该是服务器返回的URL
-        raw: uploadedFile,
-      };
-
-      currentUploadTarget.attachedFile = fileInfo;
-      ElMessage.success(`文件上传成功: ${fileInfo.name}`);
-      showFileUploadDialog.value = false;
-    }
-  } else {
-    ElMessage.warning('请选择要上传的文件。');
-  }
-};
-
-// 通用文件超出限制处理
 const handleExceed = () => {
   ElMessage.warning('只能上传一个文件，请先移除当前文件再上传。');
 };
 
-// 移除 CourseForm 中已有的 logout 函数，因为这里不再有顶栏
-// const logout = () => {
-//   console.log('退出登录');
-//   ElMessage.info('您已退出登录。');
-//   // 实际：执行退出登录操作，如清除 token，跳转登录页
-// };
 </script>
 
 <style scoped>
-/* 移除 .community-page-container 的样式，因为它现在是子组件，不需要自己的全局容器 */
-/* .community-page-container {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: #f4f6f8;
-} */
-
-/* 新增一个 wrapper 来替代原 el-main 的作用 */
+/* 样式保持不变 */
 .community-content-wrapper {
-  flex: 1; /* 让内容填充可用空间 */
-  /* padding 和 background-color 由父组件 views/Community.vue 提供 */
+  flex: 1;
 }
 
-/* 顶部导航栏样式已移除，不再需要 .navbar 样式 */
-/* .navbar { ... } */
-
-
-/* 主要内容区样式调整 */
-/* .main-content { ... } */ /* 这个类可以移除，直接在 .community-content-wrapper 中管理布局 */
-
-
-/* 卡片头部样式统一 */
+.post-list-card, .collection-card {
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
+  width: 100%; /* <-- 确保这里是 100% */
+  box-sizing: border-box;
+}
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -545,12 +489,7 @@ const handleExceed = () => {
   color: #303133;
 }
 
-/* 帖子列表卡片 - 沿用 MaterialsForm.vue 的卡片风格 */
-.post-list-card, .collection-card {
-  background-color: #fff;
-  border-radius: 4px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
-}
+
 
 .post-list {
   padding-top: 10px;

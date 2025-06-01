@@ -6,15 +6,12 @@ import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.QuestionRequest;
 import com.example.edupal.dto.response.AnswerResponse;
 import com.example.edupal.dto.response.HistoryResponse;
-import com.example.edupal.model.User;
-import com.example.edupal.repository.UserRepository;
+import com.example.edupal.dto.response.ViewQuestionResponse;
+import com.example.edupal.model.*;
+import com.example.edupal.repository.*;
 import com.example.edupal.service.AIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.edupal.model.Question;
-import com.example.edupal.model.Answer;
-import com.example.edupal.repository.QuestionRepository;
-import com.example.edupal.repository.AnswerRepository;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -38,6 +35,12 @@ public class AIServiceImpl implements AIService {
     private AnswerRepository answerRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private StudentRepository studentRepository;
+    @Autowired
+    private TeacherAnswerRepository teacherAnswerRepository;
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     private String saveAnswer(AnswerResponse answerResponse, String questionId) {
 
@@ -93,7 +96,7 @@ public class AIServiceImpl implements AIService {
 
                 jsonObject.set("messages", messagesArray);
                 jsonObject.set("stream", true);
-                jsonObject.set("max_tokens", 16384);
+                jsonObject.set("max_tokens", 4096);
 
                 // Set up the HTTP connection
                 URL url = new URL(API_URL);
@@ -206,6 +209,124 @@ public class AIServiceImpl implements AIService {
         } catch (Exception e) {
             return new Result(false, "删除失败: " + e.getMessage());
         }
+    }
+
+    @Override
+    public Result transTeacher(String userId,String questionId,String teacherId){
+
+        Student student = studentRepository.findByStudentId(userId);
+        if (student == null) {
+            return new Result(false, "学生不存在");
+        }
+        Teacher teacher = teacherRepository.findByTeacherId(teacherId);
+        if (teacher == null) {
+            return new Result(false, "教师不存在");
+        }
+        //检查teacher的class和student的class是否相同
+        if (!teacher.getClass1().equals(student.getStudentClass())&& !teacher.getClass2().equals(student.getStudentClass())) {
+            return new Result(false, "教师和学生不在同一班级，无法转交问题");
+        }
+        // 检查问题是否存在
+        Question question = questionRepository.findByQuestionId(questionId);
+        if (question == null) {
+            return new Result(false, "问题不存在");
+        }
+        // 检查问题是否已经被转交
+        if (question.getQuestionType() == 2) {
+            return new Result(false, "问题已经被转交或回答，无需再次转交");
+        }
+
+        // 创建教师回答记录
+        TeacherAnswer teacherAnswer = new TeacherAnswer();
+        teacherAnswer.setTeacherId(teacherId);
+        teacherAnswer.setStudentId(userId);
+        teacherAnswer.setQuestionId(questionId);
+        teacherAnswer.setAnswerId(null); // 初始时没有答案ID
+        teacherAnswer.setTransTime(new Date());
+        teacherAnswerRepository.save(teacherAnswer);
+
+        // 更新问题类型为转交给教师
+        question.setQuestionType(2); // 3表示问题已转交给教师
+        questionRepository.save(question);
+        return new Result(true, "问题已成功转交给教师");
+    }
+
+    @Override
+    public ViewQuestionResponse viewQuestion(String teacherId) {
+        Teacher teacher = teacherRepository.findByTeacherId(teacherId);
+        if (teacher == null) {
+            return new ViewQuestionResponse("error", "该教师不存在", teacherId, 0, List.of());
+        }
+
+        // 查询所有转交给该教师的问题
+        List<TeacherAnswer> teacherAnswers = teacherAnswerRepository.findByTeacherId(teacherId);
+
+        // 构建问题集合
+        List<ViewQuestionResponse.QA> questionSet = teacherAnswers.stream().map(ta -> {
+            Question question = questionRepository.findByQuestionId(ta.getQuestionId());
+            Student student = studentRepository.findByStudentId(ta.getStudentId());
+
+            // 获取教师回答集合
+            List<Answer> AnswerList = answerRepository.findAnswersByQuestionId(ta.getQuestionId());
+
+            // Map teacher answers to AnswerDetail objects
+            List<ViewQuestionResponse.QA.AnswerDetail> teacherAnswersDetails = AnswerList.stream()
+                    .map(answer -> new ViewQuestionResponse.QA.AnswerDetail(
+                            answer.getAnswerType(),
+                            answer.getAnswerContent(),
+                            answer.getAnswerTime()
+                    ))
+                    .collect(Collectors.toList());
+
+            return new ViewQuestionResponse.QA(
+                    student.getStudentName(),
+                    student.getStudentId(),
+                    student.getStudentClass(),
+                    question.getQuestionId(),
+                    question.getQuestionContent(),
+                    ta.getTransTime(), // 问题转交时间
+                    teacherAnswersDetails // 教师回答集合
+            );
+        }).collect(Collectors.toList());
+
+        return new ViewQuestionResponse("success", "学生提问记录返回成功", teacherId, questionSet.size(), questionSet);
+    }
+
+    @Override
+    public Result teacherAnswer(String teacherId,String questionId,String answerContent){
+        Teacher teacher = teacherRepository.findByTeacherId(teacherId);
+        if (teacher == null) {
+            return new Result(false, "教师不存在");
+        }
+        // 检查问题是否存在
+        Question question = questionRepository.findByQuestionId(questionId);
+        if (question == null) {
+            return new Result(false, "问题不存在");
+        }
+
+        //教师回答
+        TeacherAnswer teacherAnswer = teacherAnswerRepository.findByQuestionId(questionId);
+        if (teacherAnswer == null ||question.getQuestionType() != 2) {
+            return new Result(false, "该问题未被转交给教师");
+        }
+        //教师回答问题
+        Answer answer = new Answer();
+        answer.setAnswerContent(answerContent);
+        answer.setQuestionId(questionId);
+        answer.setRelatedQuestion(question.getQuestionContent());
+        answer.setAnswerType(1); // 1表示教师回答
+        answer.setAnswerTime(new Date());
+        answer.setTeacherId(teacherId);
+        answerRepository.save(answer);
+
+        // 更新教师回答记录
+        teacherAnswer.setAnswerId(answer.getAnswerId()); // 设置教师回答ID
+        teacherAnswer.setAnswerTime(new Date()); // 设置回答时间
+        teacherAnswerRepository.save(teacherAnswer);
+        // 更新问题状态为已回答
+        question.setIsAnswered(1); // 标记问题为已回答
+        questionRepository.save(question); // 更新问题状态
+        return new Result(true, "教师回答已成功提交");
     }
 }
 

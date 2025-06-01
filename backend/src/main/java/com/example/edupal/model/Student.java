@@ -3,52 +3,27 @@ package com.example.edupal.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
+@Table(name="student")
 public class Student {
-    @Id
-    @Column(length = 10)
-    private String student_id;
-
-    @Column(length = 10)
-    private String student_name;
-
-    @Column
-    private Integer student_gender;
-
-    @Column(length = 4)
-    private String student_class;
-
     // Getters and Setters
-    public String getStudent_id() {
-        return student_id;
-    }
+    @Id
+    @Column(name="student_id",length = 10)
+    private String studentId;
 
-    public void setStudent_id(String student_id) {
-        this.student_id = student_id;
-    }
+    @Column(name="student_name",length = 10)
+    private String studentName;
 
-    public String getStudent_name() {
-        return student_name;
-    }
+    @Column(name="student_gender")
+    private Integer studentGender;
 
-    public void setStudent_name(String student_name) {
-        this.student_name = student_name;
-    }
+    @Column(name="student_class",length = 4)
+    private String studentClass;
 
-    public Integer getStudent_gender() {
-        return student_gender;
-    }
-
-    public void setStudent_gender(Integer student_gender) {
-        this.student_gender = student_gender;
-    }
-
-    public String getStudent_class() {
-        return student_class;
-    }
-
-    public void setStudent_class(String student_class) {
-        this.student_class = student_class;
-    }
 }

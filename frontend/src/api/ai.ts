@@ -43,13 +43,13 @@ interface AnswerDetail {
   answerTime: string;       // Date 转换为字符串
 }
 
-// 学科映射
-const subjectMap: Record<string, number> = {
-  'math': 0,
-  'physics': 1,
-  'chemistry': 2,
-  'programming': 3,
-  'other': 4
+// 学科映射：将前端学科字符串映射为后端兼容的短字符串
+const subjectMap: Record<string, string> = {
+  'math': 'math',
+  'physics': 'physics', 
+  'chemistry': 'chem',     // 缩短为4个字符以适应数据库限制
+  'programming': 'prog',   // 缩短为4个字符以适应数据库限制
+  'other': 'other'
 };
 
 // 发送AI问答请求
@@ -61,11 +61,14 @@ export const askAI = async (
   cancelTokenSource?: any
 ): Promise<AIQuestionResponse> => {
   try {
+    // 将学科字符串转换为数据库兼容的格式
+    const mappedSubject = subjectMap[questionSubject] || questionSubject;
+    
     const requestData: AIQuestionRequest = {
       studentId,
       questionContent,
       questionType: 0, // 固定为0表示问AI
-      questionSubject
+      questionSubject: mappedSubject
     };
 
     console.log('发送AI问答请求:', requestData);

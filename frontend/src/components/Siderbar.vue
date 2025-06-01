@@ -12,43 +12,43 @@
         <i class="el-icon-house"></i>
         <span>首页</span>
       </el-menu-item>
-      <el-menu-item v-if="usertype === 'student'" index="/home/course">
+      <el-menu-item v-if="props.usertype === 1" index="/home/course">
         <i class="el-icon-reading"></i>
         <span>教学内容</span>
       </el-menu-item>
-      <el-menu-item v-if="usertype === 'student'" index="/home/materials">
+      <el-menu-item v-if="props.usertype === 1" index="/home/materials">
         <i class="el-icon-folder"></i>
         <span>资料管理</span>
       </el-menu-item>
-      <el-menu-item v-if="usertype === 'student'" index="/home/practice">
+      <el-menu-item v-if="props.usertype === 1" index="/home/practice">
         <i class="el-icon-edit-outline"></i>
         <span>在线练习</span>
       </el-menu-item>
-      <el-menu-item v-if="usertype === 'student'" index="/home/community">
+      <el-menu-item v-if="props.usertype === 1" index="/home/community">
         <i class="el-icon-chat-line-square"></i>
         <span>社区交流</span>
       </el-menu-item>
-      <el-menu-item v-if="usertype === 'student'" index="/home/qa">
+      <el-menu-item v-if="props.usertype === 1" index="/home/qa">
         <i class="el-icon-message"></i>
         <span>智能答疑</span>
       </el-menu-item>
-      <el-menu-item v-if="usertype === 'teacher'" index="/home/course">
+      <el-menu-item v-if="props.usertype === 2" index="/home/course">
         <i class="el-icon-reading"></i>
         <span>教学内容</span>
       </el-menu-item>
-      <el-menu-item v-if="usertype === 'teacher'" index="/home/materials">
+      <el-menu-item v-if="props.usertype === 2" index="/home/materials">
         <i class="el-icon-folder"></i>
         <span>资料管理</span>
       </el-menu-item>
-      <el-menu-item v-if="usertype === 'teacher'" index="/home/practice">
+      <el-menu-item v-if="props.usertype === 2" index="/home/practice">
         <i class="el-icon-edit-outline"></i>
         <span>在线练习</span>
       </el-menu-item>
-      <el-menu-item v-if="usertype === 'teacher'" index="/home/community">
+      <el-menu-item v-if="props.usertype === 2" index="/home/community">
         <i class="el-icon-chat-line-square"></i>
         <span>社区交流</span>
       </el-menu-item>
-      <el-menu-item v-if="usertype === 'teacher'" index="/home/qa">
+      <el-menu-item v-if="props.usertype === 2" index="/home/qa">
         <i class="el-icon-document"></i>
         <span>智能批改</span>
       </el-menu-item>
@@ -62,26 +62,31 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router'; // 导入 useRouter
+import { useRoute, useRouter } from 'vue-router';
 import { defineProps } from 'vue';
-import { ElMessage } from 'element-plus'; // 导入 ElMessage 用于提示
+import { ElMessage } from 'element-plus';
 
 // 定义props，接收usertype变量
 const props = defineProps({
+  // 将 usertype 的类型定义为 Number，并使用字面量类型 0 | 1 来约束
+  // 加上 -1 是为了处理 Home.vue 中传递的初始值或可能为 null/undefined 的情况，确保类型安全
   usertype: {
-    type: String,
+    type: Number as () => 0 | 1 | -1, // 0:学生, 1:教师, -1:未定义/其他
     required: true
   }
 });
 
 const route = useRoute();
-const router = useRouter(); // 获取 router 实例
+const router = useRouter();
 
 const activePath = computed(() => route.path);
 
 const logout = () => {
   console.log('退出登录');
   // 实际项目中，这里需要清除用户会话信息（如 token），然后跳转到登录页
+  // 由于尚未引入 Pinia 或其他状态管理，请确保您有其他机制来清除会话。
+  // 例如，如果您使用 localStorage 存储 token，可以在这里清除它：
+  // localStorage.removeItem('authToken');
   ElMessage.info('您已成功退出登录。');
   router.push('/login'); // 跳转到登录页面
 };
