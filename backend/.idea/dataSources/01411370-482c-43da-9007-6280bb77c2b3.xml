@@ -1062,7 +1062,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Charset>utf8mb4</Charset>
     </collation>
     <schema id="288" parent="1" name="edupal">
-      <LastIntrospectionLocalTimestamp>2025-06-01.06:23:47</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-06-01.06:51:54</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="289" parent="1" name="information_schema">
@@ -1253,8 +1253,7 @@ DYNAMIC</Options>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="333" parent="300" name="progress_id">
-      <AutoIncrement>1</AutoIncrement>
-      <DasType>int|0s</DasType>
+      <DasType>varchar(10)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
