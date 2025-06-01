@@ -153,6 +153,22 @@
         <div class="sidebar-header">
           <h3>对话历史</h3>
           <div class="header-actions">
+            <!-- 同步状态指示器 -->
+            <div v-if="isSyncing" class="sync-indicator" title="正在同步到云端">
+              <el-icon class="sync-icon"><Promotion /></el-icon>
+              <span class="sync-text">同步中</span>
+            </div>
+            <!-- 清理本地对话按钮 -->
+            <el-button 
+              v-if="hasLocalConversations"
+              text 
+              size="small"
+              @click="clearAllLocalConversations"
+              class="clear-local-btn"
+              title="清空所有本地对话"
+            >
+              <el-icon><Delete /></el-icon>
+            </el-button>
             <el-button 
               text 
               @click="toggleSidebar" 
@@ -191,12 +207,11 @@
               </div>
               <div class="conversation-actions">
                 <el-button 
-                  v-if="conv.isFromBackend"
                   text 
                   size="small"
                   @click.stop="handleDeleteConversation(conv)"
                   class="delete-btn"
-                  title="删除历史记录"
+                  :title="conv.isFromBackend ? '删除云端历史记录' : '删除本地对话'"
                 >
                   <el-icon><Delete /></el-icon>
                 </el-button>
@@ -284,6 +299,10 @@ const quickQuestions = [
 const currentMessages = computed(() => {
   const conv = conversations.value.find(c => c.id === currentConversationId.value);
   return conv ? conv.messages : [];
+});
+
+const hasLocalConversations = computed(() => {
+  return conversations.value.some(conv => !conv.isFromBackend);
 });
 
 // 方法
@@ -463,7 +482,7 @@ const syncAfterMessage = async (questionContent: string, answerContent: string, 
   isSyncing.value = true;
   try {
     // 给后端更多时间保存数据
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1500));
     
     // 保存当前对话ID，用于后续切换
     const currentLocalConvId = currentConversationId.value;
@@ -482,6 +501,15 @@ const syncAfterMessage = async (questionContent: string, answerContent: string, 
         // 找到匹配的云端对话，切换到云端版本
         currentConversationId.value = matchingBackendConv.id;
         console.log('已切换到云端同步版本:', matchingBackendConv.title);
+        
+        // 移除本地重复对话
+        const localConvIndex = conversations.value.findIndex(conv => 
+          !conv.isFromBackend && conv.id === currentLocalConvId
+        );
+        if (localConvIndex !== -1) {
+          conversations.value.splice(localConvIndex, 1);
+          console.log('已移除重复的本地对话');
+        }
       }
     }
     
@@ -507,15 +535,114 @@ const clearCurrentConversation = () => {
   }
 };
 
+// 清空所有本地对话
+const clearAllLocalConversations = async () => {
+  const localConversations = conversations.value.filter(conv => !conv.isFromBackend);
+  
+  if (localConversations.length === 0) {
+    ElMessage.info('没有本地对话需要清理');
+    return;
+  }
+
+  try {
+    await ElMessageBox.confirm(
+      `确定要清空所有本地对话吗？\n\n将删除 ${localConversations.length} 条本地对话，此操作无法撤销。`,
+      '清空本地对话',
+      {
+        confirmButtonText: '清空',
+        cancelButtonText: '取消',
+        type: 'warning',
+        dangerouslyUseHTMLString: false
+      }
+    );
+
+    // 移除所有本地对话
+    conversations.value = conversations.value.filter(conv => conv.isFromBackend);
+    
+    // 如果当前选中的是本地对话，需要切换
+    const currentConv = conversations.value.find(c => c.id === currentConversationId.value);
+    if (!currentConv) {
+      if (conversations.value.length > 0) {
+        currentConversationId.value = conversations.value[0].id;
+      } else {
+        startNewConversation();
+      }
+    }
+    
+    ElMessage.success(`已清空 ${localConversations.length} 条本地对话`);
+    
+  } catch (error: any) {
+    if (error === 'cancel') {
+      // 用户取消，不做任何操作
+      return;
+    }
+    console.error('清空本地对话失败:', error);
+    ElMessage.error('清空本地对话失败');
+  }
+};
+
 // 删除历史对话
 const handleDeleteConversation = async (conv: Conversation) => {
   console.log('开始删除对话:', conv);
   
+  // 区分本地对话和云端对话的删除逻辑
   if (!conv.isFromBackend) {
-    ElMessage.warning('只能删除云端历史记录');
+    // 本地对话删除
+    await handleDeleteLocalConversation(conv);
     return;
   }
 
+  // 云端对话删除逻辑（原有逻辑）
+  await handleDeleteBackendConversation(conv);
+};
+
+// 删除本地对话
+const handleDeleteLocalConversation = async (conv: Conversation) => {
+  try {
+    const deleteMessage = `确定要删除这条本地对话吗？\n"${conv.title}"\n\n删除后无法恢复。`;
+      
+    await ElMessageBox.confirm(
+      deleteMessage,
+      '删除确认',
+      {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        type: 'warning',
+        dangerouslyUseHTMLString: false
+      }
+    );
+
+    console.log('用户确认删除本地对话');
+    
+    // 从本地对话列表中移除
+    const index = conversations.value.findIndex(c => c.id === conv.id);
+    if (index !== -1) {
+      conversations.value.splice(index, 1);
+    }
+    
+    // 如果删除的是当前选中的对话，切换到其他对话
+    if (currentConversationId.value === conv.id) {
+      if (conversations.value.length > 0) {
+        currentConversationId.value = conversations.value[0].id;
+      } else {
+        startNewConversation();
+      }
+    }
+    
+    ElMessage.success('本地对话删除成功');
+    
+  } catch (error: any) {
+    if (error === 'cancel') {
+      // 用户取消删除，不做任何操作
+      return;
+    }
+    console.error('删除本地对话失败:', error);
+    ElMessage.error('删除本地对话失败');
+  }
+};
+
+// 删除云端对话
+const handleDeleteBackendConversation = async (conv: Conversation) => {
   // 提取所有需要删除的questionId
   let questionIds: string[] = [];
   
@@ -695,6 +822,7 @@ const sendMessage = async () => {
     ElMessage.success('AI回答已生成');
     
     // 实时同步到云端（异步执行，不阻塞用户操作）
+    // 由于 askAI 已经自动保存到后端，我们只需要重新加载并整合
     syncAfterMessage(
       questionContent, 
       aiResponse.answerContent,
@@ -1069,6 +1197,40 @@ watch(conversations, saveConversations, { deep: true });
 .header-actions {
   display: flex;
   gap: 8px;
+  align-items: center;
+}
+
+/* 同步状态指示器样式 */
+.sync-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  background: #e6f7ff;
+  border: 1px solid #91d5ff;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #1890ff;
+}
+
+.sync-icon {
+  animation: rotate 1s linear infinite;
+  font-size: 12px;
+}
+
+.sync-text {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .collapse-btn {
@@ -1079,6 +1241,17 @@ watch(conversations, saveConversations, { deep: true });
 
 .collapse-btn:hover {
   color: #409eff;
+}
+
+.clear-local-btn {
+  padding: 4px;
+  min-height: auto;
+  color: #f56c6c;
+}
+
+.clear-local-btn:hover {
+  color: #e55353;
+  background-color: rgba(245, 108, 108, 0.1);
 }
 
 .conversation-list {
