@@ -4,6 +4,7 @@ import com.example.edupal.common.ApiResponse;
 import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.QuestionRequest;
 import com.example.edupal.dto.response.AnswerResponse;
+import com.example.edupal.dto.response.GetMyTeacherResponse;
 import com.example.edupal.dto.response.HistoryResponse;
 import com.example.edupal.dto.response.ViewQuestionResponse;
 import com.example.edupal.service.AIService;
@@ -83,6 +84,15 @@ public class AIController {
             return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
         } else {
             return ResponseEntity.status(400).body(new ApiResponse<>(400,result.getMessage()));
+        }
+    }
+
+    @PostMapping("/getMyTeacher")
+    public GetMyTeacherResponse getMyTeacher(@RequestParam("userId") String userId) {
+        try {
+            return aIService.getMyTeacher(userId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
         }
     }
 }

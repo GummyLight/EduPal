@@ -4,6 +4,7 @@ import com.example.edupal.common.ApiResponse;
 import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.QuestionRequest;
 import com.example.edupal.dto.response.AnswerResponse;
+import com.example.edupal.dto.response.GetMyTeacherResponse;
 import com.example.edupal.dto.response.HistoryResponse;
 import com.example.edupal.dto.response.ViewQuestionResponse;
 
@@ -19,4 +20,6 @@ public interface AIService {
     ViewQuestionResponse viewQuestion(String teacherId);
 
     Result teacherAnswer(String teacherId,String questionId,String answerContent);
+
+    GetMyTeacherResponse getMyTeacher(String userId);
 }

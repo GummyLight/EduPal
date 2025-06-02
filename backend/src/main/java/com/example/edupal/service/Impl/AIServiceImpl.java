@@ -5,6 +5,7 @@ import cn.hutool.json.JSONObject;
 import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.QuestionRequest;
 import com.example.edupal.dto.response.AnswerResponse;
+import com.example.edupal.dto.response.GetMyTeacherResponse;
 import com.example.edupal.dto.response.HistoryResponse;
 import com.example.edupal.dto.response.ViewQuestionResponse;
 import com.example.edupal.model.*;
@@ -327,6 +328,34 @@ public class AIServiceImpl implements AIService {
         question.setIsAnswered(1); // 标记问题为已回答
         questionRepository.save(question); // 更新问题状态
         return new Result(true, "教师回答已成功提交");
+    }
+
+    @Override
+    public GetMyTeacherResponse getMyTeacher(String userId) {
+        User user = userRepository.findByUserId(userId);
+        if (user == null) {
+            return new GetMyTeacherResponse(new GetMyTeacherResponse.TItem[0]); // Return empty response if user doesn't exist
+        }
+
+        // Fetch the student's class
+        Student student = studentRepository.findByStudentId(userId);
+        if (student == null) {
+            return new GetMyTeacherResponse(new GetMyTeacherResponse.TItem[0]); // Return empty response if student doesn't exist
+        }
+
+        // Find teachers associated with the student's class
+        List<Teacher> teachers = teacherRepository.findByClass(student.getStudentClass());
+
+        // Map teachers to TItem objects
+        GetMyTeacherResponse.TItem[] teacherItems = teachers.stream()
+                .map(teacher -> new GetMyTeacherResponse.TItem(
+                        teacher.getTeacherId(),
+                        teacher.getTeacherName(),
+                        teacher.getTeachingSubject()
+                ))
+                .toArray(GetMyTeacherResponse.TItem[]::new);
+
+        return new GetMyTeacherResponse(teacherItems);
     }
 }
 
