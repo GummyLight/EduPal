@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(admin):修改admin/register请求类,将教师授课班记作数组">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/HomeTeacherResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/HomeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/HomeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/HomeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/package.json" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(home/teacher):新增教师登录界面接口，加了模拟返回信息">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AdminController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -254,15 +248,7 @@
       <workItem from="1748704535022" duration="38003000" />
       <workItem from="1748822931604" duration="9360000" />
       <workItem from="1748833505263" duration="3757000" />
-      <workItem from="1748846026867" duration="2977000" />
-    </task>
-    <task id="LOCAL-00002" summary="feat(db):将数据库部署在服务器上，更新数据库地址、用户名、密码等信息。">
-      <option name="closed" value="true" />
-      <created>1748090115606</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1748090115606</updated>
+      <workItem from="1748846026867" duration="3314000" />
     </task>
     <task id="LOCAL-00003" summary="feat:优化了response的格式，修改了登录的response接口，数据库增加了User类里面的user_name">
       <option name="closed" value="true" />
@@ -648,7 +634,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748847145827</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="feat(home/teacher):新增教师登录界面接口，加了模拟返回信息">
+      <option name="closed" value="true" />
+      <created>1748849499122</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1748849499122</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -681,7 +675,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="feat(document):建立了一个文件夹放文档们" />
     <MESSAGE value="fix(ai/history):修复了查看问题历史“只闻其声不知其人”的问题" />
     <MESSAGE value="feat(ai/delete):实现了答疑模块删除问题的功能" />
     <MESSAGE value="style(Impl):将所有ServiceImpl都单独放在了新的路径下" />
@@ -706,7 +699,8 @@
     <MESSAGE value="feat(admin):新增管理员模块后端" />
     <MESSAGE value="feat(admin):新增了管理员注册学生、教师、管理员功能" />
     <MESSAGE value="feat(admin):修改admin/register请求类,将教师授课班记作数组" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(admin):修改admin/register请求类,将教师授课班记作数组" />
+    <MESSAGE value="feat(home/teacher):新增教师登录界面接口，加了模拟返回信息" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(home/teacher):新增教师登录界面接口，加了模拟返回信息" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
