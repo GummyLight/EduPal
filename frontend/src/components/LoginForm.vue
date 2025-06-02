@@ -148,16 +148,47 @@ const verifyCodeError = ref('');
 // 密码显示状态
 const showPassword = ref(false);
 
+// Doro 模式音频播放器
+const doroAudioPlayer = ref<HTMLAudioElement | null>(null);
+
 // 神秘彩蛋相关状态
 const showSecretModal = ref(false);
 const inputSequence = ref<Array<{char: string, correct: boolean, incorrect: boolean}>>([]);
 const sequenceStatus = ref('');
 const statusMessage = ref('按键盘输入神秘代码...');
 
-// 神秘代码序列：上上下下左右左右BABA
-const secretCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA', 'KeyB', 'KeyA'];
-const secretCodeDisplay = ['↑', '↑', '↓', '↓', '←', '→', '←', '→', 'B', 'A', 'B', 'A'];
+// 多种神秘代码序列
+const secretCodes = {
+  konami: {
+    sequence: ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA', 'KeyB', 'KeyA'],
+    display: ['↑', '↑', '↓', '↓', '←', '→', '←', '→', 'B', 'A', 'B', 'A'],
+    action: () => {
+      router.push('/register');
+      ElMessage.success('欢迎来到注册页面！这是一个隐藏彩蛋！');
+    },
+    message: '🎉 恭喜！神秘代码正确！正在传送到注册页面...'
+  },
+  doro: {
+    sequence: ['KeyD', 'KeyO', 'KeyR', 'KeyO'],
+    display: ['D', 'O', 'R', 'O'],
+    action: () => {
+      // 初始化并播放 BGM
+      if (!doroAudioPlayer.value) {
+        doroAudioPlayer.value = new Audio('/src/assets/DoroBgm.mp3');
+        doroAudioPlayer.value.loop = true;
+      }
+      doroAudioPlayer.value.play().catch(error => {
+        console.error("Error playing Doro BGM:", error);
+        ElMessage.error('无法播放BGM，请检查控制台。');
+      });
+      ElMessage.success('🌸 Doroの小曲已启动！');
+    },
+    message: '🌸 神秘的 Doro 之声...' // 更新消息
+  }
+};
+
 let currentSequenceIndex = 0;
+const possibleCodes = ref<string[]>(Object.keys(secretCodes));
 
 // 计算属性
 const userIdLabel = computed(() => {
@@ -346,64 +377,87 @@ const handleSecretTrigger = () => {
   showSecretModal.value = true;
   inputSequence.value = [];
   currentSequenceIndex = 0;
+  possibleCodes.value = Object.keys(secretCodes); // Reset to all codes
   sequenceStatus.value = '';
   statusMessage.value = '按键盘输入神秘代码...';
 };
 
 const closeSecretModal = () => {
   showSecretModal.value = false;
+  // Reset state when closing
   inputSequence.value = [];
   currentSequenceIndex = 0;
+  possibleCodes.value = Object.keys(secretCodes);
+  sequenceStatus.value = '';
+  statusMessage.value = '按键盘输入神秘代码...'; // Reset message
 };
 
 // 处理键盘输入
 const handleKeyDown = (event: KeyboardEvent) => {
   if (!showSecretModal.value) return;
-  
-  // 防止默认行为
+
   event.preventDefault();
-  
-  const expectedKey = secretCode[currentSequenceIndex];
-  const inputChar = secretCodeDisplay[currentSequenceIndex];
-  
-  if (event.code === expectedKey) {
-    // 正确的按键
+  const keyPressed = event.code;
+
+  const nextPossibleCodes: string[] = [];
+  let matchedAnyCodeThisTurn = false;
+
+  for (const codeName of possibleCodes.value) {
+    const codeDetail = secretCodes[codeName as keyof typeof secretCodes];
+    // Check if the current key pressed matches the expected key in the sequence for this code
+    if (currentSequenceIndex < codeDetail.sequence.length && codeDetail.sequence[currentSequenceIndex] === keyPressed) {
+      nextPossibleCodes.push(codeName);
+      matchedAnyCodeThisTurn = true;
+    }
+  }
+
+  if (matchedAnyCodeThisTurn) {
+    // A key was pressed that matches the next expected key for one or more possible codes
+    // Use the display character from the first matching code for the visual feedback
+    const displayCharSource = secretCodes[nextPossibleCodes[0] as keyof typeof secretCodes];
     inputSequence.value.push({
-      char: inputChar,
+      char: displayCharSource.display[currentSequenceIndex], // Or a generic '●' if preferred
       correct: true,
-      incorrect: false
+      incorrect: false,
     });
     
     currentSequenceIndex++;
-    
-    if (currentSequenceIndex === secretCode.length) {
-      // 序列完成
+    possibleCodes.value = nextPossibleCodes; // Update the list of still-possible codes
+
+    // Check if any of the currently possible codes are now complete
+    let completedCodeName: string | null = null;
+    for (const codeName of possibleCodes.value) {
+      const codeDetail = secretCodes[codeName as keyof typeof secretCodes];
+      if (currentSequenceIndex === codeDetail.sequence.length) {
+        completedCodeName = codeName;
+        break; // Found a completed code
+      }
+    }
+
+    if (completedCodeName) {
+      const completedCodeDetail = secretCodes[completedCodeName as keyof typeof secretCodes];
       sequenceStatus.value = 'success';
-      statusMessage.value = '🎉 恭喜！神秘代码正确！正在传送到注册页面...';
-      
+      statusMessage.value = completedCodeDetail.message;
       setTimeout(() => {
-        closeSecretModal();
-        router.push('/register');
-        ElMessage.success('欢迎来到注册页面！这是一个隐藏彩蛋！');
-      }, 2000);
+        completedCodeDetail.action();
+        closeSecretModal(); // This will also reset state for the next opening
+      }, 1500);
     } else {
       statusMessage.value = '很好！继续输入...';
     }
+
   } else {
-    // 错误的按键
-    const wrongChar = getDisplayChar(event.code);
-    inputSequence.value.push({
-      char: wrongChar,
-      correct: false,
-      incorrect: true
-    });
-    
+    // Key pressed does not match the next key for ANY of the currently possible codes
+    const wrongCharDisplay = getDisplayChar(keyPressed); // Get a display for the wrong key
+    inputSequence.value.push({ char: wrongCharDisplay, correct: false, incorrect: true });
     sequenceStatus.value = 'error';
-    statusMessage.value = '❌ 输入错误！请重新开始...';
-    
+    statusMessage.value = '❌ 输入错误！序列已重置。';
+
+    // Reset the sequence matching process
     setTimeout(() => {
       inputSequence.value = [];
       currentSequenceIndex = 0;
+      possibleCodes.value = Object.keys(secretCodes); // Reset to all codes
       sequenceStatus.value = '';
       statusMessage.value = '按键盘输入神秘代码...';
     }, 1000);
@@ -418,18 +472,36 @@ const getDisplayChar = (code: string): string => {
     'ArrowLeft': '←',
     'ArrowRight': '→',
     'KeyB': 'B',
-    'KeyA': 'A'
+    'KeyA': 'A',
+    'KeyD': 'D',
+    'KeyO': 'O',
+    'KeyR': 'R',
   };
-  return codeMap[code] || code.replace('Key', '');
+  // Fallback for other letter keys, e.g. KeyC -> C
+  if (code.startsWith('Key') && code.length === 4 && /^[A-Z]$/.test(code.charAt(3))) {
+      if (!codeMap[code]) return code.charAt(3);
+  }
+  return codeMap[code] || code.replace(/^Key/, ''); // General fallback
 };
 
 // 监听键盘事件
 onMounted(() => {
   document.addEventListener('keydown', handleKeyDown);
+  // 预加载音频元素，但不播放
+  if (!doroAudioPlayer.value) {
+    doroAudioPlayer.value = new Audio('/src/assets/DoroBgm.mp3');
+    doroAudioPlayer.value.loop = true;
+  }
 });
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeyDown);
+  // 清理音频播放器
+  if (doroAudioPlayer.value) {
+    doroAudioPlayer.value.pause();
+    doroAudioPlayer.value.src = ''; // 尝试释放资源
+    doroAudioPlayer.value = null;
+  }
 });
 </script>
 
