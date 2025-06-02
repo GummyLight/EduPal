@@ -3,7 +3,6 @@ package com.example.edupal.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "post")
 @Data
@@ -18,24 +17,25 @@ public class Post {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "authorId", nullable = false, length = 255)
+    // 统一使用蛇形命名
+    @Column(name = "author_id", nullable = false, length = 255)
     private String authorId;
 
-    @Column(name = "authorName", nullable = false, length = 255)
+    @Column(name = "author_name", nullable = false, length = 255)
     private String authorName;
 
-    @Column(name = "publishTime", nullable = false)
+    @Column(name = "publish_time")
     private LocalDateTime publishTime;
 
-    @Column(name = "attachedFileName", length = 255)
+    @Column(name = "attached_file_name", length = 255)
     private String attachedFileName;
 
-    @Column(name = "attachedFileUrl", columnDefinition = "TEXT")
+    @Column(name = "attached_file_url", columnDefinition = "TEXT")
     private String attachedFileUrl;
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "updatedAt", nullable = false)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
 }
