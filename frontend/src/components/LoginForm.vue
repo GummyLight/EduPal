@@ -218,8 +218,6 @@ const handleTypeChange = () => {
   refreshCode(); // 切换登录方式时也刷新验证码
 };
 
-// 添加监听器来处理类型切换
-import { watch } from 'vue';
 watch(() => form.type, () => {
   handleTypeChange();
 });
@@ -245,10 +243,11 @@ const handleSubmit = async () => {
     const response = await ex.login(form.userId, form.password, form.type);
     if (response.code==200) {
       ElMessage.success(response.message);
-      window.location.href = '/home';
-
+      
       localStorage.setItem('user_id', form.userId);
-      localStorage.setItem('user_type', response.data?.userType);
+      localStorage.setItem('user_type', response.data?.userType?.toString() || '1');
+      
+      window.location.href = '/home';
 
     } else {
       ElMessage.error(response.message);
