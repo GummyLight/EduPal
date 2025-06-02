@@ -23,15 +23,13 @@ public class ListTeacherResponse {
         private String teacherId;         // 教师ID
         private String teacherName;       // 教师姓名
         private String teachingSubject;   // 教授科目
-        private String class1;            // 班级1
-        private String class2;            // 班级2
+        private String[] Class;
 
-        public TeacherDetail(String teacherId, String teacherName, String teachingSubject, String class1, String class2) {
+        public TeacherDetail(String teacherId, String teacherName, String teachingSubject, String[] Class) {
             this.teacherId = teacherId;
             this.teacherName = teacherName;
             this.teachingSubject = teachingSubject;
-            this.class1 = class1;
-            this.class2 = class2;
+            this.Class= Class;
         }
     }
 }

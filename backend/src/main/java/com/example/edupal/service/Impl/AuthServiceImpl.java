@@ -369,8 +369,7 @@ public class AuthServiceImpl implements AuthService {
                         teacher.getTeacherId(),
                         teacher.getTeacherName(),
                         teacher.getTeachingSubject(),
-                        teacher.getClass1(),
-                        teacher.getClass2()
+                        new String[]{teacher.getClass1(), teacher.getClass2()}
                 )
         ).collect(Collectors.toList());
 

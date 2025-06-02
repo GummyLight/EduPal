@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(ai):新增学生获取可转接老师的功能">
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/GetMyTeacherResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/GetMyTeacherResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(ai):规范了getMyTeacher的格式">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/ListTeacherResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/ListTeacherResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -249,15 +250,7 @@
       <workItem from="1748704535022" duration="38003000" />
       <workItem from="1748822931604" duration="9360000" />
       <workItem from="1748833505263" duration="3757000" />
-      <workItem from="1748846026867" duration="4749000" />
-    </task>
-    <task id="LOCAL-00005" summary="feat:优化了response的格式，修改了登录的response接口，数据库增加了User类里面的user_name">
-      <option name="closed" value="true" />
-      <created>1748249182871</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1748249182871</updated>
+      <workItem from="1748846026867" duration="6100000" />
     </task>
     <task id="LOCAL-00006" summary="feat:加了一条惊天地泣鬼神的注释，增强了鼠鼠对json的理解">
       <option name="closed" value="true" />
@@ -643,7 +636,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748860770395</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="fix(ai):规范了getMyTeacher的格式">
+      <option name="closed" value="true" />
+      <created>1748861160016</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1748861160016</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -676,7 +677,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="style(Impl):将所有ServiceImpl都单独放在了新的路径下" />
     <MESSAGE value="feat(file):给下载文件的端口增加了fileId键，用于上传下载的重命名" />
     <MESSAGE value="feat(file):给预览文件的端口增加了fileId键，用于上传下载的重命名" />
     <MESSAGE value="fix(ai/delete):修复了先删除问题对象可能会导致的空指针问题" />
@@ -701,7 +701,8 @@
     <MESSAGE value="feat(home/teacher):新增教师登录界面接口，加了模拟返回信息" />
     <MESSAGE value="fix(admin/updateTeacherClass):将newClass以数组形式接收" />
     <MESSAGE value="feat(ai):新增学生获取可转接老师的功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(ai):新增学生获取可转接老师的功能" />
+    <MESSAGE value="fix(ai):规范了getMyTeacher的格式" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(ai):规范了getMyTeacher的格式" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
