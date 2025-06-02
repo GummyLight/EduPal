@@ -35,7 +35,7 @@ public class AdminController {
         else if(request.getUserType()==2){
             // 老师注册
             result = authService.registerTeacher(request.getUserId(), request.getUserName(), request.getPassword(), request.getEmail(), request.getUserType(),
-                    request.getTeachingSubject(), request.getClass1(), request.getClass2());
+                    request.getTeachingSubject(), request.getTeacherClass());
         }
         else {
             return ResponseEntity.badRequest().body(new ApiResponse<>(400, "无效的用户类型"));

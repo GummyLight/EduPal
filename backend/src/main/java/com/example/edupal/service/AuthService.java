@@ -11,7 +11,7 @@ public interface AuthService {
     Result registerStudent(String userId, String userName, String password, String email, Integer userType,
                              String studentClass, Integer studentGender);
     Result registerTeacher(String userId, String userName, String password, String email, Integer userType,
-                             String teachingSubject, String class1, String class2);
+                           String teachingSubject, String[] teacherClass);
     Result loginUserByUserId(String userId, String password);
     Result loginUserByEmail(String email, String password);
     Result sendVerificationCode(String mail) throws MessagingException;
