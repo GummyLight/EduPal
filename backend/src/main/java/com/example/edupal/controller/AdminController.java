@@ -93,9 +93,8 @@ public class AdminController {
     //修改老师班级
     @PostMapping("/updateTeacherClass")
     public ResponseEntity<?> updateTeacherClass(@RequestParam("teacherId") String teacherId,
-                                                @RequestParam("newClass1") String newClass1,
-                                                @RequestParam("newClass2") String newClass2) {
-        Result result = authService.updateTeacherClass(teacherId, newClass1, newClass2);
+                                                @RequestParam("newClass") String[] newClass) {
+        Result result = authService.updateTeacherClass(teacherId, newClass[0], newClass[1]);
         if (result.isSuccess()) {
             return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
         } else {
