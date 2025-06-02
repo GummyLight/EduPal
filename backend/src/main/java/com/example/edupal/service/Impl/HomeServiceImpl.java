@@ -1,6 +1,7 @@
 package com.example.edupal.service.Impl;
 
 import com.example.edupal.dto.response.HomeStudentResponse;
+import com.example.edupal.dto.response.HomeTeacherResponse;
 import com.example.edupal.model.LearningProgress;
 import com.example.edupal.model.Question;
 import com.example.edupal.model.Student;
@@ -83,4 +84,64 @@ public class HomeServiceImpl implements HomeService {
                 null
         );
     }
+
+    @Override
+    public HomeTeacherResponse getTeacherHomeData(String userId, Integer userType) {
+        if (userType == 2) {
+            // teacher
+            com.example.edupal.model.Teacher teacher = teacherRepository.findByTeacherId(userId);
+            if (teacher == null) {
+                return new HomeTeacherResponse(
+                        "error",
+                        "未找到教师信息",
+                        null,
+                        null,
+                        null,
+                        0,
+                        0,
+                        0,
+                        null,
+                        null,
+                        null
+                );
+            }
+            //List<Question> questions = questionRepository.findQuestionByTeacherId(userId);
+
+            return new HomeTeacherResponse(
+                    "success",
+                    "成功找到教师",
+                    teacher.getTeacherName(),
+                    "2",
+                    teacher.getTeacherId(),
+                    3,
+                    0, // Placeholder for uploadExercises
+                    0, // Placeholder for uploadResources
+                    Arrays.asList("Class 1", "Class 2"), // Example class IDs
+                    Arrays.asList(
+                            new HomeTeacherResponse.StudentDetails("S1", "Student 1", 85.5, 2.3),
+                            new HomeTeacherResponse.StudentDetails("S2", "Student 2", 90.0, 1.8)
+                    ), // Example top students
+                    Arrays.asList(
+                            new HomeTeacherResponse.StudentDetails("S3", "Student 3", 60.0, 5.0),
+                            new HomeTeacherResponse.StudentDetails("S4", "Student 4", 55.0, 4.5)
+                    ) // Example bottom students
+            );
+        }
+        return new HomeTeacherResponse(
+                "error",
+                "用户类型错误",
+                null,
+                null,
+                null,
+                0,
+                0,
+                0,
+                null,
+                null,
+                null
+        );
+    }
+
+
+
 }
