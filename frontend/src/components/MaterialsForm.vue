@@ -496,7 +496,7 @@ const handleDelete = async (row: { id: string; name: string }) => {
       // 2. 如果资料记录删除成功，再尝试删除文件服务器上的实际文件 (file/delete)
       // deleteFile 接口的 fileId 参数也可能是 resource_id
       const fileDeleteResponse = await deleteFile({
-        fileId: row.id, // 使用 resource_id 作为 fileId
+        fileId: row.id+getFileExtension(row.name), // 使用 resource_id 作为 fileId
         path: SERVER_FILE_ROOT_PATH // 文件服务器的根路径
       });
 
