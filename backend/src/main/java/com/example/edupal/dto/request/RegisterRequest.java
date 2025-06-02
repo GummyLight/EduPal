@@ -9,24 +9,23 @@ public class RegisterRequest {
     private String password;
     private String email;
     private Integer userType;
-    private String class1;
-    private String class2;
+    private String[] teacherClass;
     private String teachingSubject;
     private String studentClass;
     private Integer studentGender;
 
     public RegisterRequest(String userName, String userId, String password, String email,
-                             Integer userType, String class1, String class2,
-                             String teachingSubject, String studentClass, Integer studentGender) {
+                           Integer userType, String[] teacherClass,
+                           String teachingSubject, String studentClass, Integer studentGender) {
         this.userName = userName;
         this.userId = userId;
         this.password = password;
         this.email = email;
         this.userType = userType;
-        this.class1 = class1;
-        this.class2 = class2;
+        this.teacherClass = teacherClass;
         this.teachingSubject = teachingSubject;
         this.studentClass = studentClass;
         this.studentGender = studentGender;
+
     }
 }

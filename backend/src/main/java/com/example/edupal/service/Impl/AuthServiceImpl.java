@@ -96,12 +96,13 @@ public class AuthServiceImpl implements AuthService {
         user.setCreateTime(new Date());
         userRepository.save(user);
 
+
         return new Result(true, "学生注册成功");
     }
 
     @Override
     public Result registerTeacher(String userId, String userName, String password, String email, Integer userType,
-                                  String teachingSubject, String class1, String class2) {
+                                  String teachingSubject, String[] teacherClass) {
         Result result = registerUser(userId, userName, password, email, userType);
         if (!result.isSuccess()) {
             return result; // 如果注册用户失败，直接返回错误信息
@@ -111,8 +112,8 @@ public class AuthServiceImpl implements AuthService {
         teacher.setTeacherId(userId);
         teacher.setTeacherName(userName);
         teacher.setTeachingSubject(teachingSubject);
-        teacher.setClass1(class1);
-        teacher.setClass2(class2);
+        teacher.setClass1(teacherClass[0]);
+        teacher.setClass2(teacherClass[1]);
         teacherRepository.save(teacher);
         //创建user
         User user=new User();
