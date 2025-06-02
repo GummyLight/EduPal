@@ -47,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
     private TeacherRepository teacherRepository;
 
     @Override
-    public Result registerUser(String userId, String password, String email, Integer userType) {
+    public Result registerUser(String userId, String userName, String password, String email, Integer userType) {
         if (userRepository.existsByUserId(userId)) {
             return new Result(false, "用户名已存在");
         }
@@ -65,10 +65,66 @@ public class AuthServiceImpl implements AuthService {
         user.setUserId(userId);
         user.setUserPassword(passwordEncoder.encode(password));
         user.setUserEmail(email);
+        user.setUserName(userName);
         user.setUserType(userType);
         user.setCreateTime(new Date());
         userRepository.save(user);
         return new Result(true, "注册成功");
+    }
+
+    @Override
+    public Result registerStudent(String userId, String userName, String password, String email, Integer userType,
+                                  String studentClass, Integer studentGender) {
+        Result result = registerUser(userId, userName, password, email, userType);
+        if (!result.isSuccess()) {
+            return result; // 如果注册用户失败，直接返回错误信息
+        }
+        // 创建学生对象
+        Student student = new Student();
+        student.setStudentId(userId);
+        student.setStudentName(userName);
+        student.setStudentClass(studentClass);
+        student.setStudentGender(studentGender);
+        studentRepository.save(student);
+        //创建user
+        User user=new User();
+        user.setUserId(userId);
+        user.setUserName(userName);
+        user.setUserEmail(email);
+        user.setUserPassword(passwordEncoder.encode(password));
+        user.setUserType(userType);
+        user.setCreateTime(new Date());
+        userRepository.save(user);
+
+        return new Result(true, "学生注册成功");
+    }
+
+    @Override
+    public Result registerTeacher(String userId, String userName, String password, String email, Integer userType,
+                                  String teachingSubject, String class1, String class2) {
+        Result result = registerUser(userId, userName, password, email, userType);
+        if (!result.isSuccess()) {
+            return result; // 如果注册用户失败，直接返回错误信息
+        }
+        // 创建教师对象
+        Teacher teacher = new Teacher();
+        teacher.setTeacherId(userId);
+        teacher.setTeacherName(userName);
+        teacher.setTeachingSubject(teachingSubject);
+        teacher.setClass1(class1);
+        teacher.setClass2(class2);
+        teacherRepository.save(teacher);
+        //创建user
+        User user=new User();
+        user.setUserId(userId);
+        user.setUserName(userName);
+        user.setUserEmail(email);
+        user.setUserPassword(passwordEncoder.encode(password));
+        user.setUserType(userType);
+        user.setCreateTime(new Date());
+        userRepository.save(user);
+
+        return new Result(true, "教师注册成功");
     }
 
     @Override

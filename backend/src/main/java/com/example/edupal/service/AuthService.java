@@ -7,7 +7,11 @@ import com.example.edupal.dto.response.ListUserResponse;
 import jakarta.mail.MessagingException;
 
 public interface AuthService {
-    Result registerUser(String userId, String password, String phoneNum, Integer userType);
+    Result registerUser(String userId, String userName, String password, String phoneNum, Integer userType);
+    Result registerStudent(String userId, String userName, String password, String email, Integer userType,
+                             String studentClass, Integer studentGender);
+    Result registerTeacher(String userId, String userName, String password, String email, Integer userType,
+                             String teachingSubject, String class1, String class2);
     Result loginUserByUserId(String userId, String password);
     Result loginUserByEmail(String email, String password);
     Result sendVerificationCode(String mail) throws MessagingException;
