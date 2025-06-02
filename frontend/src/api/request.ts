@@ -19,11 +19,6 @@ const api = axios.create({
 //请求拦截器
 api.interceptors.request.use(
     (config) => {
-        // 暂时不使用token认证，后端可能使用其他认证方式
-        // const token = localStorage.getItem('token');
-        // if (token) {
-        //     config.headers['Authorization'] = `Bearer ${token}`;
-        // }
         return config
     },
     (error) => {
