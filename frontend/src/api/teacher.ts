@@ -13,13 +13,24 @@ interface TransTeacherRequest {
 interface TransTeacherResponse {
   code: number
   message: string
+  data?: any
 }
 
 export const transferQuestionToTeacher = async (
     data: TransTeacherRequest
 ): Promise<TransTeacherResponse> => {
     try {
-        const response = await request.post<TransTeacherResponse>('/al/transTeacher', data);
+        // 后端期望的是表单参数，不是JSON
+        const formData = new URLSearchParams();
+        formData.append('userId', data.userId);
+        formData.append('questionId', data.questionId);
+        formData.append('teacherId', data.teacherId);
+        
+        const response = await request.post<TransTeacherResponse>('/ai/transTeacher', formData, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
         console.log('转交问题给老师成功:', response.data);
         return response.data;
     } catch (error: any) {
