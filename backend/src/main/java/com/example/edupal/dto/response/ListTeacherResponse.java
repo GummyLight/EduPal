@@ -23,13 +23,13 @@ public class ListTeacherResponse {
         private String teacherId;         // 教师ID
         private String teacherName;       // 教师姓名
         private String teachingSubject;   // 教授科目
-        private String[] Class;
+        private String[] teacherClass;
 
         public TeacherDetail(String teacherId, String teacherName, String teachingSubject, String[] Class) {
             this.teacherId = teacherId;
             this.teacherName = teacherName;
             this.teachingSubject = teachingSubject;
-            this.Class= Class;
+            this.teacherClass= Class;
         }
     }
 }
