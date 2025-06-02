@@ -64,7 +64,7 @@ class AuthServiceImplTest {
     @Test
     void testRegisterUser_UsernameExists() {
         when(userRepository.existsByUserId("testUser")).thenReturn(true);
-        Result result = authService.registerUser("testUser", "password123", "test@example.com", 1);
+        Result result = authService.registerUser("testUser", "user111","password123", "test@example.com", 1);
         assertFalse(result.isSuccess());
         assertEquals("用户名已存在", result.getMessage());
     }
@@ -72,21 +72,21 @@ class AuthServiceImplTest {
     @Test
     void testRegisterUser_EmailExists() {
         when(userRepository.existsByUserEmail("test@example.com")).thenReturn(true);
-        Result result = authService.registerUser("testUser", "password123", "test@example.com", 1);
+        Result result = authService.registerUser("testUser", "user111","password123", "test@example.com", 1);
         assertFalse(result.isSuccess());
         assertEquals("邮箱已存在", result.getMessage());
     }
 
     @Test
     void testRegisterUser_IncompleteInfo() {
-        Result result = authService.registerUser(null, "password123", "test@example.com", 1);
+        Result result = authService.registerUser(null, "user111","password123", "test@example.com", 1);
         assertFalse(result.isSuccess());
         assertEquals("未填写完整信息", result.getMessage());
     }
 
     @Test
     void testRegisterUser_ShortPassword() {
-        Result result = authService.registerUser("testUser", "pass", "test@example.com", 1);
+        Result result = authService.registerUser("testUser", "user111","pass", "test@example.com", 1);
         assertFalse(result.isSuccess());
         assertEquals("密码长度不能小于6", result.getMessage());
     }
@@ -95,7 +95,7 @@ class AuthServiceImplTest {
     void testRegisterUser_Success() {
         when(userRepository.existsByUserId("testUser")).thenReturn(false);
         when(userRepository.existsByUserEmail("test@example.com")).thenReturn(false);
-        Result result = authService.registerUser("testUser", "password123", "test@example.com", 1);
+        Result result = authService.registerUser("testUser", "user111","password123", "test@example.com", 1);
         assertTrue(result.isSuccess());
         assertEquals("注册成功", result.getMessage());
     }
