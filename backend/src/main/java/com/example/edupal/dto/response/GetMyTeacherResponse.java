@@ -2,11 +2,19 @@ package com.example.edupal.dto.response;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class GetMyTeacherResponse {
-    private TItem[] teachers;
+    private String status = "success";
+    private String message = "获取教师列表成功";
+    private Integer teacherNum;
+    private List<TItem> teachers;
 
-    public GetMyTeacherResponse(TItem[] teachers) {
+    public GetMyTeacherResponse(String status, String message,List<TItem> teachers) {
+        this.status = status;
+        this.message = message;
+        this.teacherNum = teachers.size();
         this.teachers = teachers;
     }
 

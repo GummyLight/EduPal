@@ -332,30 +332,25 @@ public class AIServiceImpl implements AIService {
 
     @Override
     public GetMyTeacherResponse getMyTeacher(String userId) {
-        User user = userRepository.findByUserId(userId);
-        if (user == null) {
-            return new GetMyTeacherResponse(new GetMyTeacherResponse.TItem[0]); // Return empty response if user doesn't exist
-        }
-
         // Fetch the student's class
         Student student = studentRepository.findByStudentId(userId);
         if (student == null) {
-            return new GetMyTeacherResponse(new GetMyTeacherResponse.TItem[0]); // Return empty response if student doesn't exist
+            return new GetMyTeacherResponse("error","学生不存在",null); // Return empty response if student doesn't exist
         }
 
         // Find teachers associated with the student's class
         List<Teacher> teachers = teacherRepository.findByClass(student.getStudentClass());
 
         // Map teachers to TItem objects
-        GetMyTeacherResponse.TItem[] teacherItems = teachers.stream()
+        List<GetMyTeacherResponse.TItem> teacherItems = teachers.stream()
                 .map(teacher -> new GetMyTeacherResponse.TItem(
                         teacher.getTeacherId(),
                         teacher.getTeacherName(),
                         teacher.getTeachingSubject()
                 ))
-                .toArray(GetMyTeacherResponse.TItem[]::new);
+                .collect(Collectors.toList());
 
-        return new GetMyTeacherResponse(teacherItems);
+        return new GetMyTeacherResponse("success","获取成功",teacherItems);
     }
 }
 
