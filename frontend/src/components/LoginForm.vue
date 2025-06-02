@@ -330,6 +330,7 @@ const handleSubmit = async () => {
       
       localStorage.setItem('user_id', form.userId);
       localStorage.setItem('user_type', response.data?.userType?.toString() || '1');
+      localStorage.setItem('user_name', response.data?.userName);
       
       window.location.href = '/home';
 

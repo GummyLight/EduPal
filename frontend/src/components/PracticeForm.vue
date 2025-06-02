@@ -57,9 +57,9 @@
           <el-button type="primary" icon="el-icon-data-analysis" @click="handleViewProgress">查看学习进度</el-button>
         </template>
 
-        <el-button type="warning" icon="el-icon-download" @click="handleExport">
-          {{ userType === 2 ? '导出练习完成情况' : '导出我的练习情况' }}
-        </el-button>
+<!--        <el-button type="warning" icon="el-icon-download" @click="handleExport">-->
+<!--          {{ userType === 2 ? '导出练习完成情况' : '导出我的练习情况' }}-->
+<!--        </el-button>-->
       </div>
 
       <el-card class="table-card" shadow="never">
@@ -126,8 +126,8 @@ const props = defineProps({
   }
 });
 
-const userType = computed(() => props.usertype);
-
+//const userType = computed(() => props.usertype);
+const userType=2;
 const username = computed(() => props.username);
 const userId = computed(() => props.userid);
 
