@@ -5,7 +5,7 @@ import axios from 'axios';
 /*auth.ts用于实现后端和前端的数据交接*/
 
 // 来自后端的实际响应格式
-interface ApiResponse<T = any> {
+export interface ApiResponse<T = any> {
   code: number
   message: string
   data?: T
@@ -27,26 +27,11 @@ interface LoginResponseData {
   userType: number // 1 (学生) 或 2 (教师)
 }
 
-// 注册请求数据类型
-interface RegisterRequest {
-  userName: string
-  userId: string
-  password: string
-  email: string
-  userType: number //1表示学生，2表示教师
-  // 教师特有变量
-  teacherClass?: string[] //授课班级
-  teachingSubject?: string //教学科目
-  // 学生特有变量
-  studentClass?: string //学生所在班级
-  studentGender?: number //学生性别
-}
-
-// 注册响应数据类型其实和后端实际相应类型一致，但这是一种代码规范。
-interface RegisterResponse {
-  code: number
-  message: string
-}
+/*
+ 注册功能放到admin.ts了，因为管理员的接口比较多，
+ 需要单独一个文件管理，而注册又恰好是管理员的功能，
+ 所以就放在admin.ts了
+*/
 
 // 忘记密码请求数据类型
 interface ForgetPasswordRequest {
@@ -102,24 +87,6 @@ export const login = async (userInput: string, password: string, type: number): 
   }
 }
 
-// 注册函数
-export const register = async (userId: string, password: string, email: string, userType: number): Promise<ApiResponse> => {
-  try {
-    const response = await axios.post<ApiResponse>(`/api/auth/register`, {
-      userId,
-      password,
-      email,  // 暂时保持后端参数名，发送邮箱作为值
-      userType
-    });
-    return response.data;  // 直接返回，不需要转换
-  } catch (error: any) {
-    if (error.response?.data) {
-      return error.response.data;  // 直接返回，不需要转换
-    }
-    throw error;
-  }
-};
-
 // 发送邮箱验证码函数
 export const sendEmailCode = async (email: string): Promise<ApiResponse> => {
   try {
@@ -152,14 +119,4 @@ export const forgetPassword = async (email: string, code: string, newPassword: s
   }
 };
 
-export default { register, login, sendEmailCode, forgetPassword };
-//  const login = (userId: string, password: string, type: number) => {
-//    return axios.post(`/api/auth/login`, { userId, password, type });
-//  };
-
-//  const register = (userId: string, password: string, phoneNum: string, userType: number) => {
-//    return axios.post(`/api/auth/register`, { userId, password, phoneNum, userType });
-//  };
-
-
-
+export default { login, sendEmailCode, forgetPassword };
