@@ -29,10 +29,17 @@ interface LoginResponseData {
 
 // 注册请求数据类型
 interface RegisterRequest {
+  userName: string
   userId: string
   password: string
   email: string
   userType: number //1表示学生，2表示教师
+  // 教师特有变量
+  teacherClass?: string[] //授课班级
+  teachingSubject?: string //教学科目
+  // 学生特有变量
+  studentClass?: string //学生所在班级
+  studentGender?: number //学生性别
 }
 
 // 注册响应数据类型其实和后端实际相应类型一致，但这是一种代码规范。
