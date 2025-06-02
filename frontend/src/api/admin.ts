@@ -64,7 +64,7 @@ interface UpdateStudentClassResponse {
 
 // 给老师换班请求
 interface UpdateTeacherClassRequest {
-    teachaerId: string
+    teacherId: string
     newClass: string[]
 }
 
@@ -86,16 +86,15 @@ interface UpdateTeacherSubjectResponse {
     message: string
 }
 
-// 教师具体信息
+// 教师具体信息 - 匹配后端ListTeacherResponse.TeacherDetail
 interface TeacherDetail {
     teacherId: string // 教师ID
     teacherName: string // 教师姓名
     teachingSubject: string // 教学科目
-    teacherClass: string[] // 授课班级
-
+    teacherClass: string[] // 授课班级数组
 }
 
-// 列出所有老师，因为是Get类型，不需要Request再Response
+// 列出所有老师 - 匹配后端ListTeacherResponse
 interface ListTeachers {
     status: string // 响应状态
     message: string // 响应信息
@@ -103,7 +102,7 @@ interface ListTeachers {
     teachers: TeacherDetail[] // 教师集合
 }
 
-// 学生具体信息
+// 学生具体信息 - 匹配后端ListStudentResponse.StudentDetail
 interface StudentDetail {
     studentId: string // 学生ID
     studentName: string // 学生姓名
@@ -111,7 +110,7 @@ interface StudentDetail {
     studentClass: string // 学生班级
 }
 
-// 列出所有学生
+// 列出所有学生 - 匹配后端ListStudentResponse
 interface ListStudents {
     status: string // 响应状态
     message: string // 响应信息
@@ -119,7 +118,7 @@ interface ListStudents {
     students: StudentDetail[] // 学生集合
 }
 
-// 用户具体信息
+// 用户具体信息 - 匹配后端ListUserResponse.UserDetail
 interface UserDetail {
     userId: string // 用户ID
     userEmail: string // 用户邮箱
@@ -129,7 +128,7 @@ interface UserDetail {
     loginTime: Date // 登录时间
 }
 
-// 列出所有用户
+// 列出所有用户 - 匹配后端ListUserResponse
 interface ListUsers {
     status: string // 响应状态
     message: string // 响应信息
@@ -137,19 +136,44 @@ interface ListUsers {
     users: UserDetail[] // 用户集合
 }
 
-// 注册函数
-export const register = async (userId: string, password: string, email: string, userType: number): Promise<ApiResponse> => {
+// 注册函数 - 注意：注册是在/admin/register而不是/auth/register
+export const register = async (userId: string, userName: string, password: string, email: string, userType: number, additionalData?: any): Promise<ApiResponse> => {
   try {
-    const response = await axios.post<ApiResponse>(`/api/auth/register`, {
-      userId,
-      password,
-      email,  // 暂时保持后端参数名，发送邮箱作为值
-      userType
-    });
-    return response.data;  // 直接返回，不需要转换
+    // 后端接受表单数据而不是JSON，所以使用URLSearchParams
+    const params = new URLSearchParams();
+    params.append('userId', userId);
+    params.append('userName', userName);
+    params.append('password', password);
+    params.append('email', email);
+    params.append('userType', userType.toString());
+
+    // 根据用户类型添加特定字段
+    if (userType === 1 && additionalData) {
+      // 学生
+      if (additionalData.studentClass) {
+        params.append('studentClass', additionalData.studentClass);
+      }
+      if (additionalData.studentGender !== undefined) {
+        params.append('studentGender', additionalData.studentGender.toString());
+      }
+    } else if (userType === 2 && additionalData) {
+      // 教师
+      if (additionalData.teachingSubject) {
+        params.append('teachingSubject', additionalData.teachingSubject);
+      }
+      if (additionalData.teacherClass && Array.isArray(additionalData.teacherClass)) {
+        // 对于数组参数，需要多次append相同的key
+        additionalData.teacherClass.forEach((classItem: string) => {
+          params.append('teacherClass', classItem);
+        });
+      }
+    }
+
+    const response = await axios.post<ApiResponse>('/admin/register', params);
+    return response.data;
   } catch (error: any) {
     if (error.response?.data) {
-      return error.response.data;  // 直接返回，不需要转换
+      return error.response.data;
     }
     throw error;
   }
@@ -158,21 +182,17 @@ export const register = async (userId: string, password: string, email: string, 
 // 注销账户函数
 export const deleteAccount = async (userType: number, userId: string): Promise<ApiResponse> => {
   try {
-    const requestData: DeleteRequest = {
-      userType,
-      userId
-    };
-    // 注意：实际的API路由是 /api/admin/delete， 而不是 /admin/delete，根据您项目结构中其他API调用推断
-    // 如果后端确实是 /admin/delete，请移除 /api 前缀
-    const response = await axios.post<ApiResponse>('/api/admin/delete', requestData);
+    // 后端使用 @RequestParam，所以需要使用 URLSearchParams
+    const params = new URLSearchParams();
+    params.append('userType', userType.toString());
+    params.append('userId', userId);
+    
+    const response = await axios.post<ApiResponse>('/admin/delete', params);
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
       return error.response.data;
     }
-    // 对于未知错误，可以返回一个标准的错误格式ApiResponse
-    // 或者直接抛出错误，让调用者处理
-    // return { code: 500, message: '操作失败，请稍后再试' };
     throw error;
   }
 };
@@ -180,13 +200,14 @@ export const deleteAccount = async (userType: number, userId: string): Promise<A
 // 更新账户信息函数
 export const updateAccount = async (userId: string, newUserName: string, newEmail: string, newPassword: string): Promise<ApiResponse> => {
   try {
-    const requestData: UpdateRequest = {
-      userId,
-      newUserName,
-      newEmail,
-      newPassword
-    };
-    const response = await axios.post<ApiResponse>('/api/admin/update', requestData);
+    // 后端使用 @RequestParam，所以需要使用 URLSearchParams
+    const params = new URLSearchParams();
+    params.append('userId', userId);
+    params.append('newUserName', newUserName);
+    params.append('newEmail', newEmail);
+    params.append('newPassword', newPassword);
+    
+    const response = await axios.post<ApiResponse>('/admin/update', params);
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -199,12 +220,12 @@ export const updateAccount = async (userId: string, newUserName: string, newEmai
 // 给学生换班函数
 export const updateStudentClass = async (studentId: string, newClassId: string): Promise<ApiResponse> => {
   try {
-    const requestData: UpdateStudentClassRequest = {
-      studentId,
-      newClassId
-    };
+    // 后端使用 @RequestParam，所以需要使用 URLSearchParams
+    const params = new URLSearchParams();
+    params.append('studentId', studentId);
+    params.append('newClassId', newClassId);
     
-    const response = await axios.post<ApiResponse>('/api/admin/updateStudentClass', requestData);
+    const response = await axios.post<ApiResponse>('/admin/updateStudentClass', params);
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -215,49 +236,52 @@ export const updateStudentClass = async (studentId: string, newClassId: string):
 };
 
 // 给老师换班函数
-export const updateTeacherClass = async (teachaerId: string, newClass: string[]): Promise<ApiResponse> => {
+export const updateTeacherClass = async (teacherId: string, newClass: string[]): Promise<ApiResponse> => {
   try {
-    const requestData: UpdateTeacherClassRequest = {
-      teachaerId, // 根据接口 UpdateTeacherClassRequest 定义的属性名
-      newClass
-    };
-    // 假设 API 路由是 /api/admin/updateTeacherClass
-    const response = await axios.post<ApiResponse>('/api/admin/updateTeacherClass', requestData);
-    return response.data; // 返回后端响应的 data 部分
+    // 后端期望的是 @RequestParam("teacherId") String teacherId, @RequestParam("newClass") String[] newClass
+    // 但是由于URLSearchParams不能直接发送数组，我们需要使用FormData或其他方式
+    // 根据后端代码，它接收String[]数组，我们需要发送数组参数
+    const params = new URLSearchParams();
+    params.append('teacherId', teacherId);
+    
+    // 对于数组参数，需要多次append相同的key
+    newClass.forEach(classItem => {
+      params.append('newClass', classItem);
+    });
+    
+    const response = await axios.post<ApiResponse>('/admin/updateTeacherClass', params);
+    return response.data;
   } catch (error: any) {
-    // 错误处理
     if (error.response?.data) {
       return error.response.data;
     }
-    throw error; // 抛出原始错误或自定义错误
+    throw error;
   }
 };
 
 // 给老师换科目函数
 export const updateTeacherSubject = async (teacherId: string, newSubject: string): Promise<ApiResponse> => {
   try {
-    const requestData: UpdateTeacherSubjectRequest = {
-      teacherId,      // 教师ID
-      newSubject      // 新的教学科目
-    };
-    // 假设 API 路由是 /api/admin/updateTeacherSubject
-    const response = await axios.post<ApiResponse>('/api/admin/updateTeacherSubject', requestData);
-    return response.data; // 返回后端响应的 data 部分
+    // 后端使用 @RequestParam，所以需要使用 URLSearchParams
+    const params = new URLSearchParams();
+    params.append('teacherId', teacherId);
+    params.append('newSubject', newSubject);
+    
+    const response = await axios.post<ApiResponse>('/admin/updateTeacherSubject', params);
+    return response.data;
   } catch (error: any) {
-    // 错误处理
     if (error.response?.data) {
       return error.response.data;
     }
-    throw error; // 抛出原始错误或自定义错误
+    throw error;
   }
 };
 
 // 列出所有老师函数
-export const listTeachers = async (): Promise<ApiResponse<ListTeachers>> => {
+export const listTeachers = async (): Promise<ListTeachers> => {
   try {
-    // 假设 API 路由是 /api/admin/listTeachers
-    // 因为是 GET 请求，不需要请求体
-    const response = await axios.get<ApiResponse<ListTeachers>>('/api/admin/listTeachers');
+    // 后端路由是 /admin/listTeachers，直接返回 ListTeacherResponse 对象
+    const response = await axios.get<ListTeachers>('/admin/listTeachers');
     return response.data; // 返回后端响应的 data 部分
   } catch (error: any) {
     // 错误处理
@@ -269,11 +293,10 @@ export const listTeachers = async (): Promise<ApiResponse<ListTeachers>> => {
 };
 
 // 列出所有学生函数
-export const listStudents = async (): Promise<ApiResponse<ListStudents>> => {
+export const listStudents = async (): Promise<ListStudents> => {
   try {
-    // 假设 API 路由是 /api/admin/listStudents
-    // 因为是 GET 请求，不需要请求体
-    const response = await axios.get<ApiResponse<ListStudents>>('/api/admin/listStudents');
+    // 后端路由是 /admin/listStudents，直接返回 ListStudentResponse 对象
+    const response = await axios.get<ListStudents>('/admin/listStudents');
     return response.data; // 返回后端响应的 data 部分
   } catch (error: any) {
     // 错误处理
@@ -285,11 +308,10 @@ export const listStudents = async (): Promise<ApiResponse<ListStudents>> => {
 };
 
 // 列出所有用户函数
-export const listUsers = async (): Promise<ApiResponse<ListUsers>> => {
+export const listUsers = async (): Promise<ListUsers> => {
   try {
-    // 假设 API 路由是 /api/admin/listUsers
-    // 因为是 GET 请求，不需要请求体
-    const response = await axios.get<ApiResponse<ListUsers>>('/api/admin/listUsers');
+    // 后端路由是 /admin/listUsers，直接返回 ListUserResponse 对象
+    const response = await axios.get<ListUsers>('/admin/listUsers');
     return response.data; // 返回后端响应的 data 部分
   } catch (error: any) {
     // 错误处理
