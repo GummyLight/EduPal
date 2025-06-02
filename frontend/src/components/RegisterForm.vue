@@ -259,8 +259,9 @@ const handleBack = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  padding: 20px;
+  height: 100vh;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 .register-card {
@@ -268,16 +269,18 @@ const handleBack = () => {
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   border-radius: 24px;
-  padding: 48px 40px;
+  padding: 32px 30px;
   box-shadow: 
     0 25px 50px rgba(0, 0, 0, 0.12),
     0 12px 24px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  max-width: 480px;
+  max-width: 450px;
   width: 100%;
-  margin: 20px;
+  max-height: 95vh;
+  overflow-y: auto;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .register-card:hover {
@@ -294,8 +297,8 @@ const handleBack = () => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 35px;
-  font-size: 32px;
+  margin-bottom: 24px;
+  font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.5px;
 }
@@ -303,13 +306,13 @@ const handleBack = () => {
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
   position: relative;
 }
 
@@ -323,10 +326,10 @@ const handleBack = () => {
 
 .form-input,
 .form-select {
-  padding: 16px 20px;
+  padding: 12px 16px;
   border: 2px solid #e5e7eb;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 15px;
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.9);
   color: #374151;
@@ -383,8 +386,8 @@ const handleBack = () => {
 
 .button-group {
   display: flex;
-  gap: 16px;
-  margin-top: 12px;
+  gap: 12px;
+  margin-top: 8px;
 }
 
 .register-button,
@@ -392,9 +395,9 @@ const handleBack = () => {
   flex: 1;
   color: white;
   border: none;
-  padding: 16px 24px;
+  padding: 12px 20px;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -474,25 +477,34 @@ const handleBack = () => {
 
 @media (max-width: 480px) {
   .register-card {
-    padding: 32px 24px;
-    margin: 10px;
+    padding: 24px 20px;
+    margin: 5px;
     border-radius: 20px;
+    max-height: 98vh;
   }
   
   .register-title {
-    font-size: 28px;
-    margin-bottom: 28px;
+    font-size: 24px;
+    margin-bottom: 20px;
   }
 
   .button-group {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
   
   .form-input,
   .form-select {
-    padding: 14px 16px;
-    font-size: 16px;
+    padding: 10px 14px;
+    font-size: 15px;
+  }
+  
+  .register-form {
+    gap: 12px;
+  }
+  
+  .form-group {
+    gap: 4px;
   }
 }
 </style>

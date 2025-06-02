@@ -26,7 +26,7 @@ const { currentImageIndex, backgroundImages } = useBackgroundSlider(5000)
 
 <style scoped>
 .register-container {
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
   position: relative;
   display: flex;
@@ -58,6 +58,11 @@ const { currentImageIndex, backgroundImages } = useBackgroundSlider(5000)
 .content-wrapper {
   position: relative;
   z-index: 2;
-  padding: 20px;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
