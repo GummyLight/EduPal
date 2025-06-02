@@ -61,6 +61,16 @@ export interface ReplyForm {
     attachedFileUrl?: string; // 用于传递已上传文件的 URL
 }
 
+/**
+ *  文件上传接口
+ */
+// 文件上传响应接口（与后端 /file/upload 接口的返回结构一致）
+interface UploadFileResponse {
+    code: number;
+    message: string;
+    data?: any; // 后端 /file/upload 返回的 data 字段，根据实际情况可能包含文件信息
+}
+
 
 // ==============================
 // 2. 封装 API 请求函数
