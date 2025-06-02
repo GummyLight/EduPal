@@ -8,5 +8,9 @@ import java.util.List;
 public interface ResourceService {
     Result saveResource(Resource resource);
     List<Resource> getAllResources();
+
     void deleteResource(String resourceId);
+
+    // 新增：按名称模糊查找
+    List<Resource> findResourcesByName(String name);
 }

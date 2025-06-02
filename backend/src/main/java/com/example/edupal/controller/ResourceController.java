@@ -1,5 +1,5 @@
 package com.example.edupal.controller;
-import com.example.edupal.dto.response.ResourceResponse;
+
 import com.example.edupal.common.ApiResponse;
 import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.ResourceRequest;
@@ -11,23 +11,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-
-
-
-
-
 @RequestMapping("/resource")
-
 @CrossOrigin
 public class ResourceController {
 
     @Autowired
     private ResourceService resourceService;
 
-    // ✅ 1. 创建资源
+    // 1. 创建资源
     @PostMapping("/create")
     public ResponseEntity<?> createResource(@RequestBody ResourceRequest request) {
         if (request == null) {
@@ -40,6 +35,9 @@ public class ResourceController {
         resource.setTeacher_id(request.getTeacher_id());
         resource.setResource_content(request.getResource_content());
         resource.setClass_id(request.getClass_id());
+        resource.setName(request.getName());
+        resource.setUpload_time(request.getUpload_time() != null ? request.getUpload_time() : LocalDateTime.now());
+        resource.setDescription(request.getDescription());
 
         Result result = resourceService.saveResource(resource);
 
@@ -55,7 +53,7 @@ public class ResourceController {
         }
     }
 
-    // ✅ 2. 查询所有资源
+    // 2. 查询所有资源
     @GetMapping("/find")
     public ResponseEntity<?> getAllResources() {
         List<Resource> resources = resourceService.getAllResources();
@@ -67,8 +65,8 @@ public class ResourceController {
         }
     }
 
-    // ✅ 3. 删除资源
-    @DeleteMapping("/delete")
+    // 3. 删除资源
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteResource(@PathVariable("id") String resourceId) {
         try {
             resourceService.deleteResource(resourceId);
@@ -76,6 +74,18 @@ public class ResourceController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse<>(500, "删除失败：" + e.getMessage()));
+        }
+    }
+
+    // 4. 按name模糊查找资源
+    @GetMapping("/search")
+    public ResponseEntity<?> searchResourcesByName(@RequestParam("name") String name) {
+        List<Resource> resources = resourceService.findResourcesByName(name);
+
+        if (resources == null || resources.isEmpty()) {
+            return ResponseEntity.ok(new ApiResponse<>(200, "未找到相关资源", resources));
+        } else {
+            return ResponseEntity.ok(new ApiResponse<>(200, "资源列表获取成功", resources));
         }
     }
 }

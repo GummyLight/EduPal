@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Resource {
+public class TeachingContent {
     @Id
     @Column(length = 8)
-    private String resource_id;
+    private String teaching_content_id;
 
     @Column(length = 8, nullable = false)
     private String subject;
@@ -16,7 +16,7 @@ public class Resource {
     private String teacher_id;
 
     @Lob
-    private String resource_content;
+    private String teaching_content_content;
 
     @Column(length = 4)
     private String class_id;
@@ -30,12 +30,12 @@ public class Resource {
     private String description;
 
     // Getters and Setters
-    public String getResource_id() {
-        return resource_id;
+    public String getTeaching_content_id() {
+        return teaching_content_id;
     }
 
-    public void setResource_id(String resource_id) {
-        this.resource_id = resource_id;
+    public void setTeaching_content_id(String teaching_content_id) {
+        this.teaching_content_id = teaching_content_id;
     }
 
     public String getSubject() {
@@ -54,12 +54,12 @@ public class Resource {
         this.teacher_id = teacher_id;
     }
 
-    public String getResource_content() {
-        return resource_content;
+    public String getTeaching_content_content() {
+        return teaching_content_content;
     }
 
-    public void setResource_content(String resource_content) {
-        this.resource_content = resource_content;
+    public void setTeaching_content_content(String teaching_content_content) {
+        this.teaching_content_content = teaching_content_content;
     }
 
     public String getClass_id() {
