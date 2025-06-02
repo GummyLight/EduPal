@@ -15,30 +15,17 @@
             <el-input v-model="filters.name" placeholder="请输入资料名称" />
           </el-form-item>
           <el-form-item label="上传人">
-            <el-input v-model="filters.uploader" placeholder="请输入上传人" />
+            <el-input v-model="filters.uploader" placeholder="请输入上传人ID" />
           </el-form-item>
           <el-form-item label="学科分类">
             <el-select v-model="filters.subject" placeholder="选择学科" clearable>
-              <el-option label="数学" value="math" />
-              <el-option label="物理" value="physics" />
-              <el-option label="英语" value="english" />
-              <el-option label="化学" value="chemistry" />
+              <el-option label="数学" value="Math" /> <el-option label="物理" value="Physics" />
+              <el-option label="英语" value="English" />
+              <el-option label="化学" value="Chemistry" />
             </el-select>
           </el-form-item>
-          <el-form-item label="格式类型">
-            <el-select v-model="filters.format" placeholder="选择格式" clearable>
-              <el-option label="PDF" value="PDF" />
-              <el-option label="视频" value="video" /> <el-option label="音频" value="audio" /> <el-option label="DOCX" value="DOCX" />
-              <el-option label="ZIP" value="ZIP" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="资源描述">
-            <el-select v-model="filters.description" placeholder="描述关键词" clearable>
-              <el-option label="讲义" value="讲义" />
-              <el-option label="习题" value="习题" />
-              <el-option label="试卷" value="试卷" />
-              <el-option label="答案" value="答案" />
-            </el-select>
+          <el-form-item label="资料描述">
+            <el-input v-model="filters.description" placeholder="描述关键词" clearable />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="search">查询</el-button>
@@ -46,13 +33,13 @@
           </el-form-item>
         </el-form>
       </el-card>
-      <div class="actions" v-if="userType === 1">
+      <div class="actions" v-if="userType === 2">
         <el-button type="success" icon="el-icon-upload" @click="handleUpload">上传资料</el-button>
       </div>
 
       <el-card class="table-card" shadow="never">
         <h3>资料库</h3>
-        <el-table :data="filteredData" border style="width: 100%">
+        <el-table :data="displayMaterials" border style="width: 100%" v-loading="loading" row-key="id">
           <el-table-column type="index" label="序号" width="60" />
           <el-table-column prop="name" label="资料名称" />
           <el-table-column prop="uploader" label="上传人" />
@@ -61,28 +48,27 @@
               {{ formatSubject(row.subject) }}
             </template>
           </el-table-column>
-          <el-table-column prop="size" label="大小" />
-          <el-table-column prop="rating" label="评分" />
-          <el-table-column prop="uploadTime" label="上传时间" />
-          <el-table-column prop="format" label="格式类型">
+          <el-table-column prop="uploadTime" label="上传时间">
             <template #default="{ row }">
-              {{ formatFormat(row.format) }}
+              {{ formatUploadTime(row.uploadTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" label="资料描述">
+            <template #default="{ row }">
+              {{ row.description }}
             </template>
           </el-table-column>
           <el-table-column label="操作" width="180">
             <template #default="{ row }">
-              <div v-if="userType === 1" class="operation-buttons">
+              <div class="operation-buttons">
                 <el-button type="primary" text size="small" @click="handlePreview(row)">预览</el-button>
                 <el-button type="success" text size="small" @click="openDownloadDialog(row)">下载</el-button>
-              </div>
-              <div v-else-if="userType === 2" class="operation-buttons">
-                <el-button type="primary" text size="small" @click="handlePreview(row)">预览</el-button>
-                <el-button type="success" text size="small" @click="openDownloadDialog(row)">下载</el-button>
-                <el-button type="danger" text size="small" @click="handleDelete(row)">删除</el-button>
+                <el-button v-if="userType === 2" type="danger" text size="small" @click="handleDelete(row)">删除</el-button>
               </div>
             </template>
           </el-table-column>
         </el-table>
+        <el-empty v-if="!loading && displayMaterials.length === 0" description="暂无资料"></el-empty>
       </el-card>
     </el-main>
 
@@ -118,12 +104,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps } from 'vue';
-import { ElMessage, ElDialog, ElForm, ElFormItem, ElInput, ElButton, ElMessageBox, ElAlert } from 'element-plus'; // 导入所需组件
+import { ref, computed, defineProps, onMounted } from 'vue';
+import { ElMessage, ElDialog, ElForm, ElFormItem, ElInput, ElButton, ElMessageBox, ElAlert, ElEmpty } from 'element-plus';
 import { useRouter } from 'vue-router';
-import { getPreviewFileUrl, getDownloadFileUrl, deleteFile } from '../api/materialsApi';
+// 导入 ResourceResponse 接口和所有 API 方法
+import {
+  ResourceResponse,
+  getPreviewFileUrl,
+  getDownloadFileUrl,
+  deleteFile,
+  fetchAllResources,
+  searchResourcesByName,
+  deleteResourceById
+  // uploadFile // 不再需要导入 uploadFile，因为本界面不处理上传
+} from '../api/materialsApi';
 
 const router = useRouter();
+
+// Props 定义，与父组件 Home.vue 传递的 props 对应
 const props = defineProps({
   usertype: {
     type: Number,
@@ -139,182 +137,247 @@ const props = defineProps({
   },
 });
 
+// 计算属性，方便在模板中使用 props
 const userType = computed(() => props.usertype);
 const username = computed(() => props.username);
 const userId = computed(() => props.userid);
 
 const showTopBar = ref(true);
+const loading = ref(false); // 控制表格加载状态
 
-// 假设后端的文件存储根路径在前端也是已知的常量
-const SERVER_FILE_ROOT_PATH = 'resource/'; // <-- 你的材料可能在 resource/ 目录下，如果不是，请修改
+// 服务器文件根路径，与后端一致
+// 确保这个路径和后端存储文件时的前缀完全一致
+const SERVER_FILE_ROOT_PATH = 'resource/';
 
+// 筛选条件模型
 const filters = ref({
   name: '',
   uploader: '',
   subject: '',
-  format: '',
-  description: '',
+  description: '', // 资料描述筛选
 });
 
-const subjectOptions = {
-  'math': '数学',
-  'physics': '物理',
-  'english': '英语',
-  'chemistry': '化学',
+// 学科选项映射
+const subjectOptions: { [key: string]: string } = {
+  'Math': '数学', // 后端返回 Math, Physics 等，前端显示中文
+  'Physics': '物理',
+  'English': '英语',
+  'Chemistry': '化学',
+  // 如果后端可能直接返回中文，为了健壮性也可以加上，但通常建议以后端返回的英文为准
+  // '数学': '数学',
+  // '物理': '物理',
+  // '英语': '英语',
+  // '化学': '化学',
 };
 
-const formatOptions = {
-  'PDF': 'PDF',
-  'video': '视频',
-  'audio': '音频',
-  'DOCX': 'DOCX',
-  'ZIP': 'ZIP',
-};
 
-// 资料数据，确保包含 fileId 和 name
-const materials = ref([
-  {
-    id: 'mat001',
-    name: '高数讲义.doc',
-    uploader: '张老师',
-    subject: 'math',
-    size: '2MB',
-    rating: 4.5,
-    uploadTime: '2025-05-20',
-    format: 'PDF',
-    description: '讲义',
-    fileId: 'r2025002', // 确保这个fileId是正确的
-  },
-  {
-    id: 'mat002',
-    name: '英语听力.mp3',
-    uploader: '李老师',
-    subject: 'english',
-    size: '3MB',
-    rating: 4.8,
-    uploadTime: '2025-05-21',
-    format: 'audio',
-    description: '练习',
-    fileId: 'audio2025002',
-  },
-  {
-    id: 'mat003',
-    name: '物理习题集.docx',
-    uploader: '王老师',
-    subject: 'physics',
-    size: '5MB',
-    rating: 4.2,
-    uploadTime: '2025-05-18',
-    format: 'DOCX',
-    description: '习题',
-    fileId: 'doc2025003',
-  },
-  {
-    id: 'mat004',
-    name: '化学期末试卷.zip',
-    uploader: '赵老师',
-    subject: 'chemistry',
-    size: '1.5MB',
-    rating: 4.0,
-    uploadTime: '2025-05-22',
-    format: 'ZIP',
-    description: '试卷',
-    fileId: 'zip2025004',
-  },
-  {
-    id: 'mat005',
-    name: '数学答案解析.pdf',
-    uploader: '张老师',
-    subject: 'math',
-    size: '1MB',
-    rating: 4.7,
-    uploadTime: '2025-05-23',
-    format: 'PDF',
-    description: '答案',
-    fileId: 'pdf2025005',
-  },
-]);
+// 存储从后端获取的原始资料数据 (下划线命名)
+const rawMaterials = ref<ResourceResponse[]>([]);
 
-const filteredData = computed(() => {
-  return materials.value.filter((item) => {
-    const f = filters.value;
-    return (
-        (!f.name || item.name.includes(f.name)) &&
-        (!f.uploader || item.uploader.includes(f.uploader)) &&
-        (!f.subject || item.subject === f.subject) &&
-        (!f.format || item.format === f.format) &&
-        (!f.description || item.description.includes(f.description))
-    );
-  });
+// **重要：displayMaterials 计算属性**
+// 将后端返回的下划线命名数据，映射为前端表格期望的字段名和格式，并处理 null 值
+const displayMaterials = computed(() => {
+  return rawMaterials.value
+      .filter((item) => {
+        const f = filters.value;
+        return (
+            // name 可能为 null，需要安全访问
+            (!f.name || (item.name && item.name.includes(f.name))) &&
+            // subject 保持原样，formatSubject 会处理
+            (!f.subject || item.subject === f.subject) &&
+            // description 可能为 null，需要安全访问
+            (!f.description || (item.description && item.description.includes(f.description))) &&
+            // uploader 筛选（teacher_id）
+            (!f.uploader || (item.teacher_id && item.teacher_id.includes(f.uploader)))
+        );
+      })
+      .map(item => ({
+        // **将后端下划线命名映射到前端需要的字段名，并自动填充 null 数据**
+        id: item.resource_id, // 确保 resource_id 是唯一的，且非 null
+        name: item.name || '未知名称', // 如果 name 为 null，显示 '未知名称'
+        uploader: item.teacher_id || '未知上传人', // 如果 teacher_id 为 null，显示 '未知上传人'
+        subject: item.subject || '未知学科', // 如果 subject 为 null，显示 '未知学科'
+        description: item.description || '无描述', // 如果 description 为 null，显示 '无描述'
+        uploadTime: item.upload_time || '', // 如果 upload_time 为 null，显示空字符串，由 formatUploadTime 处理
+        // 关键：保留 resource_content，用于后续提取文件名和扩展名
+        resource_content: item.resource_content || '',
+      }));
 });
 
+
+// 获取资料列表的异步函数
+const getMaterialsList = async () => {
+  loading.value = true; // 开始加载
+  try {
+    const data = await fetchAllResources(); // 调用 API 获取所有资料
+    rawMaterials.value = data; // 更新原始数据
+    // 只有当有数据时才显示成功，避免空列表也弹成功
+    if (data.length > 0) {
+      ElMessage.success('资料列表获取成功！');
+    } else {
+      ElMessage.info('资料库中暂无资料。');
+    }
+  } catch (error) {
+    ElMessage.error('获取资料列表失败。');
+    console.error('获取资料列表错误:', error);
+  } finally {
+    loading.value = false; // 结束加载
+  }
+};
+
+// 组件挂载时调用获取资料列表
+onMounted(() => {
+  getMaterialsList();
+});
+
+// 格式化学科显示
 const formatSubject = (value: string) => {
-  return subjectOptions[value] || value;
+  return subjectOptions[value] || value; // 如果没有映射，显示原始值
 };
 
-const formatFormat = (value: string) => {
-  return formatOptions[value] || value;
+// 格式化上传时间显示
+const formatUploadTime = (time: string | null) => { // 明确 time 可能为 string 或 null
+  if (!time) return ''; // 如果为 null 或空，显示空字符串
+  try {
+    const date = new Date(time); // 假设后端返回的是 ISO 8601 字符串
+    return date.toLocaleString(); // 格式化为本地日期时间字符串
+  } catch (e) {
+    console.error("日期格式化失败:", e);
+    return String(time); // 如果解析失败，直接返回原始字符串
+  }
 };
 
-const search = () => {
-  console.log('查询条件：', filters.value);
-  ElMessage.success('正在查询资料...');
+
+// 搜索功能
+const search = async () => {
+  loading.value = true;
+  try {
+    // 这里的后端 searchResourcesByName 接口目前只支持按 name 模糊查询
+    // 如果需要根据 subject, uploader, description 筛选，后端需要提供相应的接口或扩展现有接口
+    const queryName = filters.value.name; // 只用 name 字段进行后端模糊查询
+    let filteredData: ResourceResponse[] = [];
+
+    if (queryName) {
+      filteredData = await searchResourcesByName(queryName);
+    } else {
+      // 如果没有输入查询名称，则重新获取所有数据
+      filteredData = await fetchAllResources();
+    }
+
+    // 前端进行进一步的筛选 (如果后端接口不支持所有筛选条件)
+    // 注意：这里的筛选逻辑依然会应用所有 filters，即使后端 searchResourcesByName 只用了 name
+    const finalFilteredData = filteredData.filter((item) => {
+      const f = filters.value;
+      // 保持原始名称筛选逻辑，因为后端 searchResourcesByName 已经处理了 name
+      const matchesName = !f.name || (item.name && item.name.includes(f.name));
+      const matchesUploader = !f.uploader || (item.teacher_id && item.teacher_id.includes(f.uploader));
+      const matchesSubject = !f.subject || item.subject === f.subject;
+      const matchesDescription = !f.description || (item.description && item.description.includes(f.description));
+
+      return matchesName && matchesUploader && matchesSubject && matchesDescription;
+    });
+
+    rawMaterials.value = finalFilteredData;
+    ElMessage.success('查询成功！');
+
+  } catch (error) {
+    ElMessage.error('查询资料失败。');
+    console.error('查询资料错误:', error);
+  } finally {
+    loading.value = false;
+  }
 };
 
-const resetFilters = () => {
+// 重置筛选条件并重新加载所有资料
+const resetFilters = async () => {
   filters.value = {
     name: '',
     uploader: '',
     subject: '',
-    format: '',
     description: '',
   };
-  ElMessage.info('筛选条件已重置。');
+  ElMessage.info('筛选条件已重置，正在重新加载所有资料。');
+  await getMaterialsList();
 };
 
 const logout = () => {
   console.log('退出登录');
   ElMessage.info('您已退出登录。');
+  // 实际项目中这里应该跳转到登录页并清除用户token
+  // router.push('/login');
 };
 
+// 教师角色才有的上传资料功能
 const handleUpload = () => {
   console.log('教师操作: 跳转到上传资料界面');
   router.push('/home/materials/upload');
 };
 
-const handleBatchDownload = () => {
-  console.log('教师操作: 批量下载');
-  ElMessage.info('模拟批量下载功能。');
-};
 
-// --- 文件扩展名提取函数 ---
-function getFileExtension(fileName: string): string {
-  if (!fileName || typeof fileName !== 'string') {
+// 辅助函数：从完整路径中提取文件名 (带扩展名)
+// function getFileNameFromPath(fullPath: string): string | null {
+//   if (!fullPath || typeof fullPath !== 'string') {
+//     return null;
+//   }
+//   const lastSlashIndex = fullPath.lastIndexOf('/');
+//   if (lastSlashIndex === -1) {
+//     return fullPath; // 没有斜杠，本身就是文件名
+//   }
+//   return fullPath.substring(lastSlashIndex + 1); // 获取斜杠后的部分
+// }
+
+// function getFileExtension(filename: string): string | null {
+//   if (!filename || typeof filename !== 'string') {
+//     return null; // 如果文件名为空或不是字符串，返回 null
+//   }
+//   // 找到最后一个点的索引
+//   const lastDotIndex = filename.lastIndexOf('.');
+//   // 如果没有点或者点是第一个字符（隐藏文件），则认为没有扩展名
+//   if (lastDotIndex === -1 || lastDotIndex === 0) {
+//     return null;
+//   }
+//   // 返回点号后的部分（即扩展名，包含点）
+//   return filename.substring(lastDotIndex);
+// }
+
+// 辅助函数：从文件名中提取扩展名 (包含点)
+function getFileExtension(filename: string): string {
+  if (!filename || typeof filename !== 'string') {
     return '';
   }
-  const lastDotIndex = fileName.lastIndexOf('.');
+  const lastDotIndex = filename.lastIndexOf('.');
   if (lastDotIndex === -1 || lastDotIndex === 0) {
-    return '';
+    return ''; // 没有扩展名或以点开头的文件
   }
-  return fileName.substring(lastDotIndex);
+  return filename.substring(lastDotIndex); // 包含点，如 ".pdf"
 }
 
-// --- 预览功能 ---
-const handlePreview = (row: any) => {
-  console.log(`${userType.value === 2 ? '教师操作' : '学生操作'}: 预览资料:`, row.name, row.fileId);
 
-  if (!row.fileId || !row.name) {
-    ElMessage.warning('该资料没有文件ID或文件名，无法预览。');
+// 预览功能
+// row 参数是 displayMaterials 中映射后的对象
+const handlePreview = (row: { id: string; name: string; resource_content: string }) => {
+  console.log(`${userType.value === 2 ? '教师操作' : '学生操作'}: 预览资料:`, row.name, row.id, row.resource_content);
+
+  // 确保 resource_id 和 resource_content 有值
+  if (!row.id ) {
+    ElMessage.warning('该资料没有有效的资源ID或文件内容路径，无法预览。');
     return;
   }
 
   try {
-    // 预览接口需要 fileId + 扩展名 作为其文件标识符
+    // 后端预览接口的 fileId 需要的是完整文件名，例如 "r2025001.pdf"
+    const previewFileId = getFileExtension(row.name);
+
+    if (!previewFileId) {
+      ElMessage.warning('无法从文件内容路径中解析出文件名进行预览。');
+      return;
+    }
+
     const previewUrl = getPreviewFileUrl({
-      fileId: row.fileId + getFileExtension(row.name), // 给fileId加上name的后缀
-      path: SERVER_FILE_ROOT_PATH, // 传入服务器文件根路径
+      fileId: row.id+previewFileId, // fileId 需要是完整文件名 (含扩展名)
+      path: SERVER_FILE_ROOT_PATH,
     });
-    window.open(previewUrl, '_blank');
+    window.open(previewUrl, '_blank'); // 在新标签页打开预览
     ElMessage.success(`正在打开预览：${row.name}`);
   } catch (error) {
     ElMessage.error('无法生成预览链接。');
@@ -322,26 +385,34 @@ const handlePreview = (row: any) => {
   }
 };
 
-// --- 下载弹窗相关状态和函数 ---
-const downloadDialogVisible = ref(false); // 控制弹窗显示
-const currentDownloadRow = ref<any>(null); // 存储当前点击下载的行数据
+// 下载弹窗相关状态和函数
+const downloadDialogVisible = ref(false);
+// currentDownloadRow 存储当前要下载的资料行数据，类型为 displayMaterials 中的行类型
+const currentDownloadRow = ref<{ id: string; name: string; resource_content: string } | null>(null);
 
 const downloadForm = ref({
-  originalName: '', // 原始文件名，只读
-  fileName: '', // 用户输入的下载文件名
-  outFile: 'E:/downloadsedge/test/', // 用户输入的服务器 outFile 路径，提供默认值
+  originalName: '', // 显示原始的资料名称
+  fileName: '',     // 用户可编辑的下载文件名 (包含扩展名)
+  outFile: 'E:/downloadsedge/test/', // 默认下载到服务器上的这个路径（示例），用户可修改
 });
 
 // 打开下载弹窗
-const openDownloadDialog = (row: any) => {
-  if (!row.fileId || !row.name) {
-    ElMessage.warning('该资料没有文件ID或文件名，无法下载。');
+const openDownloadDialog = (row: { id: string; name: string; resource_content: string }) => {
+  if (!row.id || !row.name || !row.resource_content) {
+    ElMessage.warning('该资料信息不完整，无法下载。');
     return;
   }
   currentDownloadRow.value = row;
+
+  // 原始文件名显示资料的 name
   downloadForm.value.originalName = row.name;
-  downloadForm.value.fileName = row.name; // 默认下载文件名与原始文件名相同
-  // downloadForm.value.outFile 默认值已经设置，如果需要根据用户习惯或配置修改，可以在这里进行。
+
+  // 尝试从 resource_content 中获取文件扩展名，并拼接到 name 上作为默认下载文件名
+  downloadForm.value.fileName = row.name;
+
+  // 重置 outFile 为默认值，防止上次修改的影响
+  downloadForm.value.outFile = 'E:/downloadsedge/test/'; // 或其他你希望的默认值
+
   downloadDialogVisible.value = true;
 };
 
@@ -356,81 +427,92 @@ const confirmDownload = () => {
     return;
   }
 
-  // 关闭弹窗
   downloadDialogVisible.value = false;
 
-  // 调用实际的下载逻辑
-  handleDownload(currentDownloadRow.value, downloadForm.value.fileName, downloadForm.value.outFile);
+  if (currentDownloadRow.value) {
+    // 调用 handleDownload 传递必要的参数
+    handleDownload(
+        currentDownloadRow.value.id, // 后端 download 接口的 fileId 应该是 resource_id (不带后缀)
+        downloadForm.value.fileName, // 用户自定义的下载文件名 (含后缀)
+        downloadForm.value.outFile    // 用户自定义的服务器保存路径
+    );
+  } else {
+    ElMessage.error('无法获取下载资料信息。');
+  }
 };
 
-
-// --- 下载功能 (现在接受自定义文件名和路径) ---
-const handleDownload = (row: any, customFileName: string, customOutFile: string) => {
+// 下载功能
+const handleDownload = (resourceId: string, customFileName: string, customOutFile: string) => {
   console.log(
       `${userType.value === 2 ? '教师操作' : '学生操作'}: 下载资料:`,
-      row.name,
-      row.fileId,
-      '自定义文件名:',
-      customFileName,
-      '自定义服务器outFile:',
-      customOutFile
+      'resourceId (不带后缀):', resourceId,
+      '自定义文件名 (带后缀):', customFileName,
+      '自定义服务器outFile:', customOutFile
   );
 
   try {
     const downloadUrl = getDownloadFileUrl({
-      fileName: customFileName, // 使用用户自定义的下载文件名
-      path: SERVER_FILE_ROOT_PATH, // 服务器上的文件根路径
-      fileId: row.fileId,
-      outFile: customOutFile, // 使用用户自定义的服务器 outFile 路径
+      fileId: resourceId, // 后端下载接口的 fileId 应该是不带后缀的 resource_id
+      path: SERVER_FILE_ROOT_PATH,
+      fileName: customFileName, // 用户自定义的文件名，包含扩展名
+      outFile: customOutFile,
     });
 
     const link = document.createElement('a');
     link.href = downloadUrl;
+    link.style.display = 'none';
     document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    ElMessage.success(`正在下载：${customFileName}`);
+    link.click(); // 触发下载
 
+    document.body.removeChild(link);
+    ElMessage.success(`文件 ${customFileName} 正在下载！`);
   } catch (error) {
-    ElMessage.error('无法生成下载链接。');
+    ElMessage.error('无法生成下载链接或下载失败。');
     console.error('下载失败:', error);
   }
 };
 
-// --- 删除功能 ---
-const handleDelete = async (row: any) => {
-  console.log('教师操作: 删除资料:', row.name);
-  if (!row.fileId) {
-    ElMessage.warning('该资料没有文件ID，无法删除。');
+// 删除功能
+const handleDelete = async (row: { id: string; name: string }) => {
+  console.log('教师操作: 删除资料:', row.name, row.id);
+  if (!row.id) {
+    ElMessage.warning('该资料没有资源ID，无法删除。');
     return;
   }
 
   try {
-    await ElMessageBox.confirm(`确定要删除资料《${row.name}》吗？此操作将永久删除文件。`, '提示', {
+    await ElMessageBox.confirm(`确定要删除资料《${row.name}》吗？此操作将永久删除文件和相关记录。`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning',
     });
 
-    // 调用封装的删除 API
-    const response = await deleteFile({
-      fileId: row.fileId,
-      path: SERVER_FILE_ROOT_PATH // 传入服务器文件根路径
-    });
+    // 1. 调用后端删除资料记录的接口 (resource/delete/{id})
+    const resourceDeleteResponse = await deleteResourceById(row.id); // 传递 resource_id
 
-    if (response.code === 200) {
-      ElMessage.success(`资料《${row.name}》及文件删除成功！`);
-      // 从前端列表中移除
-      const index = materials.value.findIndex(item => item.id === row.id);
-      if (index !== -1) {
-        materials.value.splice(index, 1);
+    if (resourceDeleteResponse.code === 200) {
+      ElMessage.success(`资料《${row.name}》记录删除成功！`);
+
+      // 2. 如果资料记录删除成功，再尝试删除文件服务器上的实际文件 (file/delete)
+      // deleteFile 接口的 fileId 参数也可能是 resource_id
+      const fileDeleteResponse = await deleteFile({
+        fileId: row.id, // 使用 resource_id 作为 fileId
+        path: SERVER_FILE_ROOT_PATH // 文件服务器的根路径
+      });
+
+      if (fileDeleteResponse.code === 200) {
+        ElMessage.success(`关联文件《${row.name}》删除成功！`);
+      } else {
+        ElMessage.warning(fileDeleteResponse.message || `关联文件《${row.name}》删除失败，但资料记录已删除。`);
       }
+      // 3. 刷新前端列表以反映最新状态
+      await getMaterialsList();
     } else {
-      ElMessage.error(response.message || '删除失败！');
+      ElMessage.error(resourceDeleteResponse.message || '资料记录删除失败！');
     }
   } catch (error: any) {
-    if (error !== 'cancel') { // 区分用户点击取消和真正的错误
-      ElMessage.error('删除请求失败，请检查网络或后端。');
+    if (error !== 'cancel') { // 如果用户点击了取消，不显示错误
+      ElMessage.error('删除操作请求失败，请检查网络或后端。');
       console.error('删除失败:', error);
     } else {
       ElMessage.info('已取消删除操作。');
@@ -515,7 +597,6 @@ const handleDelete = async (row: any) => {
 /* 表格操作列按钮布局 */
 .operation-buttons {
   display: flex;
-  /* flex-wrap: wrap; /* 如果按钮多可以考虑换行 */
   justify-content: flex-start; /* 左对齐 */
   align-items: center;
   gap: 5px; /* 按钮之间的小间距 */

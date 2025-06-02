@@ -3,27 +3,27 @@
     <el-card class="upload-card" shadow="always">
       <template #header>
         <div class="card-header">
-          <span>测试文件上传功能</span>
+          <span>文件上传</span>
           <el-button class="back-button" type="info" text @click="goBack">返回资料库</el-button>
         </div>
       </template>
 
       <el-form :model="uploadForm" :rules="rules" ref="uploadFormRef" label-width="100px">
         <el-form-item label="资料名称" prop="name">
-          <el-input v-model="uploadForm.name" placeholder="可以随意填写或留空" />
+          <el-input v-model="uploadForm.name" placeholder="请输入资料名称" />
         </el-form-item>
 
         <el-form-item label="学科分类" prop="subject">
-          <el-select v-model="uploadForm.subject" placeholder="可以随意选择">
-            <el-option label="数学" value="math" />
-            <el-option label="物理" value="physics" />
-            <el-option label="英语" value="english" />
-            <el-option label="化学" value="chemistry" />
+          <el-select v-model="uploadForm.subject" placeholder="请选择学科">
+            <el-option label="数学" value="Math" />
+            <el-option label="物理" value="Physics" />
+            <el-option label="英语" value="English" />
+            <el-option label="化学" value="Chemistry" />
           </el-select>
         </el-form-item>
 
         <el-form-item label="资源描述" prop="description">
-          <el-select v-model="uploadForm.description" placeholder="可以随意选择">
+          <el-select v-model="uploadForm.description" placeholder="请选择描述" clearable>
             <el-option label="讲义" value="讲义" />
             <el-option label="习题" value="习题" />
             <el-option label="试卷" value="试卷" />
@@ -31,8 +31,15 @@
           </el-select>
         </el-form-item>
 
+        <el-form-item label="班级ID (可选)">
+          <el-input v-model="uploadForm.classId" placeholder="请输入班级ID，可留空" />
+        </el-form-item>
+
         <el-form-item label="文件根路径" prop="uploadPath">
           <el-input v-model="uploadForm.uploadPath" placeholder="后端服务器的绝对根路径" />
+          <el-alert type="warning" show-icon :closable="false" style="margin-top: 10px;">
+            <template #title>生产环境请谨慎配置此项，通常由后端或环境变量决定。</template>
+          </el-alert>
         </el-form-item>
         <el-form-item label="文件子目录" prop="toPath">
           <el-input v-model="uploadForm.toPath" placeholder="例如：resource/ 或 materials/" />
@@ -56,7 +63,7 @@
             <div class="el-upload__text">将文件拖到此处，或 <em>点击上传</em></div>
             <template #tip>
               <div class="el-upload__tip">
-                支持 PDF / DOCX / MP4 / MP3 / ZIP 等格式，文件大小不超过 500MB
+                支持常见文档和媒体格式，文件大小不超过 500MB
               </div>
             </template>
           </el-upload>
@@ -72,66 +79,109 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElNotification, FormInstance, UploadFile, UploadFiles, ElUpload } from 'element-plus';
 import { UploadFilled } from '@element-plus/icons-vue';
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
-import { uploadFile } from '../api/materialUploadApi';
+import { v4 as uuidv4 } from 'uuid'; // 用于生成唯一的 fileId
+// 从 materialUploadApi.ts 导入上传和提交资料信息的函数
+import { uploadFile, submitMaterialInfo, MaterialSubmitData } from '../api/materialUploadApi';
 
 const router = useRouter();
+
+// props 用于获取用户信息，从父组件 Home.vue 传递而来
+const props = defineProps({
+  usertype: {
+    type: Number,
+    required: true,
+  },
+  username: {
+    type: String,
+    required: true,
+  },
+  userid: {
+    type: String,
+    required: true,
+  },
+});
+
+// 计算属性，方便在模板中使用 props
+const userType = computed(() => props.usertype);
+const username = computed(() => props.username);
+const userId = computed(() => props.userid); // 上传人ID
 
 const uploadFormRef = ref<FormInstance>();
 const elUploadRef = ref<InstanceType<typeof ElUpload> | null>(null);
 
 const uploadForm = reactive({
-  name: '临时测试资料',
-  subject: 'math',
-  description: '讲义',
-  file: null as File | null,
-  uploadPath: 'E:/Postman/files',
-  toPath: 'resource/', // 'resource/'
-  fileId: ''
+  name: '', // 资料名称，应由用户填写
+  subject: '', // 学科分类
+  description: '' as string | null, // 资源描述，可能为 null
+  classId: '' as string | null, // 班级ID，可能为 null
+  file: null as File | null, // 待上传的文件对象
+  uploadPath: 'E:/downloadsedge/test', // 服务器文件存储的绝对根路径，请根据实际情况修改
+  toPath: 'resource/', // 文件在根路径下的子目录，例如 'resource/'
+  fileId: '', // 文件在服务器上的唯一标识 (不带扩展名)
+  originalFileName: '', // 存储原始文件名 (含扩展名)，用于后续元数据保存
 });
 
 const fileList = ref<UploadFile[]>([]);
 
-// 简化验证规则，只验证文件和新的路径字段
+// 表单验证规则
 const rules = reactive({
+  name: [{ required: true, message: '请输入资料名称', trigger: 'blur' }],
+  subject: [{ required: true, message: '请选择学科分类', trigger: 'change' }],
+  // description 和 classId 可以是可选的，根据后端 ResourceRequest 的定义
+  // description: [{ required: true, message: '请选择资源描述', trigger: 'change' }],
   uploadPath: [{ required: true, message: '请输入文件存储根路径', trigger: 'blur' }],
   toPath: [{ required: true, message: '请输入文件存储子目录', trigger: 'blur' }],
   file: [{ required: true, message: '请选择上传文件', trigger: 'change' }],
 });
 
+// 文件选择或变更时触发
 const handleFileChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
   uploadForm.file = uploadFile.raw || null;
-  fileList.value = [uploadFile];
+  fileList.value = [uploadFile]; // 确保只保留一个文件
+
   if (uploadForm.file) {
-    uploadForm.fileId = uuidv4();
+    uploadForm.fileId = uuidv4(); // 生成 UUID 作为 fileId (不带扩展名)
+    uploadForm.originalFileName = uploadFile.name; // 保存原始文件名，包含扩展名
+
+    // 尝试根据文件名填充资料名称
+    if (!uploadForm.name) {
+      uploadForm.name = uploadFile.name.substring(0, uploadFile.name.lastIndexOf('.')) || uploadFile.name;
+    }
   } else {
     uploadForm.fileId = '';
+    uploadForm.originalFileName = '';
   }
+
+  // 触发表单验证，确保文件已选择
   if (uploadFormRef.value) {
     uploadFormRef.value.validateField('file');
   }
 };
 
+// 文件移除时触发
 const handleFileRemove = () => {
   uploadForm.file = null;
   uploadForm.fileId = '';
+  uploadForm.originalFileName = '';
   fileList.value = [];
   if (uploadFormRef.value) {
     uploadFormRef.value.validateField('file');
   }
 };
 
+// 超过文件限制时触发
 const handleExceed = () => {
   ElMessage.warning('只能上传一个文件，请先移除当前文件再上传。');
 };
 
+// 实际执行文件上传到服务器的函数，由 el-upload 的 :http-request 属性调用
 const uploadFileToServer = async (options: any) => {
   const file = options.file;
+
   if (!file) {
     ElMessage.error('没有文件可上传！');
     options.onError(new Error('没有文件可上传'), file);
@@ -142,53 +192,100 @@ const uploadFileToServer = async (options: any) => {
     options.onError(new Error('Missing fileId'), file);
     return;
   }
-  // 额外验证 path 和 toPath 是否已填写
   if (!uploadForm.uploadPath || !uploadForm.toPath) {
     ElMessage.error('请填写文件根路径和子目录！');
     options.onError(new Error('Missing path or toPath'), file);
     return;
   }
 
-
   const fileUploadNotification = ElNotification({
     title: '文件上传中',
     message: `正在上传文件：${file.name}`,
     type: 'info',
-    duration: 0,
+    duration: 0, // 不自动关闭
     showClose: false,
   });
 
   try {
-    // 调用 API 文件中的上传函数，传入所有必要的参数
-    const responseData = await uploadFile(file, uploadForm.uploadPath, uploadForm.toPath, uploadForm.fileId);
+    // 调用 materialUploadApi.ts 中定义的 uploadFile 函数
+    // 参数顺序：file, fileId, toPath, path (与 materialUploadApi.ts 中的定义一致)
+    console.log('准备上传文件:',  uploadForm.fileId, uploadForm.toPath, uploadForm.uploadPath);
+    const uploadResponse = await uploadFile(
 
-    fileUploadNotification.close();
+        file,
+        uploadForm.fileId,
+        uploadForm.toPath,
+        uploadForm.uploadPath
+    );
 
-    if (responseData.code === 200) {
+    fileUploadNotification.close(); // 关闭上传中的通知
+
+    if (uploadResponse.code === 200) {
       ElMessage.success(`文件 ${file.name} 上传成功！`);
-      console.log('文件上传成功，服务器返回数据:', responseData);
-      options.onSuccess(responseData, file);
+      console.log('文件上传成功，服务器返回数据:', uploadResponse);
+      options.onSuccess(uploadResponse, file); // 告知 el-upload 成功
+
+      // **文件上传成功后，提交资料元数据**
+      await submitMaterialMetadata(); // 传递上传响应以便获取可能的文件信息
+
     } else {
-      ElMessage.error(responseData.message || `文件 ${file.name} 上传失败！`);
-      console.error('文件上传失败，服务器返回数据:', responseData);
-      options.onError(new Error(responseData.message || '文件上传失败'), file);
+      ElMessage.error(uploadResponse.message || `文件 ${file.name} 上传失败！`);
+      console.error('文件上传失败，服务器返回数据:', uploadResponse);
+      options.onError(new Error(uploadResponse.message || '文件上传失败'), file);
     }
   } catch (error: any) {
-    fileUploadNotification.close();
+    fileUploadNotification.close(); // 关闭通知
     console.error('文件上传请求失败:', error);
-    let errorMessage = '文件上传失败，请检查网络或联系管理员。';
-    if (axios.isAxiosError(error)) {
-      errorMessage = error.response?.data?.message || `文件上传失败：${error.response?.status}`;
-      console.error('HTTP 错误响应数据:', error.response?.data);
-      console.error('HTTP 错误状态码:', error.response?.status);
-    } else if (error.request) {
-      errorMessage = '文件上传请求未收到响应，请检查后端服务是否运行。';
-    }
-    ElMessage.error(errorMessage);
+    // 错误信息已经在 materialUploadApi.ts 中通过 ElMessage 统一处理了
     options.onError(error, file);
   }
 };
 
+// 提交资料元数据的函数
+const submitMaterialMetadata = async () => {
+  if (!uploadForm.file) {
+    ElMessage.error('无法提交资料元数据：文件信息缺失。');
+    return;
+  }
+
+  // 构造 resource_content：toPath + fileId + 文件扩展名
+  const fileExtension = getFileExtension(uploadForm.originalFileName);
+  const resourceContent = `${uploadForm.toPath}${uploadForm.fileId}${fileExtension}`;
+
+  // **关键：构建符合后端 ResourceRequest 结构的数据**
+  const materialData: MaterialSubmitData = {
+    resource_id: uploadForm.fileId, // 使用 UUID 作为 resource_id
+    subject: uploadForm.subject,
+    teacher_id: userId.value, // 从 props 获取当前用户的 ID
+    resource_content: resourceContent, // 文件在服务器上的完整路径
+    class_id: uploadForm.classId || null, // 如果为空字符串，则发送 null
+    name: uploadForm.name,
+    // upload_time 使用 dataTime(6)格式的字符串
+    upload_time: new Date().toISOString(),
+    description: uploadForm.description || null, // 如果为空字符串，则发送 null
+  };
+
+  try {
+    const submitResponse = await submitMaterialInfo(materialData);
+
+    if (submitResponse.code === 200) {
+      ElMessage.success('资料信息提交成功，资料已完整创建！');
+      console.log('资料信息提交成功:', submitResponse);
+      resetForm(); // 资料和文件都上传成功后，重置表单
+      // 跳转回资料库页面
+      router.push('/home/materials');
+    } else {
+      ElMessage.error(submitResponse.message || '资料信息提交失败！');
+      console.error('资料信息提交失败:', submitResponse);
+    }
+  } catch (error) {
+    console.error('提交资料信息请求失败:', error);
+    // 错误信息已经在 materialUploadApi.ts 中通过 ElMessage 统一处理了
+  }
+};
+
+
+// 触发上传操作
 const submitUpload = async () => {
   if (!uploadFormRef.value) return;
 
@@ -198,16 +295,16 @@ const submitUpload = async () => {
         ElMessage.error('请选择要上传的文件！');
         return;
       }
-      // 触发文件上传
-      ElMessage.info('正在触发文件上传...');
+      ElMessage.info('正在准备上传文件...');
       try {
         if (elUploadRef.value) {
-          await elUploadRef.value.submit();
+          elUploadRef.value.submit(); // 这会调用 :http-request 绑定的 uploadFileToServer 函数
         } else {
           throw new Error('文件上传组件未就绪。');
         }
       } catch (e) {
         console.error("文件上传触发失败:", e);
+        // 这里的错误通常是组件内部触发失败，而非后端返回
         ElMessage.error('文件上传失败，请修正后重试。');
       }
     } else {
@@ -217,29 +314,46 @@ const submitUpload = async () => {
   });
 };
 
+// 重置表单
 const resetForm = () => {
   if (uploadFormRef.value) {
     uploadFormRef.value.resetFields();
-    // 确保手动清空文件相关状态
     uploadForm.file = null;
     uploadForm.fileId = '';
+    uploadForm.originalFileName = '';
     fileList.value = [];
     if (elUploadRef.value) {
       elUploadRef.value.clearFiles();
     }
-    // 手动设置回初始值或空白，因为 resetFields 可能只针对 prop 绑定的值
+    // 恢复为默认值或空白
     uploadForm.name = '';
     uploadForm.subject = '';
-    uploadForm.description = '';
-    // 恢复为默认或空白值
-    uploadForm.uploadPath = '/opt/edupal_files/'; // <-- 再次提醒，请修改为你的实际路径！
+    uploadForm.description = null; // 确保为 null
+    uploadForm.classId = null; // 确保为 null
+    // 恢复为默认路径，请确保这是你的实际路径
+    uploadForm.uploadPath = 'E:/Postman/files/';
     uploadForm.toPath = 'resource/';
   }
 };
 
+// 返回资料库页面
 const goBack = () => {
-  ElMessage.info('测试模式，不执行页面跳转。');
+  ElMessage.info('正在返回资料库...');
+  router.push('/home/materials');
 };
+
+// 辅助函数：从文件名中提取扩展名 (包含点)
+function getFileExtension(filename: string): string {
+  if (!filename || typeof filename !== 'string') {
+    return '';
+  }
+  const lastDotIndex = filename.lastIndexOf('.');
+  if (lastDotIndex === -1 || lastDotIndex === 0) {
+    return ''; // 没有扩展名或以点开头的文件
+  }
+  return filename.substring(lastDotIndex); // 包含点，如 ".pdf"
+}
+
 </script>
 
 <style scoped>
