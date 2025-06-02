@@ -66,6 +66,10 @@
                     <el-icon><DocumentCopy /></el-icon>
                     复制
                   </el-button>
+                  <el-button text size="small" @click="openTransferDialog(message.questionId || '')" v-if="message.questionId">
+                    <el-icon><User /></el-icon>
+                    转交给老师
+                  </el-button>
                 </div>
               </div>
             </div>
@@ -222,6 +226,45 @@
       </div>
     </div>
   </div>
+
+  <!-- 转交给老师对话框 -->
+  <el-dialog
+    v-model="transferDialogVisible"
+    title="转交问题给老师"
+    width="400px"
+    :close-on-click-modal="false"
+  >
+    <el-form :model="{ teacherUserId }" label-width="100px">
+      <el-form-item label="老师用户ID" required>
+        <el-input
+          v-model="teacherUserId"
+          placeholder="请输入老师的用户ID"
+          :disabled="isTransferring"
+        />
+      </el-form-item>
+      <el-form-item>
+        <div class="transfer-tip">
+          <el-icon><InfoFilled /></el-icon>
+          <span>输入老师的用户ID后，该问题将转交给对应老师回答</span>
+        </div>
+      </el-form-item>
+    </el-form>
+    
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="closeTransferDialog" :disabled="isTransferring">
+          取消
+        </el-button>
+        <el-button 
+          type="primary" 
+          @click="confirmTransferToTeacher"
+          :loading="isTransferring"
+        >
+          确认转交
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -229,10 +272,12 @@ import { ref, computed, nextTick, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { 
   Plus, Delete, DocumentCopy,
-  Promotion, ArrowRight, Service, Operation, Close
+  Promotion, ArrowRight, Service, Operation, Close, User, InfoFilled
 } from '@element-plus/icons-vue';
 // 导入真实的AI API和类型
 import { askAI, getConversationHistory, deleteConversation, type HistoryResponse, type QA, type AnswerDetail } from '../api/ai';
+// 导入教师转交API
+import { transferQuestionToTeacher } from '../api/teacher';
 // 导入axios用于取消令牌
 import axios, { CancelTokenSource } from 'axios';
 // 导入用户默认头像
@@ -242,6 +287,19 @@ import aiIconDefault from '../assets/aiIconDefault.jpg';
 // 导入KaTeX用于LaTeX渲染
 import * as katex from 'katex';
 import 'katex/dist/katex.min.css';
+
+// Props定义
+interface Props {
+  usertype?: number;
+  username?: string;
+  userid?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  usertype: 1,
+  username: '',
+  userid: ''
+});
 
 // 接口定义
 interface Message {
@@ -275,6 +333,12 @@ const messagesContainer = ref<HTMLElement>();
 
 // 请求取消相关
 const currentRequestCancel = ref<CancelTokenSource | null>(null);
+
+// 转交老师相关状态
+const transferDialogVisible = ref(false);
+const teacherUserId = ref('');
+const transferringQuestionId = ref('');
+const isTransferring = ref(false);
 
 // 对话管理
 const conversations = ref<Conversation[]>([]);
@@ -998,6 +1062,54 @@ const handleKeydown = (event: KeyboardEvent) => {
       event.preventDefault();
       sendMessage();
     }
+  }
+};
+
+// 转交老师相关方法
+const openTransferDialog = (questionId: string) => {
+  transferringQuestionId.value = questionId;
+  teacherUserId.value = '';
+  transferDialogVisible.value = true;
+};
+
+const closeTransferDialog = () => {
+  transferDialogVisible.value = false;
+  transferringQuestionId.value = '';
+  teacherUserId.value = '';
+  isTransferring.value = false;
+};
+
+const confirmTransferToTeacher = async () => {
+  if (!teacherUserId.value.trim()) {
+    ElMessage.warning('请输入老师的用户ID');
+    return;
+  }
+
+  if (!transferringQuestionId.value) {
+    ElMessage.error('未找到要转交的问题ID');
+    return;
+  }
+
+  isTransferring.value = true;
+  
+  try {
+    const response = await transferQuestionToTeacher({
+      userId: currentUser.value.studentId,
+      questionId: transferringQuestionId.value,
+      teacherId: teacherUserId.value.trim()
+    });
+
+    if (response.code === 200) {
+      ElMessage.success('问题已成功转交给老师');
+      closeTransferDialog();
+    } else {
+      ElMessage.error(response.message || '转交失败');
+    }
+  } catch (error: any) {
+    console.error('转交问题失败:', error);
+    ElMessage.error(error.message || '转交问题失败，请稍后重试');
+  } finally {
+    isTransferring.value = false;
   }
 };
 
@@ -2104,5 +2216,29 @@ watch(conversations, saveConversations, { deep: true });
 .chat-messages::-webkit-scrollbar-thumb:hover,
 .conversation-history::-webkit-scrollbar-thumb:hover {
   background: #a1a1a1;
+}
+
+/* 转交对话框样式 */
+.transfer-tip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #606266;
+  font-size: 14px;
+  background: #f5f7fa;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #409eff;
+}
+
+.transfer-tip .el-icon {
+  color: #409eff;
+  font-size: 16px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 </style>

@@ -4,11 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(ai/teacherView):补充了返回questionid">
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(admin):新增了管理员注册学生、教师、管理员功能">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/EduPalApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/EduPalApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/edupal/EduPalApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/edupal/EduPalApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/RegisterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/RegisterRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/edupal/service/impl/AuthServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/service/impl/AuthServiceImplTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,10 +67,16 @@
     "JUnit.AuthServiceImplTest.executor": "Run",
     "JUnit.AuthServiceImplTest.loginUserByEmailSuccess.executor": "Run",
     "JUnit.AuthServiceImplTest.loginUserByEmail_ReturnsError_WhenEmailIsNull.executor": "Run",
+    "JUnit.AuthServiceImplTest.testLoginUserByUserId_Success.executor": "Run",
+    "JUnit.AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired.executor": "Run",
+    "JUnit.AuthServiceImplTest.testUpdateStudentClass_Success.executor": "Run",
     "JUnit.SecurityConfigTest.executor": "Run",
     "JUnit.UserControllerTest.executor": "Run",
     "JUnit.UserServiceImplIntegrationTest.executor": "Run",
     "JUnit.UserServiceImplTest.executor": "Run",
+    "Maven.backend [clean].executor": "Run",
+    "Maven.backend [install].executor": "Run",
+    "Maven.backend [package].executor": "Run",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
     "RequestMappingsPanelWidth0": "75",
@@ -74,7 +84,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.EduPalApplication.executor": "Run",
+    "Spring Boot.EduPalApplication.executor": "Debug",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "E:/01-08 大三春/01 软件工程 刘光迟/临时测试/EduPal-main (7)/EduPal-main/backend",
@@ -102,22 +112,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Spring Boot.EduPalApplication">
-    <configuration name="AuthControllerTest.testRegisterUser_Success" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="backend" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.example.edupal.controller.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.example.edupal.controller" />
-      <option name="MAIN_CLASS_NAME" value="com.example.edupal.controller.AuthControllerTest" />
-      <option name="METHOD_NAME" value="testRegisterUser_Success" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="AuthServiceImplTest.loginUserByEmailSuccess" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
@@ -150,6 +144,54 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="AuthServiceImplTest.testLoginUserByUserId_Success" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.edupal.service.impl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.example.edupal.service.impl" />
+      <option name="MAIN_CLASS_NAME" value="com.example.edupal.service.impl.AuthServiceImplTest" />
+      <option name="METHOD_NAME" value="testLoginUserByUserId_Success" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.edupal.service.impl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.example.edupal.service.impl" />
+      <option name="MAIN_CLASS_NAME" value="com.example.edupal.service.impl.AuthServiceImplTest" />
+      <option name="METHOD_NAME" value="testSendVerificationCode_CodeExistsNotExpired" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AuthServiceImplTest.testUpdateStudentClass_Success" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.edupal.service.impl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.example.edupal.service.impl" />
+      <option name="MAIN_CLASS_NAME" value="com.example.edupal.service.impl.AuthServiceImplTest" />
+      <option name="METHOD_NAME" value="testUpdateStudentClass_Success" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="EduPalApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="backend" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.edupal.EduPalApplication" />
@@ -159,9 +201,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.AuthServiceImplTest.testLoginUserByUserId_Success" />
+        <item itemvalue="JUnit.AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired" />
+        <item itemvalue="JUnit.AuthServiceImplTest.testUpdateStudentClass_Success" />
         <item itemvalue="JUnit.AuthServiceImplTest.loginUserByEmailSuccess" />
         <item itemvalue="JUnit.AuthServiceImplTest.loginUserByEmail_ReturnsError_WhenEmailIsNull" />
-        <item itemvalue="JUnit.AuthControllerTest.testRegisterUser_Success" />
       </list>
     </recent_temporary>
   </component>
@@ -208,7 +252,8 @@
       <workItem from="1748650200423" duration="12606000" />
       <workItem from="1748664375756" duration="173000" />
       <workItem from="1748670340519" duration="8128000" />
-      <workItem from="1748704535022" duration="27054000" />
+      <workItem from="1748704535022" duration="38003000" />
+      <workItem from="1748822931604" duration="8170000" />
     </task>
     <task id="LOCAL-00001" summary="feat(auth):新增auth模块，包括登录和注册">
       <option name="closed" value="true" />
@@ -530,7 +575,63 @@
       <option name="project" value="LOCAL" />
       <updated>1748767080603</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="fix:修改了数据库的时区问题">
+      <option name="closed" value="true" />
+      <created>1748769819738</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1748769819738</updated>
+    </task>
+    <task id="LOCAL-00042" summary="fix:修改了数据库的时区问题？谁给改回来了？">
+      <option name="closed" value="true" />
+      <created>1748777109889</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1748777109889</updated>
+    </task>
+    <task id="LOCAL-00043" summary="fix(file):修复了upload404的问题">
+      <option name="closed" value="true" />
+      <created>1748781265852</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1748781265852</updated>
+    </task>
+    <task id="LOCAL-00044" summary="fix(file):修复了download404的问题">
+      <option name="closed" value="true" />
+      <created>1748785440172</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1748785440172</updated>
+    </task>
+    <task id="LOCAL-00045" summary="fix(file):修复了download失败但有创建文件的问题">
+      <option name="closed" value="true" />
+      <created>1748787753067</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1748787753067</updated>
+    </task>
+    <task id="LOCAL-00046" summary="test(AuthServiceImpl):新增AuthServiceImpl单元测试用例，2个自动测试错误，但手动测试可以通过">
+      <option name="closed" value="true" />
+      <created>1748828369811</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1748828369812</updated>
+    </task>
+    <task id="LOCAL-00047" summary="feat(admin):新增管理员模块后端">
+      <option name="closed" value="true" />
+      <created>1748828439325</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1748828439325</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -563,14 +664,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix(auth):统一了前后端忘记密码的router" />
-    <MESSAGE value="fix(model):增加了 LearningProgress和Quiz的model和数据库的连接" />
-    <MESSAGE value="fix(auth):修复了重置密码result始终为false的问题" />
-    <MESSAGE value="同步一下" />
-    <MESSAGE value="feat(file):完成了后端与远程服务器交互，上传、下载、删除文件的基本逻辑，请求接口已完成，响应接口未完善。" />
-    <MESSAGE value="feat(file):完善了上传、下载、删除文件的请求和响应接口，preview功能还未测试" />
-    <MESSAGE value="feat(file):完成了文件预览功能，返回流式数据，需要前端依赖第三方pdf预览功能实现" />
-    <MESSAGE value="feat(file):删掉了一些测试用注释" />
     <MESSAGE value="feat(ai):添加了获取问答历史的功能，响应采用3层json嵌套，返回一些必要元素" />
     <MESSAGE value="feat(document):建立了一个文件夹放文档们" />
     <MESSAGE value="fix(ai/history):修复了查看问题历史“只闻其声不知其人”的问题" />
@@ -588,7 +681,15 @@
     <MESSAGE value="feat(home/student):新增学生首页显示功能" />
     <MESSAGE value="fix(ai/teacherView):修改请求类型为GET" />
     <MESSAGE value="fix(ai/teacherView):补充了返回questionid" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(ai/teacherView):补充了返回questionid" />
+    <MESSAGE value="fix:修改了数据库的时区问题" />
+    <MESSAGE value="fix:修改了数据库的时区问题？谁给改回来了？" />
+    <MESSAGE value="fix(file):修复了upload404的问题" />
+    <MESSAGE value="fix(file):修复了download404的问题" />
+    <MESSAGE value="fix(file):修复了download失败但有创建文件的问题" />
+    <MESSAGE value="test(AuthServiceImpl):新增AuthServiceImpl单元测试用例，2个自动测试错误，但手动测试可以通过" />
+    <MESSAGE value="feat(admin):新增管理员模块后端" />
+    <MESSAGE value="feat(admin):新增了管理员注册学生、教师、管理员功能" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(admin):新增了管理员注册学生、教师、管理员功能" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -799,64 +900,44 @@
           <option name="timeStamp" value="91" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>120</line>
-          <option name="timeStamp" value="119" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
-          <line>84</line>
+          <line>74</line>
           <option name="timeStamp" value="120" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
-          <line>92</line>
+          <line>82</line>
           <option name="timeStamp" value="121" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
-          <line>94</line>
+          <line>84</line>
           <option name="timeStamp" value="122" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>133</line>
+          <line>213</line>
           <option name="timeStamp" value="123" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
-          <line>90</line>
+          <line>80</line>
           <option name="timeStamp" value="124" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>122</line>
+          <line>202</line>
           <option name="timeStamp" value="125" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>123</line>
-          <option name="timeStamp" value="126" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>127</line>
-          <option name="timeStamp" value="127" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>126</line>
+          <line>206</line>
           <option name="timeStamp" value="129" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>132</line>
+          <line>212</line>
           <option name="timeStamp" value="130" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>128</line>
-          <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>jar://$PROJECT_DIR$/../../../../../environment/maven-3.9/myRepository/commons-net/commons-net/3.6/commons-net-3.6-sources.jar!/org/apache/commons/net/ftp/FTPClient.java</url>
@@ -1070,22 +1151,22 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>88</line>
+          <line>72</line>
           <option name="timeStamp" value="250" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>90</line>
+          <line>74</line>
           <option name="timeStamp" value="251" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>95</line>
+          <line>79</line>
           <option name="timeStamp" value="252" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>92</line>
+          <line>76</line>
           <option name="timeStamp" value="253" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -1130,17 +1211,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>68</line>
+          <line>48</line>
           <option name="timeStamp" value="282" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>70</line>
+          <line>50</line>
           <option name="timeStamp" value="283" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/FileController.java</url>
-          <line>73</line>
+          <line>57</line>
           <option name="timeStamp" value="284" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -1183,6 +1264,21 @@
           <line>37</line>
           <option name="timeStamp" value="292" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
+          <line>138</line>
+          <option name="timeStamp" value="301" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
+          <line>137</line>
+          <option name="timeStamp" value="302" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AdminController.java</url>
+          <line>27</line>
+          <option name="timeStamp" value="309" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java</url>
           <line>10</line>
@@ -1209,6 +1305,15 @@
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="276" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/test/java/com/example/edupal/service/impl/AuthServiceImplTest.java</url>
+          <line>319</line>
+          <properties class="com.example.edupal.service.impl.AuthServiceImplTest" method="testUpdateStudentClass_Success">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="299" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

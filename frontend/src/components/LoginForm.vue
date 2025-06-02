@@ -1,5 +1,12 @@
 <template>
   <div class="login-form-container">
+    <!-- 神秘触发区域 - 点击左上角隐藏区域 -->
+    <div 
+      class="secret-trigger" 
+      @click="handleSecretTrigger"
+      title="神秘区域"
+    ></div>
+    
     <div class="login-card">
       <h2 class="login-title">登录</h2>
       <form @submit.prevent="handleSubmit" class="login-form">
@@ -84,14 +91,48 @@
         </div>
       </form>
     </div>
+    
+    <!-- 神秘窗口模态框 -->
+    <div v-if="showSecretModal" class="secret-modal-overlay" @click="closeSecretModal">
+      <div class="secret-modal" @click.stop>
+        <div class="secret-header">
+          <h3>🎮 神秘彩蛋发现！</h3>
+          <button @click="closeSecretModal" class="close-btn">×</button>
+        </div>
+        <div class="secret-content">
+          <p class="secret-instruction">
+            输入神秘代码解锁隐藏功能：
+          </p>
+          <div class="code-display">
+            <span class="code-hint"></span>
+          </div>
+          <div class="input-sequence">
+            <span 
+              v-for="(input, index) in inputSequence" 
+              :key="index"
+              class="input-char"
+              :class="{ 'correct': input.correct, 'incorrect': input.incorrect }"
+            >
+              {{ input.char }}
+            </span>
+          </div>
+          <p class="secret-status" :class="sequenceStatus">
+            {{ statusMessage }}
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, computed, ref ,watch  } from 'vue';
+import { reactive, computed, ref, watch, onMounted, onUnmounted } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useRouter } from 'vue-router';
 import ex from '../api/auth';
 import SIdentify from './identify/identify.vue'; // 引入图片验证码组件
+
+const router = useRouter();
 
 const form = reactive({
   userId: '',
@@ -107,6 +148,49 @@ const verifyCodeError = ref('');
 // 密码显示状态
 const showPassword = ref(false);
 
+// Doro 模式音频播放器
+const doroAudioPlayer = ref<HTMLAudioElement | null>(null);
+
+// 神秘彩蛋相关状态
+const showSecretModal = ref(false);
+const inputSequence = ref<Array<{char: string, correct: boolean, incorrect: boolean}>>([]);
+const sequenceStatus = ref('');
+const statusMessage = ref('按键盘输入神秘代码...');
+
+// 多种神秘代码序列
+const secretCodes = {
+  konami: {
+    sequence: ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA', 'KeyB', 'KeyA'],
+    display: ['↑', '↑', '↓', '↓', '←', '→', '←', '→', 'B', 'A', 'B', 'A'],
+    action: () => {
+      router.push('/register');
+      ElMessage.success('欢迎来到注册页面！这是一个隐藏彩蛋！');
+    },
+    message: '🎉 恭喜！神秘代码正确！正在传送到注册页面...'
+  },
+  doro: {
+    sequence: ['KeyD', 'KeyO', 'KeyR', 'KeyO'],
+    display: ['D', 'O', 'R', 'O'],
+    action: () => {
+      // 初始化并播放 BGM
+      if (!doroAudioPlayer.value) {
+        doroAudioPlayer.value = new Audio('/src/assets/DoroBgm.mp3');
+        doroAudioPlayer.value.loop = true;
+      }
+      doroAudioPlayer.value.play().catch(error => {
+        console.error("Error playing Doro BGM:", error);
+        ElMessage.error('无法播放BGM，请检查控制台。');
+      });
+      ElMessage.success('🌸 Doroの小曲已启动！');
+    },
+    message: '🌸 神秘的 Doro 之声...' // 更新消息
+  }
+};
+
+let currentSequenceIndex = 0;
+const possibleCodes = ref<string[]>(Object.keys(secretCodes));
+
+// 计算属性
 const userIdLabel = computed(() => {
   return form.type === 1 ? '邮箱：' : '账号：';
 });
@@ -218,8 +302,6 @@ const handleTypeChange = () => {
   refreshCode(); // 切换登录方式时也刷新验证码
 };
 
-// 添加监听器来处理类型切换
-import { watch } from 'vue';
 watch(() => form.type, () => {
   handleTypeChange();
 });
@@ -245,10 +327,11 @@ const handleSubmit = async () => {
     const response = await ex.login(form.userId, form.password, form.type);
     if (response.code==200) {
       ElMessage.success(response.message);
-      window.location.href = '/home';
-
+      
       localStorage.setItem('user_id', form.userId);
-      localStorage.setItem('user_type', response.data?.userType);
+      localStorage.setItem('user_type', response.data?.userType?.toString() || '1');
+      
+      window.location.href = '/home';
 
     } else {
       ElMessage.error(response.message);
@@ -288,6 +371,138 @@ const makeCode = (o: string, l: number) => {
 
 // 初始化验证码
 refreshCode();
+
+// 神秘窗口彩蛋功能
+const handleSecretTrigger = () => {
+  showSecretModal.value = true;
+  inputSequence.value = [];
+  currentSequenceIndex = 0;
+  possibleCodes.value = Object.keys(secretCodes); // Reset to all codes
+  sequenceStatus.value = '';
+  statusMessage.value = '按键盘输入神秘代码...';
+};
+
+const closeSecretModal = () => {
+  showSecretModal.value = false;
+  // Reset state when closing
+  inputSequence.value = [];
+  currentSequenceIndex = 0;
+  possibleCodes.value = Object.keys(secretCodes);
+  sequenceStatus.value = '';
+  statusMessage.value = '按键盘输入神秘代码...'; // Reset message
+};
+
+// 处理键盘输入
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (!showSecretModal.value) return;
+
+  event.preventDefault();
+  const keyPressed = event.code;
+
+  const nextPossibleCodes: string[] = [];
+  let matchedAnyCodeThisTurn = false;
+
+  for (const codeName of possibleCodes.value) {
+    const codeDetail = secretCodes[codeName as keyof typeof secretCodes];
+    // Check if the current key pressed matches the expected key in the sequence for this code
+    if (currentSequenceIndex < codeDetail.sequence.length && codeDetail.sequence[currentSequenceIndex] === keyPressed) {
+      nextPossibleCodes.push(codeName);
+      matchedAnyCodeThisTurn = true;
+    }
+  }
+
+  if (matchedAnyCodeThisTurn) {
+    // A key was pressed that matches the next expected key for one or more possible codes
+    // Use the display character from the first matching code for the visual feedback
+    const displayCharSource = secretCodes[nextPossibleCodes[0] as keyof typeof secretCodes];
+    inputSequence.value.push({
+      char: displayCharSource.display[currentSequenceIndex], // Or a generic '●' if preferred
+      correct: true,
+      incorrect: false,
+    });
+    
+    currentSequenceIndex++;
+    possibleCodes.value = nextPossibleCodes; // Update the list of still-possible codes
+
+    // Check if any of the currently possible codes are now complete
+    let completedCodeName: string | null = null;
+    for (const codeName of possibleCodes.value) {
+      const codeDetail = secretCodes[codeName as keyof typeof secretCodes];
+      if (currentSequenceIndex === codeDetail.sequence.length) {
+        completedCodeName = codeName;
+        break; // Found a completed code
+      }
+    }
+
+    if (completedCodeName) {
+      const completedCodeDetail = secretCodes[completedCodeName as keyof typeof secretCodes];
+      sequenceStatus.value = 'success';
+      statusMessage.value = completedCodeDetail.message;
+      setTimeout(() => {
+        completedCodeDetail.action();
+        closeSecretModal(); // This will also reset state for the next opening
+      }, 1500);
+    } else {
+      statusMessage.value = '很好！继续输入...';
+    }
+
+  } else {
+    // Key pressed does not match the next key for ANY of the currently possible codes
+    const wrongCharDisplay = getDisplayChar(keyPressed); // Get a display for the wrong key
+    inputSequence.value.push({ char: wrongCharDisplay, correct: false, incorrect: true });
+    sequenceStatus.value = 'error';
+    statusMessage.value = '❌ 输入错误！序列已重置。';
+
+    // Reset the sequence matching process
+    setTimeout(() => {
+      inputSequence.value = [];
+      currentSequenceIndex = 0;
+      possibleCodes.value = Object.keys(secretCodes); // Reset to all codes
+      sequenceStatus.value = '';
+      statusMessage.value = '按键盘输入神秘代码...';
+    }, 1000);
+  }
+};
+
+// 将键盘代码转换为显示字符
+const getDisplayChar = (code: string): string => {
+  const codeMap: {[key: string]: string} = {
+    'ArrowUp': '↑',
+    'ArrowDown': '↓',
+    'ArrowLeft': '←',
+    'ArrowRight': '→',
+    'KeyB': 'B',
+    'KeyA': 'A',
+    'KeyD': 'D',
+    'KeyO': 'O',
+    'KeyR': 'R',
+  };
+  // Fallback for other letter keys, e.g. KeyC -> C
+  if (code.startsWith('Key') && code.length === 4 && /^[A-Z]$/.test(code.charAt(3))) {
+      if (!codeMap[code]) return code.charAt(3);
+  }
+  return codeMap[code] || code.replace(/^Key/, ''); // General fallback
+};
+
+// 监听键盘事件
+onMounted(() => {
+  document.addEventListener('keydown', handleKeyDown);
+  // 预加载音频元素，但不播放
+  if (!doroAudioPlayer.value) {
+    doroAudioPlayer.value = new Audio('/src/assets/DoroBgm.mp3');
+    doroAudioPlayer.value.loop = true;
+  }
+});
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeyDown);
+  // 清理音频播放器
+  if (doroAudioPlayer.value) {
+    doroAudioPlayer.value.pause();
+    doroAudioPlayer.value.src = ''; // 尝试释放资源
+    doroAudioPlayer.value = null;
+  }
+});
 </script>
 
 <style scoped>
@@ -468,6 +683,230 @@ refreshCode();
   transition: transform 0.2s ease;
 }
 
+/* 神秘触发区域样式 */
+.secret-trigger {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  background: transparent;
+  cursor: pointer;
+  z-index: 9999;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.secret-trigger:hover {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+  border-radius: 0 0 25px 0;
+  backdrop-filter: blur(5px);
+}
+
+.secret-icon {
+  font-size: 16px;
+  opacity: 0.3;
+  transition: all 0.3s ease;
+  animation: float 3s ease-in-out infinite;
+}
+
+.secret-trigger:hover .secret-icon {
+  opacity: 0.8;
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px rgba(79, 70, 229, 0.5));
+}
+
+/* 神秘窗口模态框样式 */
+.secret-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+.secret-modal {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  color: white;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease;
+}
+
+.secret-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.secret-header h3 {
+  margin: 0;
+  font-size: 24px;
+  background: linear-gradient(45deg, #fff, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.secret-content {
+  text-align: center;
+}
+
+.secret-instruction {
+  font-size: 16px;
+  margin-bottom: 15px;
+  opacity: 0.9;
+}
+
+.code-display {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 15px 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.code-hint {
+  font-family: 'Courier New', monospace;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.input-sequence {
+  min-height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.input-char {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  animation: bounceIn 0.5s ease;
+}
+
+.input-char.correct {
+  background: rgba(34, 197, 94, 0.8);
+  color: white;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+}
+
+.input-char.incorrect {
+  background: rgba(239, 68, 68, 0.8);
+  color: white;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+  animation: shake 0.5s ease;
+}
+
+.secret-status {
+  font-size: 14px;
+  margin-top: 15px;
+  min-height: 20px;
+  font-weight: 500;
+}
+
+.secret-status.success {
+  color: #4ade80;
+  animation: pulse 1s infinite;
+}
+
+.secret-status.error {
+  color: #f87171;
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bounceIn {
+  0% { 
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% { 
+    transform: scale(0.9);
+  }
+  100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
 @media (max-width: 480px) {
   .login-card {
     padding: 30px 20px;
@@ -488,6 +927,11 @@ refreshCode();
     /* 在堆叠时，flex:1 不再是为了平分宽度，可以保持或移除 */
     /* 如果希望它们仍然是全宽，flex:1 配合父容器的列方向仍然有效 */
     width: 100%;
+  }
+
+  .secret-modal {
+    width: 95%;
+    padding: 15px;
   }
 }
 </style>

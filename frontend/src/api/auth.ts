@@ -24,7 +24,7 @@ interface LoginResponseData {
   success: boolean // true/false
   userId: string // "s20250112"
   userName: string // "李昶谨"
-  userType: number // 1 (教师) 或 0 (学生)
+  userType: number // 1 (学生) 或 2 (教师)
 }
 
 // 注册请求数据类型
@@ -32,7 +32,7 @@ interface RegisterRequest {
   userId: string
   password: string
   email: string
-  userType: number //0表示学生，1表示教师
+  userType: number //1表示学生，2表示教师
 }
 
 // 注册响应数据类型其实和后端实际相应类型一致，但这是一种代码规范。

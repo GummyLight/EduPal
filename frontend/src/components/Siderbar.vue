@@ -71,7 +71,7 @@ const props = defineProps({
   // 将 usertype 的类型定义为 Number，并使用字面量类型 0 | 1 来约束
   // 加上 -1 是为了处理 Home.vue 中传递的初始值或可能为 null/undefined 的情况，确保类型安全
   usertype: {
-    type: Number as () => 0 | 1 | -1, // 0:学生, 1:教师, -1:未定义/其他
+    type: Number as () => 0 | 1 | 2 | -1, // 1:学生, 2:教师, -1:未定义/其他
     required: true
   }
 });
