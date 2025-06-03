@@ -184,6 +184,15 @@ const secretCodes = {
       ElMessage.success('🌸 Doroの小曲已启动！');
     },
     message: '🌸 神秘的 Doro 之声...' // 更新消息
+  },
+  contributors: {
+    sequence: ['KeyC', 'KeyO', 'KeyN', 'KeyT', 'KeyR', 'KeyI', 'KeyB', 'KeyU', 'KeyT', 'KeyO', 'KeyR', 'KeyS'],
+    display: ['C', 'O', 'N', 'T', 'R', 'I', 'B', 'U', 'T', 'O', 'R', 'S'],
+    action: () => {
+      router.push('/credits-game');
+      ElMessage.success('🎮 进入贡献者弹幕游戏！准备好躲避攻击了吗？');
+    },
+    message: '🎮 感谢所有贡献者！正在启动弹幕游戏...'
   }
 };
 
@@ -330,7 +339,7 @@ const handleSubmit = async () => {
       
       localStorage.setItem('user_id', form.userId);
       localStorage.setItem('user_type', response.data?.userType?.toString() || '1');
-      localStorage.setItem('user_name', response.data?.userName);
+      localStorage.setItem('user_name', response.data?.userName?.toString() || 'name');
       
       window.location.href = '/home';
 
@@ -477,6 +486,12 @@ const getDisplayChar = (code: string): string => {
     'KeyD': 'D',
     'KeyO': 'O',
     'KeyR': 'R',
+    'KeyC': 'C',
+    'KeyN': 'N',
+    'KeyT': 'T',
+    'KeyI': 'I',
+    'KeyU': 'U',
+    'KeyS': 'S',
   };
   // Fallback for other letter keys, e.g. KeyC -> C
   if (code.startsWith('Key') && code.length === 4 && /^[A-Z]$/.test(code.charAt(3))) {

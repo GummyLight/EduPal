@@ -11,6 +11,20 @@
           </select>
         </div>
         <div class="form-group">
+          <label for="userName">姓名：</label>
+          <input 
+            v-model="form.userName" 
+            type="text" 
+            id="userName"
+            class="form-input"
+            :class="{ 'error': userNameError }"
+            placeholder="请输入真实姓名"
+            @blur="validateUserName"
+            required 
+          />
+          <span v-if="userNameError" class="error-message">{{ userNameError }}</span>
+        </div>
+        <div class="form-group">
           <label for="userId">用户名：</label>
           <input 
             v-model="form.userId" 
@@ -82,10 +96,11 @@
 <script setup lang="ts">
 import { reactive, ref, computed } from 'vue';
 import { ElMessage } from 'element-plus';
-import ex from '../api/auth';
+import admin from '../api/admin';
 
 const form = reactive({
   userId: '',
+  userName: '',
   password: '',
   confirmPassword: '',
   email: '',
@@ -96,6 +111,7 @@ const loading = ref(false);
 
 // 错误信息状态
 const userIdError = ref('');
+const userNameError = ref('');
 const passwordError = ref('');
 const confirmPasswordError = ref('');
 const emailError = ref('');
@@ -103,10 +119,12 @@ const emailError = ref('');
 // 表单验证状态
 const isFormValid = computed(() => {
   return form.userId && 
+         form.userName &&
          form.password && 
          form.confirmPassword &&
          form.email &&
          !userIdError.value &&
+         !userNameError.value &&
          !passwordError.value &&
          !confirmPasswordError.value &&
          !emailError.value;
@@ -166,6 +184,22 @@ const validateUserId = () => {
   }
 };
 
+// 验证姓名
+const validateUserName = () => {
+  if (!form.userName) {
+    userNameError.value = '';
+    return;
+  }
+  
+  if (form.userName.length < 2) {
+    userNameError.value = '姓名至少2个字符';
+  } else if (form.userName.length > 20) {
+    userNameError.value = '姓名不能超过20个字符';
+  } else {
+    userNameError.value = '';
+  }
+};
+
 // 验证密码
 const validatePassword = () => {
   if (!form.password) {
@@ -216,26 +250,27 @@ const validateEmail = () => {
 const handleSubmit = async () => {
   // 提交前再次验证所有字段
   validateUserId();
+  validateUserName();
   validatePassword();
   validateConfirmPassword();
   validateEmail();
   
   // 检查是否有任何错误
-  if (userIdError.value || passwordError.value || confirmPasswordError.value || emailError.value) {
+  if (userIdError.value || userNameError.value || passwordError.value || confirmPasswordError.value || emailError.value) {
     ElMessage.error('请检查输入格式');
     return;
   }
 
   loading.value = true;
   try {
-    const response = await ex.register(form.userId, form.password, form.email, form.userType);
-    if (response.data.success) {
-      ElMessage.success(response.data.message);
+    const response = await admin.register(form.userId, form.userName, form.password, form.email, form.userType);
+    if (response.code === 200) {
+      ElMessage.success(response.message || '注册成功');
       setTimeout(() => {
         window.location.href = '/login';
       }, 2000);
     } else {
-      ElMessage.error(response.data.message);
+      ElMessage.error(response.message || '注册失败');
     }
   } catch (error: any) {
     console.error('Register failed:', error);

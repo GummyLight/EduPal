@@ -14,12 +14,14 @@ import PracticeDetail from '../components/PracticeDetail.vue';
 import TeacherHomeworkReview from '../components/TeacherHomeworkReview.vue';
 import PracticeEdit from '../views/PracticeEdit.vue'
 import MaterialUpload from '../components/MaterialUpload.vue';
+import CreditsGame from '../views/CreditsGame.vue'; // 导入弹幕游戏页面
 
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/forgot-password', component: ForgotPassword },
+  { path: '/credits-game', component: CreditsGame }, // 弹幕游戏页面
   { path: '/markdown-demo', component: MarkdownDemo }, // 新增 Markdown 示例页面
   {
     path: '/home',
