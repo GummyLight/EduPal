@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 @Entity
 public class Resource {
     @Id
-    @Column(length = 8)
+    @Column(length = 36)
     private String resource_id;
 
     @Column(length = 8, nullable = false)
