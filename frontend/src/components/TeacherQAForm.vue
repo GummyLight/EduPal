@@ -48,18 +48,18 @@
         </div>
 
         <!-- 问题卡片 -->
-        <div v-for="question in questions" :key="question.questionId" class="question-card">
+        <div v-for="question in questions" :key="question.studentClass" class="question-card">
           <!-- 学生信息头部 -->
           <div class="question-header">
             <div class="student-info">
               <div class="student-avatar">
-                <img :src="userIconDefault" :alt="question.studentName" class="avatar-image" />
+                <img :src="userIconDefault" :alt="question.questionId" class="avatar-image" />
               </div>
               <div class="student-details">
-                <h4>{{ question.studentName }}</h4>
+                <h4>{{ question.questionId }}</h4>
                 <div class="student-meta">
-                  <span class="student-id">学号: {{ question.studentId }}</span>
-                  <span class="student-class">班级: {{ question.studentClass }}</span>
+                  <span class="student-id">学号: {{ question.studentName }}</span>
+                  <span class="student-class">班级: {{ question.studentId }}</span>
                 </div>
               </div>
             </div>
@@ -77,14 +77,22 @@
           <div class="answers-section">
             <!-- 已有答案 -->
             <div v-if="question.teacherAnswers.length > 0" class="existing-answers">
-              <h5>我的回答:</h5>
+              <h5>历史回答:</h5>
               <div 
                 v-for="(answer, index) in question.teacherAnswers" 
                 :key="index" 
                 class="answer-item"
+                :class="getAnswerClass(answer.answerType)"
               >
+                <div class="answer-header">
+                  <div class="answer-type-badge" :class="getAnswerBadgeClass(answer.answerType)">
+                    <el-icon v-if="answer.answerType === 0"><Monitor /></el-icon>
+                    <el-icon v-else><UserFilled /></el-icon>
+                    <span>{{ getAnswerTypeName(answer.answerType) }}</span>
+                  </div>
+                  <div class="answer-time">{{ formatTime(new Date(answer.answerTime)) }}</div>
+                </div>
                 <div class="answer-content" v-html="formatAnswerContent(answer.answerContent)"></div>
-                <div class="answer-time">{{ formatTime(new Date(answer.answerTime)) }}</div>
               </div>
             </div>
 
@@ -94,12 +102,12 @@
               <h5 v-else>补充回答:</h5>
               
               <el-input
-                v-model="answerInputs[question.questionId]"
+                v-model="answerInputs[question.studentClass]"
                 type="textarea"
                 :rows="4"
                 placeholder="请输入您的回答..."
                 class="answer-textarea"
-                @keydown="handleAnswerKeydown($event, question.questionId)"
+                @keydown="handleAnswerKeydown($event, question.studentClass)"
               />
               
               <div class="answer-actions">
@@ -108,9 +116,9 @@
                 </div>
                 <el-button
                   type="primary"
-                  @click="submitAnswer(question.questionId)"
-                  :loading="submittingAnswers[question.questionId]"
-                  :disabled="!answerInputs[question.questionId]?.trim()"
+                  @click="submitAnswer(question.studentClass)"
+                  :loading="submittingAnswers[question.studentClass]"
+                  :disabled="!answerInputs[question.studentClass]?.trim()"
                 >
                   <el-icon><Promotion /></el-icon>
                   发送回答
@@ -195,7 +203,7 @@ import { ref, computed, nextTick, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { 
   UserFilled, Loading, Refresh, DocumentRemove, 
-  Promotion, DataAnalysis, Operation
+  Promotion, DataAnalysis, Operation, Monitor
 } from '@element-plus/icons-vue';
 // 导入教师相关API
 import { TeacherViewQuestions, TeacherAnswer, type QA, type AnswerDetail } from '../api/teacher';
@@ -267,8 +275,8 @@ const refreshQuestions = async () => {
       
       // 初始化回答输入框
       questions.value.forEach((q: QA) => {
-        if (!answerInputs.value[q.questionId]) {
-          answerInputs.value[q.questionId] = '';
+        if (!answerInputs.value[q.studentClass]) {
+          answerInputs.value[q.studentClass] = '';
         }
       });
       
@@ -423,6 +431,18 @@ const getSubjectName = (subject: string): string => {
     'other': '其他'
   };
   return subjectNames[subject] || subject;
+};
+
+const getAnswerTypeName = (answerType: number): string => {
+  return answerType === 0 ? 'AI回答' : '教师回答';
+};
+
+const getAnswerClass = (answerType: number): string => {
+  return answerType === 0 ? 'ai-answer' : 'teacher-answer';
+};
+
+const getAnswerBadgeClass = (answerType: number): string => {
+  return answerType === 0 ? 'ai-badge' : 'teacher-badge';
 };
 
 const toggleSidebar = () => {
@@ -718,6 +738,52 @@ onMounted(() => {
   padding: 12px 16px;
   margin-bottom: 8px;
   border-left: 4px solid #67c23a;
+  transition: all 0.2s ease;
+}
+
+.answer-item.ai-answer {
+  background: #fef7e0;
+  border: 1px solid #ffd666;
+  border-left: 4px solid #faad14;
+}
+
+.answer-item.teacher-answer {
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-left: 4px solid #52c41a;
+}
+
+.answer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.answer-type-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.answer-type-badge.ai-badge {
+  background: #fff7e6;
+  color: #fa8c16;
+  border: 1px solid #ffd591;
+}
+
+.answer-type-badge.teacher-badge {
+  background: #f6ffed;
+  color: #389e0d;
+  border: 1px solid #95de64;
+}
+
+.answer-type-badge .el-icon {
+  font-size: 14px;
 }
 
 .answer-content {

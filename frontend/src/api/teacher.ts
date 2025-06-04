@@ -50,20 +50,25 @@ interface TeacherViewRequest {
 
 // 老师对问题的回答
 export interface AnswerDetail {
-    answerType: number // 答案类型，数学/物理/...
+    answerType: number // 回答类型，0-AI回答，1-教师回答
     answerContent: string // 答案内容
     answerTime: string // 回答时间
 }
 
 // 和ai.ts的QA定义不同，所以单独拿出一个ts来写
+// 注意：由于后端构造函数参数顺序错误，字段映射关系如下：
+// - questionId 字段实际包含 studentName（学生姓名）
+// - studentName 字段实际包含 studentId（学号）  
+// - studentId 字段实际包含 studentClass（班级）
+// - studentClass 字段实际包含 questionId（真正的问题ID）
 export interface QA {
-    studentName: string // 提问学生姓名
-    studentId: string // 提问学生ID
-    studentClass: string // 提问学生班级
-    questionId: string // 问题ID
-    questionContent: string // 提问内容
-    transferTime: string //问题转交的时间
-    teacherAnswers: AnswerDetail[] // 教师回答集合
+    questionId: string // 实际包含：studentName（学生姓名）
+    studentName: string // 实际包含：studentId（学号）
+    studentId: string // 实际包含：studentClass（班级）
+    studentClass: string // 实际包含：questionId（真正的问题ID）
+    questionContent: string // 提问内容（正确）
+    transferTime: string // 问题转交的时间（正确）
+    teacherAnswers: AnswerDetail[] // 教师回答集合（正确）
 }
 
 // 老师查看所有转交的问题响应
@@ -108,7 +113,17 @@ export const TeacherAnswer = async (
     data: TeacherAnswerRequest
 ): Promise<TeacherAnswerResponse> => {
     try {
-        const response = await request.post<TeacherAnswerResponse>('/ai/teacherAnswer', data);
+        // 后端期望的是表单参数，不是JSON
+        const formData = new URLSearchParams();
+        formData.append('teacherId', data.teacherId);
+        formData.append('questionId', data.questionId);
+        formData.append('answerContent', data.answerContent);
+        
+        const response = await request.post<TeacherAnswerResponse>('/ai/teacherAnswer', formData, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
         console.log('老师回答问题成功:', response.data);
         return response.data;
     } catch (error: any) {
