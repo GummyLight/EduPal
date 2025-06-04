@@ -83,9 +83,10 @@ import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElNotification, FormInstance, UploadFile, UploadFiles, ElUpload } from 'element-plus';
 import { UploadFilled } from '@element-plus/icons-vue';
-import { v4 as uuidv4 } from 'uuid'; // 用于生成唯一的 fileId
 // 从 materialUploadApi.ts 导入上传和提交资料信息的函数
-import { uploadFile, submitMaterialInfo, MaterialSubmitData } from '../api/materialUploadApi';
+import { uploadFile, submitMaterialInfo, MaterialSubmitData ,getMaxResourceId } from '../api/materialUploadApi';
+import { onMounted } from 'vue';
+
 
 const router = useRouter();
 
@@ -112,6 +113,27 @@ const userId = computed(() => props.userid); // 上传人ID
 
 const uploadFormRef = ref<FormInstance>();
 const elUploadRef = ref<InstanceType<typeof ElUpload> | null>(null);
+const maxResourceId = ref<number | null>(null);
+
+const fetchMaxResourceId = async () => {
+  try {
+    const maxId = await getMaxResourceId();
+    maxResourceId.value = maxId;
+    ElMessage.success(`最大 resource_id: ${maxId}`);
+  } catch (error) {
+    ElMessage.error('获取最大 resource_id 失败');
+    console.error('获取最大 resource_id 错误:', error);
+  }
+};
+
+onMounted(async () => {
+  try {
+    await fetchMaxResourceId();
+  } catch (error) {
+    ElMessage.error('获取最大 resource_id 失败，请刷新页面或联系管理员');
+    console.error('获取最大 resource_id 错误:', error);
+  }
+});
 
 const uploadForm = reactive({
   name: '', // 资料名称，应由用户填写
@@ -144,7 +166,7 @@ const handleFileChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
   fileList.value = [uploadFile]; // 确保只保留一个文件
 
   if (uploadForm.file) {
-    uploadForm.fileId = uuidv4(); // 生成 UUID 作为 fileId (不带扩展名)
+    uploadForm.fileId = maxResourceId.value;
     uploadForm.originalFileName = uploadFile.name; // 保存原始文件名，包含扩展名
 
     // 尝试根据文件名填充资料名称
