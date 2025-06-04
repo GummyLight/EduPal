@@ -115,12 +115,15 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, defineProps } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage ,ElMessageBox} from 'element-plus';
+import { useRouter } from 'vue-router';
+
 import {
   ResourceResponse,
   fetchAllResources,
   getPreviewFileUrl,
   getDownloadFileUrl,
+  deleteResourceById
 } from '../api/materialsApi';
 
 const props = defineProps({
@@ -133,6 +136,7 @@ const userType = computed(() => props.usertype);
 const username = computed(() => props.username);
 const userId = computed(() => props.userid);
 
+const router = useRouter();
 
 const filters = ref({
   name: '',
@@ -147,8 +151,7 @@ const tableData = ref<any[]>([]);
 const classOptions = ref([]); // 用于存储班级选项
 const currentClass = ref(''); // 当前选择的班级
 
-// 初始化获取所有资源
-onMounted(async () => {
+const refreshResources = async () => {
   try {
     const res = await fetchAllResources();
     rawMaterials.value = res || [];
@@ -189,6 +192,10 @@ onMounted(async () => {
     ElMessage.error('获取资源失败');
     console.error(err);
   }
+};
+// 初始化获取所有资源
+onMounted(() => {
+  refreshResources();
 });
 
 const fileTypeMap = {
@@ -369,27 +376,89 @@ const handleDownload = async (resourceId: string, customFileName: string, custom
 
 
 
-const handleDeleteSelected = () => {
-  if (!hasSelection.value) return ElMessage.warning('请选择资源');
-  const ids = selectedRows.value.map(r => r.id);
-  tableData.value = tableData.value.filter(item => !ids.includes(item.id));
-  selectedRows.value = [];
-  ElMessage.success('已删除所选资源（模拟）');
+const handleDeleteSelected = async () => {
+  if (!hasSelection.value) return ElMessage.warning('请选择要删除的资源');
+
+  const selectedIds = selectedRows.value.map(row => row.id); // 提取选中资源的 ID
+  const selectedNames = selectedRows.value.map(row => row.name); // 提取选中资源的名称
+
+  try {
+    // 显示确认对话框
+    await ElMessageBox.confirm(
+        `确定要删除以下 ${selectedIds.length} 个资源吗？这将永久删除文件和相关记录。${selectedNames.join('、')}`,
+        '批量删除确认',
+        {
+          confirmButtonText: '确定删除',
+          cancelButtonText: '取消',
+          type: 'warning',
+          dangerouslyUseHTMLString: true
+        }
+    );
+
+    // 批量删除逻辑
+    const successList = []; // 成功删除的记录
+    const failList = [];    // 删除失败的记录
+
+    // 遍历所有选中的资源
+    for (const row of selectedRows.value) {
+      if (!row.id) {
+        failList.push(`ID为空：${row.name}`);
+        continue;
+      }
+
+      try {
+        // 1. 删除资源记录
+        const resourceDeleteResponse = await deleteResourceById(row.id);
+
+        if (resourceDeleteResponse.code === 200) {
+          successList.push(row.name);
+
+          // 2. 删除文件 (如果需要)
+          if (getFileExtension(row.name)) {
+            const fileDeleteResponse = await deleteFile({
+              fileId: row.id + getFileExtension(row.name),
+              path: SERVER_FILE_ROOT_PATH // 服务器文件路径
+            });
+
+            if (fileDeleteResponse.code !== 200) {
+              failList.push(`文件删除失败：${row.name} (${fileDeleteResponse.message || '未知错误'})`);
+            }
+          }
+        } else {
+          failList.push(`记录删除失败：${row.name} (${resourceDeleteResponse.message || '未知错误'})`);
+        }
+      } catch (error) {
+        failList.push(`删除出错：${row.name} (${error.message || '未知错误'})`);
+        console.error(`删除 ${row.name} 时出错:`, error);
+      }
+    }
+
+    // 显示操作结果
+    if (successList.length > 0) {
+      ElMessage.success(`成功删除：${successList.join('、')}`);
+    }
+    if (failList.length > 0) {
+      ElMessage.error(`以下资源删除失败：${failList.join('、')}`);
+    }
+    // 刷新页面
+    await refreshResources();
+
+
+  } catch (error: any) {
+    if (error !== 'cancel') { // 如果用户点击了取消，不显示错误
+      ElMessage.error('批量删除操作请求失败，请检查网络或后端。');
+      console.error('批量删除失败:', error);
+    } else {
+      ElMessage.info('已取消批量删除操作。');
+    }
+  }
 };
 
-const handlePreviewSelected = () => {
-  if (!hasSelection.value) return ElMessage.warning('请选择资源');
-  handlePreview(selectedRows.value[0]);
-};
 
-const handleDownloadSelected = () => {
-  if (!hasSelection.value) return ElMessage.warning('请选择资源');
-  selectedRows.value.forEach(handleDownload);
-};
 
 const handleUploadSelected = () => {
   console.log('教师操作: 跳转到上传资料界面');
-  router.push('');
+  router.push('/home/materials/upload');
 };
 
 const handleSmartGenerate = () => {
