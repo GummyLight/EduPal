@@ -44,7 +44,6 @@ export interface ResourceResponse {
 // ----------------------------------------------------
 // 文件操作接口 (你提供的现有代码)
 // ----------------------------------------------------
-
 /**
  * 预览文件
  * @param params 包含 fileId 和 path 的对象
@@ -56,7 +55,18 @@ export function getPreviewFileUrl(params: FileOperationParams): string {
     // 假设你的后端接口路径是 /file/previewFile
     // 这里使用 service.defaults.baseURL 来确保与 service 实例的 baseURL 一致
     const baseUrl = service.defaults.baseURL || ''; // 获取 service 的 baseURL
-    return `${baseUrl}/file/previewFile?fileId=${params.fileId}&path=${encodeURIComponent(params.path)}`;
+    const url= `${baseUrl}/file/previewFile?fileId=${params.fileId}&path=${encodeURIComponent(params.path)}`;
+
+    axios
+        .get(url, { responseType: 'blob' })
+        .then((response) => {
+            const file = new Blob([response.data], { type: 'application/pdf' });
+            const fileURL = URL.createObjectURL(file);
+            window.open(fileURL);
+        })
+        .catch((error) => {
+            console.error('预览文件失败:', error);
+        });
 }
 
 /**

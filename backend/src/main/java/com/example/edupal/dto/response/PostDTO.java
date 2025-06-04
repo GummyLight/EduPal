@@ -13,6 +13,6 @@ public class PostDTO {
     private String authorName;
     private LocalDateTime publishTime;
     private Boolean isCollected;
-    private AttachedFileDTO attachedFile;
+    private String attachedFileUrl;
     private List<ReplyDTO> replies;
 }

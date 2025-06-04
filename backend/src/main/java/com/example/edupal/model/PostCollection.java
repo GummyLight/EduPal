@@ -6,23 +6,20 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "postcollect")
+@Table(name = "post_collection")
 @Data
 @IdClass(PostCollection.PostCollectionId.class)
 public class PostCollection {
     @Id
-    @Column(name = "userId", length = 255)
+    @Column(name = "user_Id", length = 255)
     private String userId;
 
-    @Id
-    @Column(name = "postId", length = 36)
-    private String postId;
-
-    @Column(name = "createdAt", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Id // 需要为复合主键的每个部分添加@Id注解
+    @Column(name = "post_id",length=255) // 修正列名与数据库一致
+    private String postId; // 需要添加postId字段，与PostCollectionId匹配
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postId", insertable = false, updatable = false)
+    @JoinColumn(name = "post_Id", insertable = false, updatable = false)
     private Post post;
 
     @Data

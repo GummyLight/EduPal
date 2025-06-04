@@ -26,7 +26,6 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final ReplyRepository replyRepository;
     private final PostCollectionRepository postCollectionRepository;
-    private final FileService fileService;
     private final UserRepository userRepository;
 
     // 获取当前登录用户ID的辅助方法
@@ -54,24 +53,18 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostDTO createPost(PostForm form) {
-        String userId = getCurrentUserId();
-        User author = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("用户不存在"));
-
+        User author = userRepository.findById(form.getAuthorId())
+                .orElseThrow(() -> new RuntimeException("用户不存在，ID: " + form.getAuthorId()));
         Post post = new Post();
         post.setId(UUID.randomUUID().toString());
         post.setTitle(form.getTitle());
         post.setContent(form.getContent());
-        post.setAuthorId(userId);
+        post.setAuthorId(form.getAuthorId());
         post.setAuthorName(author.getUserName());
         post.setPublishTime(LocalDateTime.now());
+        post.setAttachedFileUrl(form.getAttachedFileUrl()); // 直接设置URL
 
-        if (form.getAttachedFileUrl() != null) {
-            post.setAttachedFileName(extractFileName(form.getAttachedFileUrl()));
-            post.setAttachedFileUrl(form.getAttachedFileUrl());
-        }
-
-        return convertToPostDTO(postRepository.save(post), userId);
+        return convertToPostDTO(postRepository.save(post), form.getAuthorId());
     }
 
     @Override
@@ -105,11 +98,7 @@ public class PostServiceImpl implements PostService {
         reply.setAuthorName(author.getUserName());
         reply.setContent(form.getContent());
         reply.setPublishTime(LocalDateTime.now());
-
-        if (form.getAttachedFileUrl() != null) {
-            reply.setAttachedFileName(extractFileName(form.getAttachedFileUrl()));
-            reply.setAttachedFileUrl(form.getAttachedFileUrl());
-        }
+        reply.setAttachedFileUrl(form.getAttachedFileUrl()); // 直接设置URL
 
         return convertToReplyDTO(replyRepository.save(reply));
     }
@@ -144,26 +133,7 @@ public class PostServiceImpl implements PostService {
         }
     }
 
-    @Override
-    public AttachedFileDTO uploadFile(MultipartFile file) {
-        String uploaderId = getCurrentUserId();
-        try {
-            String fileName = file.getOriginalFilename();
-            String dest = "posts/" + uploaderId + "/";
-            Result uploadResult = fileService.upload(dest, "",fileName, file); //lcj：这个方法大概率废了
-
-            if (!uploadResult.isSuccess()) {
-                throw new RuntimeException("File upload failed: " + uploadResult.getMessage());
-            }
-
-            String fileUrl = "/api/file/download?filename=" + dest + fileName;
-            return new AttachedFileDTO(fileName, fileUrl);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to upload file", e);
-        }
-    }
-
-    // 以下私有方法保持不变...
+    // 私有方法
     private PostDTO convertToPostDTO(Post post, String userId) {
         return convertToPostDTO(post, userId, null);
     }
@@ -179,13 +149,7 @@ public class PostServiceImpl implements PostService {
         dto.setAuthorName(post.getAuthorName());
         dto.setPublishTime(post.getPublishTime());
         dto.setIsCollected(isCollected);
-
-        if (post.getAttachedFileUrl() != null) {
-            dto.setAttachedFile(new AttachedFileDTO(
-                    post.getAttachedFileName(),
-                    post.getAttachedFileUrl()
-            ));
-        }
+        dto.setAttachedFileUrl(post.getAttachedFileUrl()); // 直接设置URL
 
         if (replies != null) {
             dto.setReplies(replies.stream()
@@ -203,18 +167,8 @@ public class PostServiceImpl implements PostService {
         dto.setAuthorName(reply.getAuthorName());
         dto.setContent(reply.getContent());
         dto.setPublishTime(reply.getPublishTime());
-
-        if (reply.getAttachedFileUrl() != null) {
-            dto.setAttachedFile(new AttachedFileDTO(
-                    reply.getAttachedFileName(),
-                    reply.getAttachedFileUrl()
-            ));
-        }
+        dto.setAttachedFileUrl(reply.getAttachedFileUrl()); // 直接设置URL
 
         return dto;
-    }
-
-    private String extractFileName(String url) {
-        return url.substring(url.lastIndexOf('/') + 1);
     }
 }

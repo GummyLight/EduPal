@@ -20,15 +20,6 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
 
-    // 获取当前用户ID的辅助方法
-    private String getCurrentUserId() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new RuntimeException("用户未认证");
-        }
-        return auth.getName();
-    }
-
     // 1. 获取帖子列表 GET /community/posts
     @GetMapping("/posts")
     public List<PostDTO> getPosts() {
@@ -75,11 +66,5 @@ public class PostController {
     @DeleteMapping("/posts/{postId}/collect")
     public void uncollectPost(@PathVariable String postId) {
         postService.toggleCollect(postId, false);
-    }
-
-    // 9. 文件上传 POST /api/file/upload
-    @PostMapping("/file/upload")
-    public AttachedFileDTO uploadFile(@RequestParam("file") MultipartFile file) {
-        return postService.uploadFile(file);
     }
 }
