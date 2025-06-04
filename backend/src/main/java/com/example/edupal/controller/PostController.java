@@ -115,5 +115,12 @@ public class PostController {
         ));
     }
 
+    // 9. 获取用户收藏的帖子列表 GET /community/users/{userId}/collected-posts
+    @GetMapping("/users/{userId}/collected-posts")
+    public ResponseEntity<List<PostDTO>> getCollectedPosts(@PathVariable String userId) {
+        List<PostDTO> posts = postService.getCollectedPosts(userId);
+        return ResponseEntity.ok(posts);
+    }
+
 
 }

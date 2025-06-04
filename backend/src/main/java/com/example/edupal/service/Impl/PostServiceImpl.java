@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -121,6 +122,23 @@ public class PostServiceImpl implements PostService {
         } else {
             postCollectionRepository.deleteByUserIdAndPostId(userId, postId);
         }
+    }
+    @Override
+    public List<PostDTO> getCollectedPosts(String userId) {
+        // 查询用户收藏的帖子ID列表
+        List<String> collectedPostIds = postCollectionRepository.findPostIdsByUserId(userId);
+
+        if (collectedPostIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 根据帖子ID列表查询帖子详情
+        List<Post> posts = postRepository.findByIds(collectedPostIds);
+
+        // 转换为DTO并标记为已收藏
+        return posts.stream()
+                .map(post -> convertToPostDTO(post, userId))
+                .collect(Collectors.toList());
     }
 
     // 私有方法

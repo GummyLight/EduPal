@@ -12,5 +12,6 @@ public interface PostService {
     void deletePost(String postId);
     ReplyDTO createReply(String postId, ReplyForm form);
     void deleteReply(String replyId);
+    List<PostDTO> getCollectedPosts(String userId);
     void toggleCollect(String postId, boolean collect,String userId);
 }
