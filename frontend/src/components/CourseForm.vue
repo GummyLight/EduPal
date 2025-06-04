@@ -388,7 +388,8 @@ const handleDownloadSelected = () => {
 };
 
 const handleUploadSelected = () => {
-  ElMessage.success('上传功能暂未开放');
+  console.log('教师操作: 跳转到上传资料界面');
+  router.push('');
 };
 
 const handleSmartGenerate = () => {

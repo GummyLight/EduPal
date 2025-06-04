@@ -30,7 +30,7 @@ public class ResourceController {
         }
 
         Resource resource = new Resource();
-        resource.setResource_id(request.getResource_id());
+        //resource.setResource_id(request.getResource_id());
         resource.setSubject(request.getSubject());
         resource.setTeacher_id(request.getTeacher_id());
         resource.setResource_content(request.getResource_content());
