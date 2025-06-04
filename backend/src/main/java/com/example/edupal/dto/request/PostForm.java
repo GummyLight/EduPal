@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class PostForm {
-    private String student_id;
+    private String authorId;
     private String title;
     private String content;
     private String attachedFileUrl;

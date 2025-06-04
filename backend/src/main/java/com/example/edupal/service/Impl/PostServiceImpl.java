@@ -53,20 +53,18 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostDTO createPost(PostForm form) {
-        String userId = getCurrentUserId();
-        User author = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("用户不存在"));
-
+        User author = userRepository.findById(form.getAuthorId())
+                .orElseThrow(() -> new RuntimeException("用户不存在，ID: " + form.getAuthorId()));
         Post post = new Post();
         post.setId(UUID.randomUUID().toString());
         post.setTitle(form.getTitle());
         post.setContent(form.getContent());
-        post.setAuthorId(userId);
+        post.setAuthorId(form.getAuthorId());
         post.setAuthorName(author.getUserName());
         post.setPublishTime(LocalDateTime.now());
         post.setAttachedFileUrl(form.getAttachedFileUrl()); // 直接设置URL
 
-        return convertToPostDTO(postRepository.save(post), userId);
+        return convertToPostDTO(postRepository.save(post), form.getAuthorId());
     }
 
     @Override
