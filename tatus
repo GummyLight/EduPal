@@ -1,0 +1,506 @@
+[33mcommit b4d3a0dde3fae4643578dc45cbab5ccef60919a7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Suzuki <1063046101@qq.com>
+Date:   Tue Jun 3 12:50:06 2025 +0800
+
+    feat: 彩蛋界面加入contributors代码
+
+[33mcommit db08479f73a30645429d9cdf83bfbe238ed70192[m
+Merge: ea49abd 5967617
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 22:20:31 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit ea49abdd1501fc876deac172a4984bc922c72047[m
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 22:20:18 2025 +0800
+
+    feat: 加入管理员测试文档，完善注册页面(其实就改了个比例)
+
+[33mcommit 5967617a2508b7a312292e6477a3dc04e6403b9b[m
+Merge: 253c5e1 550b3a0
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 21:18:13 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit 253c5e1ed739e50baf9c9471a821d36ea2ad871e[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 21:17:52 2025 +0800
+
+    docs:提交管理员模块接口文档
+
+[33mcommit 550b3a01124f2ca421b147d55116495af236c431[m
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 21:13:50 2025 +0800
+
+    feat: 实现了管理员功能前后端互通，等待管理员home界面做好以后可以开始做前端界面
+
+[33mcommit 937cdcfab86fe779f1a0ed8073da129c99c3cb70[m
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 20:24:22 2025 +0800
+
+    feat: 实现了前端管理员接口对接，但过程中teacherClass要换成数组所以带来了很多不便，正在逐步修复
+
+[33mcommit 1b4a946ec50726dba0ad2711c56efc2388b124eb[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 20:02:40 2025 +0800
+
+    fix(ListTeacherResponse):修改Class为teacherClass
+
+[33mcommit 587b4f6eb0651a4521ee10c6997cb5235b7a3b42[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 19:58:36 2025 +0800
+
+    fix(ListTeacherResponse):修改Class的格式为String[]
+
+[33mcommit d35738b85d310fa6a85024e161adb6f5b02f6f45[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 18:45:57 2025 +0800
+
+    fix(ai):规范了getMyTeacher的格式
+
+[33mcommit 666ba89825e862ac9753cb0d65e3e02acdcae9cc[m
+Merge: 1e11c9a 5dbdaff
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 18:39:46 2025 +0800
+
+    Merge remote-tracking branch 'origin/main'
+
+[33mcommit 1e11c9a2139ffed5ef0e6dbfe04d136455b76280[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 18:39:28 2025 +0800
+
+    feat(ai):新增学生获取可转接老师的功能
+
+[33mcommit 5dbdaff118409b80d455ba3d62e9cf0b332e1c70[m
+Merge: 81d691f 44a6130
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 16:00:01 2025 +0800
+
+    Merge remote-tracking branch 'origin/main'
+
+[33mcommit 81d691f79e38fe19f7f27d3a5f8d2db276a2d8e6[m
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 15:56:57 2025 +0800
+
+    添加教师首页
+
+[33mcommit 44a6130347678c09dcc158d0ccbce464f54e50c7[m
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 15:56:57 2025 +0800
+
+    添加教师首页
+
+[33mcommit 21a7819ebce896093eb2a19525214c94ca097733[m
+Merge: bf3594a fa94fc7
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 15:56:28 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit fa94fc70a0e309972ecd0855ff9c3e7e8aff1117[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 15:35:04 2025 +0800
+
+    fix(admin/updateTeacherClass):将newClass以数组形式接收
+
+[33mcommit bf3594a4de3ab250379bad0f55e4ce7dd199bda2[m
+Merge: 54d95f5 fb66e7e
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 15:32:22 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit fb66e7eec9443e60b088347f4e5d2bbf7aaee6c6[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 15:31:36 2025 +0800
+
+    feat(home/teacher):新增教师登录界面接口，加了模拟返回信息
+
+[33mcommit 54d95f56f476ab3b53c6e6493e5dc7eb28a90808[m
+Merge: 9a79939 9439060
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 14:55:06 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit 9439060be3873460d003e1eb330f4a5bf83f50e2[m
+Merge: 5e90bf1 d711d5e
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 14:53:44 2025 +0800
+
+    Merge remote-tracking branch 'origin/main'
+
+[33mcommit 9a799398b6071fc3c5946f34501565c51cf9eef4[m
+Merge: 8c04e23 d711d5e
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 14:52:37 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+    
+    # Conflicts:
+    #       node_modules/.bin/uuid
+    #       node_modules/.bin/uuid~HEAD
+    #       node_modules/uuid/dist/esm/bin/uuid
+
+[33mcommit 5e90bf14b6237334d25f92f11eb6bd826422032a[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 14:52:25 2025 +0800
+
+    feat(admin):修改admin/register请求类,将教师授课班记作数组
+
+[33mcommit 8c04e231822787c5abd8a7091a673ff6c278db9a[m
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 14:51:49 2025 +0800
+
+    1111
+
+[33mcommit 78581b27e8ac496ed4d193410c2d9ed22220a291[m
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 14:51:33 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit d711d5ed91125230c701cefba78a7323d3ff7bf2[m
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 14:45:28 2025 +0800
+
+    feat: 管理员接口进行时，但是pull出bug了所以对齐一下
+
+[33mcommit cf0ad2d4aba28ede5faf6e7d72025a40531950f7[m
+Merge: 68ae241 d071cdd
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 14:38:11 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit d071cdde46bfeb4b396d581b8d7ecf2a578f524d[m
+Merge: f766a43 f06a452
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 14:37:21 2025 +0800
+
+    Merge remote-tracking branch 'origin/main'
+
+[33mcommit a0f2025cf53a56421f324b614816d9c0e8977217[m
+Merge: 05b5bb0 f06a452
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 14:35:25 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit 68ae24147a49e50426549728e18e0677a71fc036[m
+Merge: f766a43 f06a452
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 14:32:58 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit f766a43c0ccd9116eceef8e33ac588cbbacf239d[m
+Merge: 5b806f4 bf69608
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 14:26:34 2025 +0800
+
+    Merge remote-tracking branch 'origin/main'
+
+[33mcommit 5b806f48794083fa7a6ddf8d843db8f7822c5905[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 14:26:20 2025 +0800
+
+    feat(admin):修改admin/register请求类,将教师授课班记作数组
+
+[33mcommit bf696082ee5982467c5d16fc186c842571592d4c[m
+Author: 橡皮糖 <135332773+GummyLight@users.noreply.github.com>
+Date:   Mon Jun 2 14:13:55 2025 +0800
+
+    docs：更新 README.md
+
+[33mcommit 05b5bb004274e7881b9405b1346d4bf1a6722c2b[m
+Merge: 156fb93 edcd9d2
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 12:52:52 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit 156fb9360c31d394e4fc78f86596440b80c9f0d7[m
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 12:51:36 2025 +0800
+
+    资料管理模块
+
+[33mcommit f06a452afdfadadaf18545aed9ac2b9a35a074d6[m
+Merge: f79876a edcd9d2
+Author: chestnut <1208134539@qq.com>
+Date:   Mon Jun 2 12:37:24 2025 +0800
+
+    Merge remote-tracking branch 'origin/main'
+    
+    # Conflicts:
+    #       backend/target/classes/com/example/edupal/common/Result.class
+    #       backend/target/classes/com/example/edupal/service/AuthService.class
+
+[33mcommit f79876a32e987aa7d8289155152d71873fadf581[m
+Author: chestnut <1208134539@qq.com>
+Date:   Mon Jun 2 12:36:27 2025 +0800
+
+    修复community
+
+[33mcommit edcd9d243174b2b1c6f1ae0c3a6cf289c75f5f05[m
+Merge: dd98d32 8e8faca
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 11:30:17 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit dd98d3291a7c6062a903286d270479c79b1346dd[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 11:30:02 2025 +0800
+
+    docs(文件模块接口文档):上传文件模块接口文档
+
+[33mcommit 8e8facae053b16a25bfcd9e0de2e89ecedf5c5a8[m
+Merge: 5f04faa 6ed8139
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 11:13:37 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit 5f04faabf4b84bd86cbe44125cd082e2b37c836e[m
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 11:13:28 2025 +0800
+
+    feat: 加入了登陆页面的doro代码，本来想设计顺便修改背景和整体主题的，但是工作量有点大，先放着
+
+[33mcommit 6ed8139bf18ebd14b04b018740e58e44a9665541[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 10:39:28 2025 +0800
+
+    feat(admin):新增了管理员注册学生、教师、管理员功能
+
+[33mcommit 7739c587d9d588fa5a59e3791de3bac8875ee60e[m
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 10:22:50 2025 +0800
+
+    feat: 登陆界面加入神秘彩蛋，教师端测试文档转移至document
+
+[33mcommit c24a07df26c4c5894094bd9ffc36860699218959[m
+Merge: 04b56c8 f71503b
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 09:49:18 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit f71503b2879efee3e26e0631594b5bb2ca2c0f47[m
+Merge: 2070925 2b522b4
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 09:47:53 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit 2070925482ebeeb4195931c23cff549e31bbec9b[m
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 09:47:40 2025 +0800
+
+    fix: 修复了教师测试不够个人审美的bug
+
+[33mcommit 2b522b4f0144ef23b5b36e1918afad9668cf9ea9[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 09:40:37 2025 +0800
+
+    feat(admin):新增管理员模块后端
+
+[33mcommit 49f5e969c586591cfe336f7db6ca8890ce4112c7[m
+Merge: 4c40077 1810723
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 09:39:44 2025 +0800
+
+    Merge remote-tracking branch 'origin/main'
+
+[33mcommit 4c40077012bd41b5087687b8a1e0b916961a950a[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Mon Jun 2 09:39:27 2025 +0800
+
+    test(AuthServiceImpl):新增AuthServiceImpl单元测试用例，2个自动测试错误，但手动测试可以通过
+
+[33mcommit 1810723965f887d9278978b5a72112107791944e[m
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 09:34:31 2025 +0800
+
+    feat: 实现教师回答功能，但因为教师端home还没做，所以特意写了一个脚本用于教师端功能测试，并加入了极具个人审美的测试内容
+
+[33mcommit 04b56c803e23e23ade1281bf6309e55da39ff167[m
+Merge: 2ba32e1 9439537
+Author: XunMeng <1851220295@qq.com>
+Date:   Mon Jun 2 09:29:48 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit 94395375bde1fc58e208c01f02bd2e9ce9c31b7f[m
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 09:24:27 2025 +0800
+
+    fix: 转交功能成功实现，但是因为主页的教师端还没有做，导致登录教师账号想要回答问题的时候，首先连主页都进不去
+
+[33mcommit a3ef76de4cd072b273c9521ea228dd08c4e16fe6[m
+Merge: 6eedc53 18f5a14
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 08:55:19 2025 +0800
+
+    feat: 新增教师智能答疑界面
+
+[33mcommit 6eedc53cfc4914d9a6e6c512eb03ee2d56a4fb33[m
+Author: Suzuki <1063046101@qq.com>
+Date:   Mon Jun 2 08:54:05 2025 +0800
+
+    feat: 新增教师智能答疑界面
+
+[33mcommit 18f5a14348ef04aaa072136bbb589240f5078c12[m
+Merge: c452b4f d556a79
+Author: rubiaizhere <rubiaizhere@gmail.com>
+Date:   Mon Jun 2 00:50:55 2025 +0800
+
+    Merge remote-tracking branch 'origin/main'
+
+[33mcommit c452b4f4e8e785f20754ec0bf3d024ecc70c0b29[m
+Author: rubiaizhere <rubiaizhere@gmail.com>
+Date:   Mon Jun 2 00:49:29 2025 +0800
+
+    晚安
+
+[33mcommit d556a793ff698028e676b33fd6c69ef3d0f10725[m
+Author: rubiaizhere <rubiaizhere@gmail.com>
+Date:   Mon Jun 2 00:49:29 2025 +0800
+
+    重写了teaching-content类，使之数据成员更丰富。
+    按照和resource一致修改的，但是不知道为什么数据库那边识别出了更多的列，但是无伤大雅，测试接口均OK
+
+[33mcommit ad33e1b4ac7e0f33b3d254b00e525c98d9c8e577[m
+Author: rubiaizhere <rubiaizhere@gmail.com>
+Date:   Sun Jun 1 23:00:56 2025 +0800
+
+    增加了resource按name模糊查找
+
+[33mcommit 2ba32e196c5d0533b8ef111de2905413d21eacb5[m
+Author: XunMeng <1851220295@qq.com>
+Date:   Sun Jun 1 22:59:26 2025 +0800
+
+    填坑计划3.0
+
+[33mcommit 6f6e37ef7522fff22087911c07aeb5c2c8a4f101[m
+Author: rubiaizhere <rubiaizhere@gmail.com>
+Date:   Sun Jun 1 22:52:29 2025 +0800
+
+    增加了resource的数据成员：name，upload_time，description
+
+[33mcommit b464efe5e169c6acb289a42dc9b5eeabff372ee3[m
+Merge: c53a9cb 0c4112d
+Author: rubiaizhere <rubiaizhere@gmail.com>
+Date:   Sun Jun 1 22:34:00 2025 +0800
+
+    Merge remote-tracking branch 'origin/main'
+    
+    # Conflicts:
+    #       backend/src/main/java/com/example/edupal/config/SecurityConfig.java
+    #       backend/target/classes/com/example/edupal/config/SecurityConfig.class
+
+[33mcommit b986697a74f74b96699fef2a694f578651f67bfe[m
+Merge: b182211 0c4112d
+Author: XunMeng <1851220295@qq.com>
+Date:   Sun Jun 1 22:23:02 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit 0c4112d9405a43dd3c582c81e695defb059b808b[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Sun Jun 1 22:21:17 2025 +0800
+
+    fix(file):修复了download失败但有创建文件的问题
+
+[33mcommit b182211bfcdcd1ef33455ff4eeb5cb83e5cf560c[m
+Merge: 9a76005 697200a
+Author: XunMeng <1851220295@qq.com>
+Date:   Sun Jun 1 21:45:26 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit 697200a120d93b2bffd8c6e7e862b4d555191fc8[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Sun Jun 1 21:43:56 2025 +0800
+
+    fix(file):修复了download404的问题
+
+[33mcommit 34af4944a2c0d2f9e8c07935b6b8a8bde70e4529[m
+Merge: d0362b0 6b34ce5
+Author: Suzuki <1063046101@qq.com>
+Date:   Sun Jun 1 20:39:34 2025 +0800
+
+    解决合并冲突：修复ViewQuestionResponse.java中的重复字段和构造函数参数顺序
+
+[33mcommit d0362b063c5b3f197a05a3231eaebfb69246227d[m
+Author: Suzuki <1063046101@qq.com>
+Date:   Sun Jun 1 20:36:20 2025 +0800
+
+    fix：师生答疑修复中
+
+[33mcommit 9a7600576af1050b3396804180b1cadc6f0a694f[m
+Merge: 8f68138 6b34ce5
+Author: XunMeng <1851220295@qq.com>
+Date:   Sun Jun 1 20:34:56 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit 6b34ce5546f65e3ae1319d88a1ed754a989d823b[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Sun Jun 1 20:34:23 2025 +0800
+
+    fix(file):修复了upload404的问题
+
+[33mcommit 8f681384398d14f560a4f5d30608c1ea622a913b[m
+Merge: d2eb862 bc5cba8
+Author: XunMeng <1851220295@qq.com>
+Date:   Sun Jun 1 20:29:19 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit d2eb8627075581d3eb449f16a3ea415c841c1715[m
+Author: XunMeng <1851220295@qq.com>
+Date:   Sun Jun 1 20:29:02 2025 +0800
+
+    填坑计划3.0
+
+[33mcommit bc5cba8b1f465215e345aa9118f0138a8a5166c1[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Sun Jun 1 19:25:07 2025 +0800
+
+    fix:修改了数据库的时区问题？谁给改回来了？
+
+[33mcommit d74e168f1ab53bc5a09d000b922e010a85dd1978[m
+Author: XunMeng <1851220295@qq.com>
+Date:   Sun Jun 1 18:13:59 2025 +0800
+
+    填坑计划2.0
+
+[33mcommit d019a0afd84fb9052658cf47f0a7fa7c8f2ea47f[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Sun Jun 1 17:23:38 2025 +0800
+
+    fix:修改了数据库的时区问题
+
+[33mcommit 154ee23d57a07ee65ec969c416eefb2ae1509ceb[m
+Author: XunMeng <1851220295@qq.com>
+Date:   Sun Jun 1 17:13:59 2025 +0800
+
+    填坑计划
+
+[33mcommit 3185cee6976cd86743a51a820995a3712d95b2da[m
+Merge: 8ba468f 1761bb2
+Author: XunMeng <1851220295@qq.com>
+Date:   Sun Jun 1 17:12:21 2025 +0800
+
+    Merge branch 'main' of https://github.com/GummyLight/EduPal
+
+[33mcommit 1761bb25b71a889c6bbf13592e8eac0318ad55d5[m
+Author: 橡皮糖 <1323858543@qq.com>
+Date:   Sun Jun 1 16:37:58 2025 +0800
+
+    fix(ai/teacherView):补充了返回questionid
