@@ -313,32 +313,6 @@ const handleUpload = () => {
 };
 
 
-// 辅助函数：从完整路径中提取文件名 (带扩展名)
-// function getFileNameFromPath(fullPath: string): string | null {
-//   if (!fullPath || typeof fullPath !== 'string') {
-//     return null;
-//   }
-//   const lastSlashIndex = fullPath.lastIndexOf('/');
-//   if (lastSlashIndex === -1) {
-//     return fullPath; // 没有斜杠，本身就是文件名
-//   }
-//   return fullPath.substring(lastSlashIndex + 1); // 获取斜杠后的部分
-// }
-
-// function getFileExtension(filename: string): string | null {
-//   if (!filename || typeof filename !== 'string') {
-//     return null; // 如果文件名为空或不是字符串，返回 null
-//   }
-//   // 找到最后一个点的索引
-//   const lastDotIndex = filename.lastIndexOf('.');
-//   // 如果没有点或者点是第一个字符（隐藏文件），则认为没有扩展名
-//   if (lastDotIndex === -1 || lastDotIndex === 0) {
-//     return null;
-//   }
-//   // 返回点号后的部分（即扩展名，包含点）
-//   return filename.substring(lastDotIndex);
-// }
-
 // 辅助函数：从文件名中提取扩展名 (包含点)
 function getFileExtension(filename: string): string {
   if (!filename || typeof filename !== 'string') {
@@ -463,7 +437,7 @@ const handleDownload = async (resourceId: string, customFileName: string, custom
     const res = await axios.get(downloadUrl);
 
     if (res.data.code === 200) {
-      ElMessage.success(`文件 ${customFileName} 下载成功！（已保存到服务器）`);
+      ElMessage.success(`文件 ${customFileName} 下载成功！`);
     } else {
       ElMessage.error(res.data.message || '下载失败');
     }

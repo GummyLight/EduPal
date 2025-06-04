@@ -11,7 +11,22 @@ interface ApiResponse<T = any> {
     message: string;
     data?: T;
 }
+//下载专用api
+interface FileOperationParams {
+    fileId: string;
+    path: string;
+}
 
+interface DownloadFileParams extends FileOperationParams {
+    fileName: string;
+    outFile: string; // 后端接口要求，但前端通常不关心实际保存路径
+}
+
+interface UploadFileResponse {
+    code: number;
+    message: string;
+    data?: any; // 后端 /file/upload 返回的 data 字段，根据实际情况可能包含文件信息
+}
 // --- 定义练习相关的接口数据结构 (与后端实体/DTO对应) ---
 export interface ExerciseResponse {
     exercise_id: string;
@@ -74,6 +89,43 @@ function getAuthAxiosConfig() {
 }
 
 // --- 练习列表相关的 API 函数 ---
+
+/**
+ * 上传文件到后端服务器
+ * @param file 要上传的文件对象
+ * @param fileId 文件唯一ID (前端生成，不带扩展名，例如 UUID)
+ * @param toPath 文件存储的目标子路径 (例如 "resource/")
+ * @param path 文件存储的根路径 (例如 "E:/Postman/files")
+ * @returns Promise<UploadFileResponse>
+ */
+export async function uploadFile(file: File, fileId: string, toPath: string, path: string): Promise<UploadFileResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('fileId', fileId);
+    formData.append('toPath', toPath);
+    formData.append('path', path);
+
+    try {
+        const response = await service.post<UploadFileResponse>('/file/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+        });
+        return response.data;
+    } catch (error: any) {
+        let errorMessage = '文件上传失败，请检查网络或后端服务。';
+        if (axios.isAxiosError(error)) {
+            errorMessage = error.response?.data?.message || `文件上传失败：HTTP 错误 ${error.response?.status}`;
+            console.error('HTTP 错误响应数据:', error.response?.data);
+            console.error('HTTP 错误状态码:', error.response?.status);
+        } else if (error.request) {
+            errorMessage = '文件上传请求未收到响应，请检查后端服务是否运行。';
+        }
+        ElMessage.error(errorMessage); // 统一错误提示
+        throw error; // 继续抛出错误，让调用方（组件）处理
+    }
+}
+
 
 /**
  * 获取练习列表 (PracticeForm.vue 使用)

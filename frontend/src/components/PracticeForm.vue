@@ -127,7 +127,7 @@ const props = defineProps({
 });
 
 //const userType = computed(() => props.usertype);
-const userType=2;
+const userType=computed(() => props.usertype);
 const username = computed(() => props.username);
 const userId = computed(() => props.userid);
 

@@ -4,10 +4,10 @@
       <div class="title">智慧教学系统</div>
       <div class="user-info">
         <el-select v-model="currentClass" placeholder="选择班级" size="small" class="class-select">
-          <el-option label="班级 1" value="class1" />
-          <el-option label="班级 2" value="class2" />
+          <el-option v-for="option in classOptions" :key="option.value" :label="option.label" :value="option.value" />
         </el-select>
-        <span>您好，{{ username }} {{ userType === 2 ? '教师' : '同学' }}</span> <el-button type="danger" size="small" @click="logout">退出登录</el-button>
+        <span>您好，{{ username }} {{ userType === 2 ? '教师' : '同学' }}</span>
+        <el-button type="danger" size="small" @click="logout">退出登录</el-button>
       </div>
     </el-header>
 
@@ -53,18 +53,12 @@
           <el-table-column type="index" label="序号" width="60" />
           <el-table-column prop="name" label="文件名称" />
           <el-table-column prop="uploader" label="上传人" />
-          <el-table-column prop="size" label="大小" />
           <el-table-column prop="uploadTime" label="上传时间" />
-          <el-table-column prop="type" label="文件类型">
-            <template #default="{ row }">
-              {{ formatFileType(row.type) }}
-            </template>
-          </el-table-column>
           <el-table-column label="操作" width="180">
             <template #default="{ row }">
               <div class="operation-buttons">
                 <el-button type="primary" text size="small" @click="handlePreview(row)">预览</el-button>
-                <el-button type="success" text size="small" @click="handleDownload(row)">下载</el-button>
+                <el-button type="success" text size="small" @click="openDownloadDialog(row)">下载</el-button>
               </div>
             </template>
           </el-table-column>
@@ -73,8 +67,7 @@
         <div class="footer-actions">
           <div class="left-actions operation-buttons">
             <el-button type="danger" :disabled="!hasSelection" @click="handleDeleteSelected">删除</el-button>
-            <el-button :disabled="!hasSelection" @click="handlePreviewSelected">预览</el-button>
-            <el-button type="success" :disabled="!hasSelection" @click="handleDownloadSelected">下载</el-button>
+            <el-button type="success" @click="handleUploadSelected">上传</el-button>
           </div>
           <div class="right-actions" v-if="userType === 2">
             <el-select v-model="generateType" placeholder="生成文件类型" style="width: 160px;" clearable>
@@ -87,37 +80,59 @@
         </div>
       </el-card>
     </el-main>
+
+    <!-- 下载弹窗 -->
+    <el-dialog
+        v-model="downloadDialogVisible"
+        title="下载设置"
+        width="30%"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+    >
+      <el-form :model="downloadForm" label-width="120px">
+        <el-form-item label="原始文件名">
+          <el-input v-model="downloadForm.originalName" disabled />
+        </el-form-item>
+        <el-form-item label="下载文件名">
+          <el-input v-model="downloadForm.fileName" placeholder="请输入下载文件名" />
+        </el-form-item>
+        <el-form-item label="保存到文件夹">
+          <el-input v-model="downloadForm.outFile" placeholder="请输入服务器上的保存文件夹路径" />
+          <el-alert type="warning" show-icon :closable="false" style="margin-top: 10px;">
+            <template #title>注意：此处路径指服务器上的临时下载文件夹。</template>
+          </el-alert>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="downloadDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="confirmDownload">确定下载</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </el-container>
 </template>
 
 <script setup lang="ts">
-import { ref, computed ,defineProps} from 'vue';
+import { ref, computed, onMounted, defineProps } from 'vue';
 import { ElMessage } from 'element-plus';
+import {
+  ResourceResponse,
+  fetchAllResources,
+  getPreviewFileUrl,
+  getDownloadFileUrl,
+} from '../api/materialsApi';
 
-
-//接收props
 const props = defineProps({
-  usertype: {
-    type: Number, // 明确类型
-    required: true,
-  },
-  username: { // 确保也接收 username，因为您在模板中也使用了它
-    type: String,
-    required: true,
-  },
-  userid: {
-    type: String,
-    required: true,
-  }
+  usertype: Number,
+  username: String,
+  userid: String,
 });
 
 const userType = computed(() => props.usertype);
-
 const username = computed(() => props.username);
 const userId = computed(() => props.userid);
 
-
-const currentClass = ref('class1'); // 模拟班级选择
 
 const filters = ref({
   name: '',
@@ -126,137 +141,265 @@ const filters = ref({
   type: '',
 });
 
-// 模拟数据：将 type 字段改为英文，以便与 filter value 一致
-const tableData = ref([
-  { id: 'c001', name: '线性代数讲义.pdf', uploader: '张老师', size: '1.2MB', uploadTime: '2025-05-20', type: 'doc', filePath: '/mock-materials/xianxingdaishu_jiangyi.pdf' },
-  { id: 'c002', name: '概率论视频.mp4', uploader: '李老师', size: '120MB', uploadTime: '2025-05-21', type: 'video', filePath: '/mock-materials/gailv_shipin.mp4' },
-  { id: 'c003', name: '英语听力.mp3', uploader: '王老师', size: '5MB', uploadTime: '2025-05-22', type: 'audio', filePath: '/mock-materials/yingyu_tingli.mp3' },
-  { id: 'c004', name: '高数习题集.doc', uploader: '李老师', size: '2.5MB', uploadTime: '2025-05-15', type: 'doc', filePath: '/mock-materials/gaoshu_xitiji.doc' }
-]);
+const rawMaterials = ref<ResourceResponse[]>([]);
+const tableData = ref<any[]>([]);
 
-// 文件类型映射（用于表格显示中文）
-const fileTypeMap: { [key: string]: string } = {
-  'doc': '文档',
-  'video': '视频',
-  'audio': '音频',
-};
-const formatFileType = (value: string) => {
-  return fileTypeMap[value] || value;
-};
+const classOptions = ref([]); // 用于存储班级选项
+const currentClass = ref(''); // 当前选择的班级
 
+// 初始化获取所有资源
+onMounted(async () => {
+  try {
+    const res = await fetchAllResources();
+    rawMaterials.value = res || [];
+
+
+    // 提取所有唯一的 class_id
+    const uniqueClassIds = new Set(rawMaterials.value.map(item => item.class_id));
+    classOptions.value = Array.from(uniqueClassIds).map(classId => ({
+      label: `班级 ${classId}`, // 假设班级名称为 "班级 + class_id"
+      value: classId
+    }));
+
+    // 默认选择第一个班级
+    // if (classOptions.value.length > 0) {
+    //   currentClass.value = classOptions.value[0].value;
+    // }
+
+
+    tableData.value = res.map(item => {
+      const filePath = item.resource_content || '';
+      const fileExt = filePath.split('.').pop()?.toLowerCase();
+      let type = '';
+      if (fileExt?.match(/(doc|docx|pdf|txt)/)) type = 'doc';
+      else if (fileExt?.match(/(mp4|avi|mov)/)) type = 'video';
+      else if (fileExt?.match(/(mp3|wav|m4a)/)) type = 'audio';
+
+      return {
+        id: item.resource_id,
+        name: item.name || '未知名称',
+        uploader: item.teacher_id || '未知上传人',
+        uploadTime: item.upload_time || '',
+        type,
+        filePath,
+        classId: item.class_id // 添加这一行
+      };
+    });
+  } catch (err) {
+    ElMessage.error('获取资源失败');
+    console.error(err);
+  }
+});
+
+const fileTypeMap = {
+  doc: '文档',
+  video: '视频',
+  audio: '音频',
+};
+const formatFileType = (value: string) => fileTypeMap[value] || value;
 
 const selectedRows = ref<any[]>([]);
 const hasSelection = computed(() => selectedRows.value.length > 0);
-
-const handleSelectionChange = (val: any[]) => {
-  selectedRows.value = val;
-};
+const handleSelectionChange = (val: any[]) => selectedRows.value = val;
 
 const generateType = ref('');
+const resetFilters = () => {
+  filters.value = { name: '', uploader: '', uploadTime: '', type: '' };
+};
 
 const search = () => {
-  ElMessage.success('正在查询资源...');
-  console.log('搜索条件：', filters.value);
-  // 实际：发起API请求到后端，根据 filters 获取数据
+  ElMessage.success('筛选已应用');
 };
 
-const resetFilters = () => {
-  filters.value = {
-    name: '',
-    uploader: '',
-    uploadTime: '',
-    type: '',
-  };
-  ElMessage.info('筛选条件已重置。');
-};
+const filteredData = computed(() => {
+  return tableData.value.filter(item => {
+    const f = filters.value;
+    const matchName = !f.name || item.name.includes(f.name);
+    const matchUploader = !f.uploader || item.uploader.includes(f.uploader);
+    const matchType = !f.type || item.type === f.type;
 
-const logout = () => {
-  console.log('退出登录');
-  ElMessage.info('您已退出登录。');
-  // 实际：执行退出登录操作，如清除 token，跳转登录页
-};
+    const now = new Date();
+    let matchUploadTime = true;
+    if (f.uploadTime && item.uploadTime) {
+      const uploadDate = new Date(item.uploadTime);
+      if (f.uploadTime === '1w') {
+        const oneWeekAgo = new Date(now);
+        oneWeekAgo.setDate(now.getDate() - 7);
+        matchUploadTime = uploadDate >= oneWeekAgo;
+      } else if (f.uploadTime === '1m') {
+        const oneMonthAgo = new Date(now);
+        oneMonthAgo.setMonth(now.getMonth() - 1);
+        matchUploadTime = uploadDate >= oneMonthAgo;
+      } else if (f.uploadTime === '3m') {
+        const threeMonthsAgo = new Date(now);
+        threeMonthsAgo.setMonth(now.getMonth() - 3);
+        matchUploadTime = uploadDate >= threeMonthsAgo;
+      }
+    }
 
+    // 筛选班级
+    const matchClass = !currentClass.value || item.classId === currentClass.value;
 
-const handlePreview = (row: any) => {
-  console.log('预览资源:', row.name, row.filePath);
-  if (row.filePath) {
-    window.open(row.filePath, '_blank');
-  } else {
-    ElMessage.warning('该资源没有可预览的文件路径。');
+    return matchName && matchUploader && matchType && matchUploadTime && matchClass;
+  });
+});
+
+// 辅助函数：从文件名中提取扩展名 (包含点)
+function getFileExtension(filename: string): string {
+  if (!filename || typeof filename !== 'string') {
+    return '';
   }
-};
-
-const handleDownload = (row: any) => {
-  console.log('下载资源:', row.name, row.filePath);
-  if (row.filePath) {
-    const link = document.createElement('a');
-    link.href = row.filePath;
-    link.download = row.name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    ElMessage.success(`正在下载：${row.name}`);
-  } else {
-    ElMessage.warning('该资源没有文件可供下载。');
+  const lastDotIndex = filename.lastIndexOf('.');
+  if (lastDotIndex === -1 || lastDotIndex === 0) {
+    return ''; // 没有扩展名或以点开头的文件
   }
-};
+  return filename.substring(lastDotIndex); // 包含点，如 ".pdf"
+}
 
-const handleDeleteSelected = () => {
-  if (!hasSelection.value) {
-    ElMessage.warning('请选择要删除的资源。');
+
+const handlePreview = (row: { id: string; name: string }) => {
+  console.log(`${userType.value === 2 ? '教师操作' : '学生操作'}: 预览资料:`, row.name, row.id);
+
+  // 确保 resource_id 和 resource_content 有值
+  if (!row.id ) {
+    ElMessage.warning('该资料没有有效的资源ID或文件内容路径，无法预览。');
     return;
   }
-  const selectedNames = selectedRows.value.map(row => row.name).join('，');
-  ElMessage.success(`模拟删除选中的资源：${selectedNames}`);
-  console.log('删除选中的资源:', selectedRows.value);
-  tableData.value = tableData.value.filter(item => !selectedRows.value.some(sel => sel.id === item.id));
-  selectedRows.value = []; // 清空选中
+
+  try {
+    // 后端预览接口的 fileId 需要的是完整文件名，例如 "r2025001.pdf"
+    const previewFileId = getFileExtension(row.name);
+
+    if (!previewFileId) {
+      ElMessage.warning('无法从文件内容路径中解析出文件名进行预览。');
+      return;
+    }
+
+    const previewUrl = getPreviewFileUrl({
+      fileId: row.id+previewFileId, // fileId 需要是完整文件名 (含扩展名)
+      path: 'resource/',
+    });
+    //window.open(previewUrl, '_blank'); // 在新标签页打开预览
+    ElMessage.success(`正在打开预览：${row.name}`);
+  } catch (error) {
+    ElMessage.error('无法生成预览链接。');
+    console.error('预览失败:', error);
+  }
+};
+// const handlePreview = (row: any) => {
+//   if (row.filePath) window.open(row.filePath, '_blank');
+//   else ElMessage.warning('该资源没有预览地址');
+// };
+
+
+
+const downloadDialogVisible = ref(false); // 控制下载弹窗的显示
+const currentDownloadRow = ref<any>(null); // 当前要下载的资源行数据
+const downloadForm = ref({
+  originalName: '', // 原始文件名
+  fileName: '', // 用户自定义的下载文件名
+  outFile: 'E:/downloadsedge/test/', // 默认下载路径（服务器上的路径）
+});
+
+// 打开下载弹窗
+const openDownloadDialog = (row: any) => {
+  currentDownloadRow.value = row;
+  downloadForm.value.originalName = row.name;
+  downloadForm.value.fileName = row.name;
+  downloadForm.value.outFile = 'E:/downloadsedge/test/'; // 默认下载路径
+  downloadDialogVisible.value = true;
+};
+
+// 确认下载
+const confirmDownload = async () => {
+  if (!downloadForm.value.fileName) {
+    ElMessage.warning('下载文件名不能为空');
+    return;
+  }
+  if (!downloadForm.value.outFile) {
+    ElMessage.warning('下载路径不能为空');
+    return;
+  }
+
+  downloadDialogVisible.value = false;
+  if (currentDownloadRow.value) {
+    // 调用 handleDownload 传递必要的参数
+    handleDownload(
+        currentDownloadRow.value.id, // 后端 download 接口的 fileId 应该是 resource_id (不带后缀)
+        downloadForm.value.fileName, // 用户自定义的下载文件名 (含后缀)
+        downloadForm.value.outFile    // 用户自定义的服务器保存路径
+    );
+  } else {
+    ElMessage.error('无法获取下载资料信息。');
+  }
+};
+
+import axios from 'axios';
+
+const handleDownload = async (resourceId: string, customFileName: string, customOutFile: string) => {
+  console.log(
+      `${userType.value === 2 ? '教师操作' : '学生操作'}: 下载资料:`,
+      'resourceId (不带后缀):', resourceId,
+      '自定义文件名 (带后缀):', customFileName,
+      '自定义服务器outFile:', customOutFile
+  );
+
+  try {
+    const downloadUrl = getDownloadFileUrl({
+      fileId: resourceId,
+      path: 'resource/',
+      fileName: customFileName,
+      outFile: customOutFile,
+    });
+
+    // 改成 axios 请求，防止页面跳转
+    const res = await axios.get(downloadUrl);
+
+    if (res.data.code === 200) {
+      ElMessage.success(`文件 ${customFileName} 下载成功！`);
+    } else {
+      ElMessage.error(res.data.message || '下载失败');
+    }
+
+  } catch (error) {
+    ElMessage.error('下载失败，请检查网络或后端服务。');
+    console.error('下载失败:', error);
+  }
+};
+
+
+
+const handleDeleteSelected = () => {
+  if (!hasSelection.value) return ElMessage.warning('请选择资源');
+  const ids = selectedRows.value.map(r => r.id);
+  tableData.value = tableData.value.filter(item => !ids.includes(item.id));
+  selectedRows.value = [];
+  ElMessage.success('已删除所选资源（模拟）');
 };
 
 const handlePreviewSelected = () => {
-  if (!hasSelection.value) {
-    ElMessage.warning('请选择要预览的资源。');
-    return;
-  }
-  const firstSelected = selectedRows.value[0];
-  if (selectedRows.value.length > 1) {
-    ElMessage.info('只支持预览第一个选中的文件。');
-  }
-  handlePreview(firstSelected);
+  if (!hasSelection.value) return ElMessage.warning('请选择资源');
+  handlePreview(selectedRows.value[0]);
 };
 
 const handleDownloadSelected = () => {
-  if (!hasSelection.value) {
-    ElMessage.warning('请选择要下载的资源。');
-    return;
-  }
-  ElMessage.success('模拟批量下载选中的资源。');
-  console.log('批量下载选中的资源:', selectedRows.value);
+  if (!hasSelection.value) return ElMessage.warning('请选择资源');
+  selectedRows.value.forEach(handleDownload);
+};
+
+const handleUploadSelected = () => {
+  ElMessage.success('上传功能暂未开放');
 };
 
 const handleSmartGenerate = () => {
   if (!generateType.value) {
-    ElMessage.warning('请选择要生成的类型。');
+    ElMessage.warning('请选择生成类型');
     return;
   }
-  ElMessage.success(`模拟智能生成${generateType.value}文件。`);
-  console.log('智能生成类型:', generateType.value);
+  ElMessage.success(`已模拟生成 ${generateType.value} 文件`);
 };
-
-// 过滤逻辑修正：确保 type 比较的是英文值
-const filteredData = computed(() => {
-  return tableData.value.filter(item => {
-    const matchName = filters.value.name === '' || item.name.includes(filters.value.name);
-    const matchUploader = filters.value.uploader === '' || item.uploader.includes(filters.value.uploader);
-    const matchType = filters.value.type === '' || item.type === filters.value.type; // 现在 item.type 也是英文了
-
-    // 假设 uploadTime 筛选是基于简单字符串匹配
-    const matchUploadTime = filters.value.uploadTime === '' || item.uploadTime.includes(filters.value.uploadTime.replace('w', '').replace('m', '')); // 简单示例
-
-    return matchName && matchUploader && matchType && matchUploadTime;
-  });
-});
 </script>
+
 
 <style scoped>
 /* 样式与之前提供的保持一致，仅在底部操作区添加 v-if 即可 */
