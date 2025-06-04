@@ -67,7 +67,7 @@ public class ResourceController {
 
     // 3. 删除资源
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteResource(@PathVariable("id") String resourceId) {
+    public ResponseEntity<?> deleteResource(@PathVariable("id") int resourceId) {
         try {
             resourceService.deleteResource(resourceId);
             return ResponseEntity.ok(new ApiResponse<>(200, "资源删除成功"));
@@ -87,5 +87,15 @@ public class ResourceController {
         } else {
             return ResponseEntity.ok(new ApiResponse<>(200, "资源列表获取成功", resources));
         }
+    }
+
+    // 5. 新增接口：获取当前最大 resource_id
+    @GetMapping("/max-id")
+    public ResponseEntity<?> getMaxResourceId() {
+        Integer maxId = resourceService.getMaxResourceId();
+        if (maxId == null) {
+            maxId = 0;  // 表为空时默认0
+        }
+        return ResponseEntity.ok(new ApiResponse<>(200, "最大 resource_id 获取成功", maxId));
     }
 }

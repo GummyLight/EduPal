@@ -6,8 +6,9 @@ import java.time.LocalDateTime;
 @Entity
 public class Resource {
     @Id
-    @Column(length = 36)
-    private String resource_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 可选，表示自动增长
+    private int resource_id;
+
 
     @Column(length = 8, nullable = false)
     private String subject;
@@ -30,11 +31,11 @@ public class Resource {
     private String description;
 
     // Getters and Setters
-    public String getResource_id() {
+    public int getResource_id() {
         return resource_id;
     }
 
-    public void setResource_id(String resource_id) {
+    public void setResource_id(int resource_id) {
         this.resource_id = resource_id;
     }
 

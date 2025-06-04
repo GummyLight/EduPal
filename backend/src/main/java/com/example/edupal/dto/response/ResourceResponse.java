@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class ResourceResponse {
-    private String resourceId;
+    private int resourceId;
     private String subject;
     private String teacherId;
     private String resourceContent;
@@ -18,7 +18,7 @@ public class ResourceResponse {
 
     public ResourceResponse() {}
 
-    public ResourceResponse(String resourceId, String subject, String teacherId, String resourceContent,
+    public ResourceResponse(int resourceId, String subject, String teacherId, String resourceContent,
                             String classId, String name, LocalDateTime uploadTime, String description) {
         this.resourceId = resourceId;
         this.subject = subject;

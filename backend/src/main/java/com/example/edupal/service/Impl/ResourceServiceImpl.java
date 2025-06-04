@@ -32,12 +32,17 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public void deleteResource(String resourceId) {
+    public void deleteResource(int resourceId) {
         resourceRepository.deleteById(resourceId);
     }
 
     @Override
     public List<Resource> findResourcesByName(String name) {
         return resourceRepository.findByNameContaining(name);
+    }
+
+    @Override
+    public Integer getMaxResourceId() {
+        return resourceRepository.findMaxResourceId();
     }
 }
