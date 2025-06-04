@@ -33,7 +33,7 @@
           </el-form-item>
         </el-form>
       </el-card>
-      <div class="actions" v-if="userType === 2">
+      <div class="actions" v-if="userType === 2 || userType === 1">
         <el-button type="success" icon="el-icon-upload" @click="handleUpload">上传资料</el-button>
       </div>
 
@@ -116,7 +116,6 @@ import {
   fetchAllResources,
   searchResourcesByName,
   deleteResourceById
-  // uploadFile // 不再需要导入 uploadFile，因为本界面不处理上传
 } from '../api/materialsApi';
 
 const router = useRouter();
@@ -377,7 +376,7 @@ const handlePreview = (row: { id: string; name: string; resource_content: string
       fileId: row.id+previewFileId, // fileId 需要是完整文件名 (含扩展名)
       path: SERVER_FILE_ROOT_PATH,
     });
-    window.open(previewUrl, '_blank'); // 在新标签页打开预览
+    //window.open(previewUrl, '_blank'); // 在新标签页打开预览
     ElMessage.success(`正在打开预览：${row.name}`);
   } catch (error) {
     ElMessage.error('无法生成预览链接。');
@@ -442,7 +441,9 @@ const confirmDownload = () => {
 };
 
 // 下载功能
-const handleDownload = (resourceId: string, customFileName: string, customOutFile: string) => {
+import axios from 'axios';
+
+const handleDownload = async (resourceId: string, customFileName: string, customOutFile: string) => {
   console.log(
       `${userType.value === 2 ? '教师操作' : '学生操作'}: 下载资料:`,
       'resourceId (不带后缀):', resourceId,
@@ -452,22 +453,23 @@ const handleDownload = (resourceId: string, customFileName: string, customOutFil
 
   try {
     const downloadUrl = getDownloadFileUrl({
-      fileId: resourceId, // 后端下载接口的 fileId 应该是不带后缀的 resource_id
+      fileId: resourceId,
       path: SERVER_FILE_ROOT_PATH,
-      fileName: customFileName, // 用户自定义的文件名，包含扩展名
+      fileName: customFileName,
       outFile: customOutFile,
     });
 
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click(); // 触发下载
+    // 改成 axios 请求，防止页面跳转
+    const res = await axios.get(downloadUrl);
 
-    document.body.removeChild(link);
-    ElMessage.success(`文件 ${customFileName} 正在下载！`);
+    if (res.data.code === 200) {
+      ElMessage.success(`文件 ${customFileName} 下载成功！（已保存到服务器）`);
+    } else {
+      ElMessage.error(res.data.message || '下载失败');
+    }
+
   } catch (error) {
-    ElMessage.error('无法生成下载链接或下载失败。');
+    ElMessage.error('下载失败，请检查网络或后端服务。');
     console.error('下载失败:', error);
   }
 };

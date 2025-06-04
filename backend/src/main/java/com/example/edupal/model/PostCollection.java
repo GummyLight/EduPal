@@ -15,7 +15,7 @@ public class PostCollection {
     private String userId;
 
     @Id // 需要为复合主键的每个部分添加@Id注解
-    @Column(name = "post_id") // 修正列名与数据库一致
+    @Column(name = "post_id",length=255) // 修正列名与数据库一致
     private String postId; // 需要添加postId字段，与PostCollectionId匹配
 
     @ManyToOne(fetch = FetchType.LAZY)
