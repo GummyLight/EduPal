@@ -71,8 +71,23 @@ public class PostController {
 
     // 6. 删除回复 DELETE /community/posts/{postId}/replies/{replyId}
     @DeleteMapping("/posts/{postId}/replies/{replyId}")
-    public void deleteReply(@PathVariable String replyId) {
-        postService.deleteReply(replyId);
+    public ResponseEntity<?> deleteReply(@PathVariable String replyId) {
+        try {
+            postService.deleteReply(replyId);
+            return ResponseEntity.ok().body(Map.of(
+                    "status", "success",
+                    "message", "回复删除成功",
+                    "replyId", replyId,
+                    "timestamp", LocalDateTime.now()
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "status", "error",
+                            "error", "回复不存在",
+                            "timestamp", LocalDateTime.now()
+                    ));
+        }
     }
 
     // 7. 收藏帖子 PUT /community/posts/{postId}/collect
