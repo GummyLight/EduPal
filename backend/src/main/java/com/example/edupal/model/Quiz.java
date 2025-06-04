@@ -15,18 +15,46 @@ public class Quiz {
     @Column(name = "quiz_id", length = 8)
     private String quiz_id;
 
-    @Column(name = "quiz_subject", length = 8, nullable = false)
-    private String quiz_subject;
+    @Column(name = "title", length = 255)
+    private String title;
+
+    @Column(name = "subject", length = 255)
+    private String subject;
+
+    @Column(name = "content_type", length = 255)
+    private String contentType;
+
+    @Column(name = "difficulty", length = 255)
+    private String difficulty;
+
+    @Column(name = "knowledge_points", length = 255)
+    private String knowledgePoints;
 
     @Lob
-    @Column(name = "quiz_content")
-    private String quiz_content;
+    @Column(name = "description")
+    private String description;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "publish_time")
-    private Date publish_time;
+    @Column(name = "teacher_id", length = 255)
+    private String teacherId;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "class_ids", length = 255)
+    private String classIds;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "create_time")
+    private Date createTime;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "updated_time")
+    private Date updatedTime;
+
+    @Temporal(TemporalType.DATE)
     @Column(name = "deadline")
     private Date deadline;
+
+    @Column(name = "quiz_subject", length = 8)
+    private String quizSubject;
+
+    @Column(name = "teacher_name", length = 255)
+    private String teacherName;
 }
