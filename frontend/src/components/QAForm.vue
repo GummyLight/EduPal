@@ -53,7 +53,7 @@
           </div>
 
           <!-- AI消息 -->
-          <div v-else class="message ai-message">
+          <div v-else-if="message.type === 'ai'" class="message ai-message">
             <div class="ai-avatar">
               <img :src="aiIconDefault" alt="AI头像" class="avatar-image" />
             </div>
@@ -69,6 +69,25 @@
                   <el-button text size="small" @click="openTransferDialog(message.questionId || '')" v-if="message.questionId">
                     <el-icon><User /></el-icon>
                     转交给老师
+                  </el-button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 教师消息 -->
+          <div v-else-if="message.type === 'teacher'" class="message teacher-message">
+            <div class="teacher-avatar">
+              <img :src="teacherIconDefault" alt="教师头像" class="avatar-image" />
+            </div>
+            <div class="message-content">
+              <div class="message-text" v-html="formatAIResponse(message.content)"></div>
+              <div class="message-actions">
+                <div class="message-time">{{ formatTime(message.timestamp) }}</div>
+                <div class="action-buttons">
+                  <el-button text size="small" @click="copyMessage(message.content)">
+                    <el-icon><DocumentCopy /></el-icon>
+                    复制
                   </el-button>
                 </div>
               </div>
@@ -284,6 +303,8 @@ import axios, { CancelTokenSource } from 'axios';
 import userIconDefault from '../assets/userIconDefault.jpg';
 // 导入AI默认头像
 import aiIconDefault from '../assets/aiIconDefault.jpg';
+// 导入教师默认头像
+import teacherIconDefault from '../assets/teacherIconDefault.jpg';
 // 导入KaTeX用于LaTeX渲染
 import * as katex from 'katex';
 import 'katex/dist/katex.min.css';
@@ -304,7 +325,7 @@ const props = withDefaults(defineProps<Props>(), {
 // 接口定义
 interface Message {
   id: string;
-  type: 'user' | 'ai';
+  type: 'user' | 'ai' | 'teacher';
   content: string;
   timestamp: Date;
   questionId?: string;
@@ -387,40 +408,7 @@ const selectConversation = (id: string) => {
   currentConversationId.value = id;
 };
 
-// 按时间分组QA数组：将相邻时间内的问答分组到同一个对话中
-const groupQAsByTime = (qaList: QA[], timeGapMinutes: number = 15): QA[][] => {
-  if (qaList.length === 0) return [];
-  
-  // 按时间排序
-  const sortedQAs = [...qaList].sort((a, b) => 
-    new Date(a.questionTime).getTime() - new Date(b.questionTime).getTime()
-  );
-  
-  const groups: QA[][] = [];
-  let currentGroup: QA[] = [sortedQAs[0]];
-  
-  for (let i = 1; i < sortedQAs.length; i++) {
-    const currentQA = sortedQAs[i];
-    const lastQAInGroup = currentGroup[currentGroup.length - 1];
-    
-    // 计算时间差（毫秒）
-    const timeDiff = new Date(currentQA.questionTime).getTime() - new Date(lastQAInGroup.questionTime).getTime();
-    const timeGapMs = timeGapMinutes * 60 * 1000; // 转换为毫秒
-    
-    // 如果时间差小于设定阈值，加入当前组；否则创建新组
-    if (timeDiff <= timeGapMs) {
-      currentGroup.push(currentQA);
-    } else {
-      groups.push(currentGroup);
-      currentGroup = [currentQA];
-    }
-  }
-  
-  // 添加最后一组
-  groups.push(currentGroup);
-  
-  return groups;
-};
+// 删除时间分组算法，改为直接处理每个问答对
 
 // 从后端加载历史对话并整合到本地对话列表
 const loadAndMergeBackendHistory = async () => {
@@ -428,62 +416,50 @@ const loadAndMergeBackendHistory = async () => {
     const historyResponse = await getConversationHistory(currentUser.value.studentId);
     
     if (historyResponse.status === 'success' && historyResponse.questionSet.length > 0) {
-      // 使用时间分组功能：将相邻时间内的QA合并到同一个对话中
-      const qaGroups = groupQAsByTime(historyResponse.questionSet, 15); // 15分钟内的问答归为一组
-      
-      const backendConversations: Conversation[] = qaGroups.map((qaGroup: QA[], groupIndex: number) => {
-        // 使用第一个QA的信息作为对话的基本信息
-        const firstQA = qaGroup[0];
-        const lastQA = qaGroup[qaGroup.length - 1];
-        
+      // 为每个QA创建一个独立的对话，确保问答对应
+      const backendConversations: Conversation[] = historyResponse.questionSet.map((qa: QA, qaIndex: number) => {
         const conversation: Conversation = {
-          id: `backend-group-${groupIndex}-${firstQA.questionId}`, // 使用分组索引和第一个questionId
-          title: firstQA.questionContent.length > 30 
-            ? firstQA.questionContent.substring(0, 30) + '...' 
-            : firstQA.questionContent,
-          lastTime: new Date(lastQA.questionTime),
-          subject: firstQA.questionSubject,
+          id: `backend-${qa.questionId}`, // 使用questionId作为唯一标识
+          title: qa.questionContent.length > 30 
+            ? qa.questionContent.substring(0, 30) + '...' 
+            : qa.questionContent,
+          lastTime: new Date(qa.questionTime),
+          subject: qa.questionSubject,
           isFromBackend: true,
           messages: []
         };
         
-        // 为每个QA添加消息
-        qaGroup.forEach((qa: QA) => {
-          // 添加用户问题
-          const userMessage: Message = {
-            id: generateId(),
-            type: 'user',
-            content: qa.questionContent,
-            timestamp: new Date(qa.questionTime),
-            subject: qa.questionSubject,
-            questionId: qa.questionId
-          };
-          conversation.messages.push(userMessage);
-          
-          // 添加所有答案（按时间排序）
-          const sortedAnswers = qa.answers.sort((a, b) => 
-            new Date(a.answerTime).getTime() - new Date(b.answerTime).getTime()
-          );
-          
-          sortedAnswers.forEach((answer: AnswerDetail) => {
-            // 添加AI回答
-            const aiMessage: Message = {
-              id: generateId(),
-              type: 'ai',
-              content: answer.answerContent,
-              timestamp: new Date(answer.answerTime),
-              subject: qa.questionSubject,
-              questionId: qa.questionId,
-              answerId: answer.answerId
-            };
-            conversation.messages.push(aiMessage);
-          });
-        });
+        // 添加用户问题
+        const userMessage: Message = {
+          id: generateId(),
+          type: 'user',
+          content: qa.questionContent,
+          timestamp: new Date(qa.questionTime),
+          subject: qa.questionSubject,
+          questionId: qa.questionId
+        };
+        conversation.messages.push(userMessage);
         
-        // 按时间排序所有消息
-        conversation.messages.sort((a, b) => 
-          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        // 添加所有答案（按时间排序）
+        const sortedAnswers = qa.answers.sort((a, b) => 
+          new Date(a.answerTime).getTime() - new Date(b.answerTime).getTime()
         );
+        
+        sortedAnswers.forEach((answer: AnswerDetail) => {
+          // 根据answerType设置消息类型：0-AI回答，1-教师回答
+          const messageType = answer.answerType === 0 ? 'ai' : 'teacher';
+          
+          const answerMessage: Message = {
+            id: generateId(),
+            type: messageType,
+            content: answer.answerContent,
+            timestamp: new Date(answer.answerTime),
+            subject: qa.questionSubject,
+            questionId: qa.questionId,
+            answerId: answer.answerId
+          };
+          conversation.messages.push(answerMessage);
+        });
         
         // 更新lastTime为最后一条消息的时间
         if (conversation.messages.length > 0) {
@@ -519,7 +495,7 @@ const loadAndMergeBackendHistory = async () => {
         new Date(b.lastTime).getTime() - new Date(a.lastTime).getTime()
       );
       
-      console.log(`成功整合 ${backendConversations.length} 个后端对话分组，去重后保留 ${localConversations.length} 条本地对话，总共 ${conversations.value.length} 条对话`);
+      console.log(`成功加载 ${backendConversations.length} 个后端对话，去重后保留 ${localConversations.length} 条本地对话，总共 ${conversations.value.length} 条对话`);
     }
   } catch (error: any) {
     console.error('加载后端历史对话失败:', error);
@@ -709,20 +685,11 @@ const handleDeleteLocalConversation = async (conv: Conversation) => {
 
 // 删除云端对话
 const handleDeleteBackendConversation = async (conv: Conversation) => {
-  // 提取所有需要删除的questionId
+  // 现在每个对话对应一个questionId
   let questionIds: string[] = [];
   
-  if (conv.id.startsWith('backend-group-')) {
-    // 新格式: "backend-group-{groupIndex}-{questionId}"
-    // 收集分组对话中所有的questionId
-    questionIds = conv.messages
-      .filter(msg => msg.type === 'user' && msg.questionId)
-      .map(msg => msg.questionId!)
-      .filter((id, index, arr) => arr.indexOf(id) === index); // 去重
-    
-    console.log('分组对话，提取的questionIds:', questionIds);
-  } else if (conv.id.startsWith('backend-')) {
-    // 旧格式: "backend-{questionId}"
+  if (conv.id.startsWith('backend-')) {
+    // 格式: "backend-{questionId}"
     const questionId = conv.id.replace('backend-', '');
     questionIds = [questionId];
     console.log('单个对话，提取的questionId:', questionId);
@@ -739,9 +706,7 @@ const handleDeleteBackendConversation = async (conv: Conversation) => {
   console.log('当前用户ID:', currentUser.value.studentId);
   
   try {
-    const deleteMessage = questionIds.length > 1 
-      ? `确定要删除这个对话分组吗？\n"${conv.title}"\n\n此操作将删除 ${questionIds.length} 个相关问题，无法撤销。`
-      : `确定要删除这条历史对话吗？\n"${conv.title}"`;
+    const deleteMessage = `确定要删除这条历史对话吗？\n"${conv.title}"`;
       
     await ElMessageBox.confirm(
       deleteMessage,
@@ -756,22 +721,9 @@ const handleDeleteBackendConversation = async (conv: Conversation) => {
 
     console.log('用户确认删除，开始调用API');
     
-    // 遍历删除所有questionId
-    const deletePromises = questionIds.map(questionId => 
-      deleteConversation(currentUser.value.studentId, questionId)
-    );
-    
-    // 等待所有删除操作完成
-    const results = await Promise.allSettled(deletePromises);
-    console.log('删除API返回结果:', results);
-    
-    // 检查是否有失败的删除操作
-    const failedResults = results.filter(result => result.status === 'rejected');
-    if (failedResults.length > 0) {
-      console.error('部分删除失败:', failedResults);
-      ElMessage.error(`删除失败：${failedResults.length}/${questionIds.length} 个问题删除失败`);
-      return;
-    }
+    // 删除问题
+    const result = await deleteConversation(currentUser.value.studentId, questionIds[0]);
+    console.log('删除API返回结果:', result);
     
     // 从本地对话列表中移除
     const index = conversations.value.findIndex(c => c.id === conv.id);
@@ -1526,6 +1478,20 @@ watch(conversations, saveConversations, { deep: true });
   overflow: hidden; /* 确保图片不会溢出圆形边界 */
 }
 
+.teacher-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #52c41a, #73d13d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(82, 196, 26, 0.3);
+  overflow: hidden; /* 确保图片不会溢出圆形边界 */
+}
+
 .welcome-content h3 {
   margin: 0 0 8px 0;
   color: #303133;
@@ -1648,6 +1614,26 @@ watch(conversations, saveConversations, { deep: true });
   margin-left: -3px;
 }
 
+/* 教师消息气泡样式 */
+.teacher-message .message-text {
+  background: linear-gradient(135deg, #f6ffed, #f0f9e8);
+  border-left: 3px solid #52c41a;
+  border-radius: 18px 18px 18px 4px;
+}
+
+.teacher-message .message-text::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  bottom: 8px;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  border-right-color: #52c41a;
+  border-left: none;
+  margin-left: -3px;
+}
+
 /* 用户消息气泡样式 */
 .user-message .message-text {
   background: linear-gradient(135deg, #409eff, #66b1ff);
@@ -1695,6 +1681,12 @@ watch(conversations, saveConversations, { deep: true });
   background: rgba(103, 194, 58, 0.08);
   border-color: rgba(103, 194, 58, 0.15);
   color: #67c23a;
+}
+
+.teacher-message .message-time {
+  background: rgba(82, 196, 26, 0.08);
+  border-color: rgba(82, 196, 26, 0.15);
+  color: #52c41a;
 }
 
 .message:hover .message-time {
@@ -2175,14 +2167,15 @@ watch(conversations, saveConversations, { deep: true });
     font-size: 13px;
   }
   
-  .ai-avatar, .user-avatar {
+  .ai-avatar, .user-avatar, .teacher-avatar {
     width: 32px;
     height: 32px;
     font-size: 14px;
   }
   
   .ai-avatar .avatar-image,
-  .user-avatar .avatar-image {
+  .user-avatar .avatar-image,
+  .teacher-avatar .avatar-image {
     width: 100%;
     height: 100%;
   }
