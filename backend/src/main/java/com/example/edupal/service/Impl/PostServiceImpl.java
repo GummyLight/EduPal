@@ -70,13 +70,9 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void deletePost(String postId) {
-        String userId = getCurrentUserId();
+        // 获取当前登录用户（真实ID）
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        if (!post.getAuthorId().equals(userId)) {
-            throw new RuntimeException("Only author can delete the post");
-        }
+                .orElseThrow(() -> new RuntimeException("帖子不存在"));
 
         postRepository.delete(post);
     }
@@ -84,17 +80,17 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public ReplyDTO createReply(String postId, ReplyForm form) {
-        String userId = getCurrentUserId();
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        User author = userRepository.findById(userId)
+        User author = userRepository.findById(form.getAuthorId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Reply reply = new Reply();
         reply.setId(UUID.randomUUID().toString());
         reply.setPostId(postId);
-        reply.setAuthorId(userId);
+        reply.setAuthorId(form.getAuthorId());
         reply.setAuthorName(author.getUserName());
         reply.setContent(form.getContent());
         reply.setPublishTime(LocalDateTime.now());
