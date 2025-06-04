@@ -71,19 +71,49 @@ public class PostController {
 
     // 6. 删除回复 DELETE /community/posts/{postId}/replies/{replyId}
     @DeleteMapping("/posts/{postId}/replies/{replyId}")
-    public void deleteReply(@PathVariable String replyId) {
-        postService.deleteReply(replyId);
+    public ResponseEntity<?> deleteReply(@PathVariable String replyId) {
+        try {
+            postService.deleteReply(replyId);
+            return ResponseEntity.ok().body(Map.of(
+                    "status", "success",
+                    "message", "回复删除成功",
+                    "replyId", replyId,
+                    "timestamp", LocalDateTime.now()
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                            "status", "error",
+                            "error", "回复不存在",
+                            "timestamp", LocalDateTime.now()
+                    ));
+        }
     }
 
     // 7. 收藏帖子 PUT /community/posts/{postId}/collect
-    @PutMapping("/posts/{postId}/collect")
-    public void collectPost(@PathVariable String postId) {
-        postService.toggleCollect(postId, true);
+    @PutMapping("/posts/{postId}/collect/{userId}")
+    public ResponseEntity<?> collectPost(
+            @PathVariable String postId,
+            @PathVariable String userId  // 必须添加@PathVariable注解
+    ) {
+        postService.toggleCollect(postId, true, userId);
+        return ResponseEntity.ok().body(Map.of(
+                "status", "success",
+                "message", "帖子收藏成功"
+        ));
     }
 
-    // 8. 取消收藏 DELETE /community/posts/{postId}/collect
-    @DeleteMapping("/posts/{postId}/collect")
-    public void uncollectPost(@PathVariable String postId) {
-        postService.toggleCollect(postId, false);
+    @DeleteMapping("/posts/{postId}/collect/{userId}")
+    public ResponseEntity<?> uncollectPost(
+            @PathVariable String postId,
+            @PathVariable String userId  // 添加注解
+    ) {
+        postService.toggleCollect(postId, false, userId);
+        return ResponseEntity.ok().body(Map.of(
+                "status", "success",
+                "message", "取消收藏成功"
+        ));
     }
+
+
 }

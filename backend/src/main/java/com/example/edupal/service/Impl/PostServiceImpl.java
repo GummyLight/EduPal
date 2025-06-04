@@ -102,21 +102,15 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void deleteReply(String replyId) {
-        String userId = getCurrentUserId();
         Reply reply = replyRepository.findById(replyId)
                 .orElseThrow(() -> new RuntimeException("Reply not found"));
-
-        if (!reply.getAuthorId().equals(userId)) {
-            throw new RuntimeException("Only author can delete the reply");
-        }
 
         replyRepository.delete(reply);
     }
 
     @Override
     @Transactional
-    public void toggleCollect(String postId, boolean collect) {
-        String userId = getCurrentUserId();
+    public void toggleCollect(String postId, boolean collect,String userId) {
         if (collect) {
             if (!postCollectionRepository.existsByUserIdAndPostId(userId, postId)) {
                 PostCollection collection = new PostCollection();
