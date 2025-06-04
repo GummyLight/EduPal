@@ -66,10 +66,6 @@ public class PostServiceImpl implements PostService {
         post.setAuthorName(author.getUserName());
         post.setPublishTime(LocalDateTime.now());
 
-        if (form.getAttachedFileUrl() != null) {
-            post.setAttachedFileName(extractFileName(form.getAttachedFileUrl()));
-            post.setAttachedFileUrl(form.getAttachedFileUrl());
-        }
 
         return convertToPostDTO(postRepository.save(post), userId);
     }
@@ -106,10 +102,6 @@ public class PostServiceImpl implements PostService {
         reply.setContent(form.getContent());
         reply.setPublishTime(LocalDateTime.now());
 
-        if (form.getAttachedFileUrl() != null) {
-            reply.setAttachedFileName(extractFileName(form.getAttachedFileUrl()));
-            reply.setAttachedFileUrl(form.getAttachedFileUrl());
-        }
 
         return convertToReplyDTO(replyRepository.save(reply));
     }
