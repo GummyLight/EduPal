@@ -8,9 +8,11 @@ import java.util.List;
 public interface ResourceService {
     Result saveResource(Resource resource);
     List<Resource> getAllResources();
+    void deleteResource(int resourceId);
 
-    void deleteResource(String resourceId);
-
-    // 新增：按名称模糊查找
+    // 按名称模糊查找
     List<Resource> findResourcesByName(String name);
+
+    // 新增：获取最大 resource_id
+    Integer getMaxResourceId();
 }

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 public class ResourceRequest {
 
-    private String resource_id;
+    private int resource_id;
     private String subject;
     private String teacher_id;
     private String resource_content;
@@ -21,7 +21,7 @@ public class ResourceRequest {
 
     public ResourceRequest() {}
 
-    public ResourceRequest(String resource_id, String subject, String teacher_id, String resource_content, String class_id,
+    public ResourceRequest(int resource_id, String subject, String teacher_id, String resource_content, String class_id,
                            String name, LocalDateTime upload_time, String description) {
         this.resource_id = resource_id;
         this.subject = subject;
