@@ -10,5 +10,5 @@ public class ReplyDTO {
     private String authorName;
     private String content;
     private LocalDateTime publishTime;
-    private AttachedFileDTO attachedFile;
+    private String attachedFileUrl;
 }

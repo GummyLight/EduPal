@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class ReplyForm {
     private String content;
-    private String author_id;
+    private String attachedFileUrl;
 }

@@ -7,5 +7,6 @@ public class PostForm {
     private String student_id;
     private String title;
     private String content;
+    private String attachedFileUrl;
 
 }
