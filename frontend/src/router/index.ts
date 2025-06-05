@@ -96,6 +96,7 @@ const routes = [
         ]
       },
       { path: 'qa', component: QA },
+      { path: 'user-management', component: () => import('../views/UserManagement.vue') },
     ]
   }
 ];

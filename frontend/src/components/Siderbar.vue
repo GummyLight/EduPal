@@ -52,6 +52,10 @@
         <i class="el-icon-document"></i>
         <span>智能批改</span>
       </el-menu-item>
+      <el-menu-item v-if="props.usertype === 0" index="/home/user-management">
+        <i class="el-icon-user"></i>
+        <span>用户管理</span>
+      </el-menu-item>
     </el-menu>
 
     <div class="logout-button-container">

@@ -43,6 +43,25 @@ interface AnswerDetail {
   answerTime: string;       // Date 转换为字符串
 }
 
+// 学生获取转接教师列表请求
+interface GetMyTeacherRequest {
+  userId: string
+}
+
+// 教师列表元素
+interface TItem {
+  teacherId: string
+  teacherName: string
+  teacherSubject: string
+}
+// 学生获取转接教师列表响应
+interface GetMyTeacherResponse {
+  status: string
+  message: string
+  teacherNum: number
+  teachers: TItem[]
+}
+
 // 学科映射：将前端学科字符串映射为后端兼容的短字符串
 const subjectMap: Record<string, string> = {
   'math': 'math',
@@ -193,10 +212,37 @@ export const deleteConversation = async (
   }
 };
 
+// 获取学生可转接的教师列表
+export const getMyTeacher = async (userId: string): Promise<GetMyTeacherResponse> => {
+  try {
+    // 后端使用 @RequestParam，需要使用 URLSearchParams 格式
+    const params = new URLSearchParams();
+    params.append('userId', userId);
+    
+    const response = await request.post<GetMyTeacherResponse>('/ai/getMyTeacher', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+    
+    console.log('获取教师列表成功:', response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error('获取教师列表失败:', error);
+    
+    if (error.response?.data) {
+      throw new Error(error.response.data.message || '获取教师列表失败');
+    }
+    
+    throw new Error('网络错误或服务器内部错误，请稍后重试');
+  }
+};
+
 export default {
   askAI,
   getConversationHistory,
-  deleteConversation
+  deleteConversation,
+  getMyTeacher
 };
 
 // 导出类型定义
@@ -205,5 +251,8 @@ export type {
   AIQuestionResponse, 
   HistoryResponse, 
   QA, 
-  AnswerDetail 
+  AnswerDetail,
+  GetMyTeacherRequest,
+  GetMyTeacherResponse,
+  TItem
 };

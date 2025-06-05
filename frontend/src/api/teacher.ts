@@ -55,20 +55,15 @@ export interface AnswerDetail {
     answerTime: string // 回答时间
 }
 
-// 和ai.ts的QA定义不同，所以单独拿出一个ts来写
-// 注意：由于后端构造函数参数顺序错误，字段映射关系如下：
-// - questionId 字段实际包含 studentName（学生姓名）
-// - studentName 字段实际包含 studentId（学号）  
-// - studentId 字段实际包含 studentClass（班级）
-// - studentClass 字段实际包含 questionId（真正的问题ID）
+// 和ai.ts的QA定义不同，所以单独拿出一个ts来写）
 export interface QA {
-    questionId: string // 实际包含：studentName（学生姓名）
-    studentName: string // 实际包含：studentId（学号）
-    studentId: string // 实际包含：studentClass（班级）
-    studentClass: string // 实际包含：questionId（真正的问题ID）
-    questionContent: string // 提问内容（正确）
-    transferTime: string // 问题转交的时间（正确）
-    teacherAnswers: AnswerDetail[] // 教师回答集合（正确）
+    questionId: string
+    studentName: string
+    studentId: string
+    studentClass: string
+    questionContent: string
+    transferTime: string
+    teacherAnswers: AnswerDetail[]
 }
 
 // 老师查看所有转交的问题响应

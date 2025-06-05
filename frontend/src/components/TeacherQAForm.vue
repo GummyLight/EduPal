@@ -56,10 +56,10 @@
                 <img :src="userIconDefault" :alt="question.questionId" class="avatar-image" />
               </div>
               <div class="student-details">
-                <h4>{{ question.questionId }}</h4>
+                <h4>{{ question.studentName }}</h4>
                 <div class="student-meta">
-                  <span class="student-id">学号: {{ question.studentName }}</span>
-                  <span class="student-class">班级: {{ question.studentId }}</span>
+                  <span class="student-id">学号: {{ question.questionId }}</span>
+                  <span class="student-class">班级: {{ question.studentClass }}</span>
                 </div>
               </div>
             </div>
