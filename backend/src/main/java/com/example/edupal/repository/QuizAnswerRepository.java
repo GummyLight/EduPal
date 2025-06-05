@@ -6,6 +6,7 @@ import com.example.edupal.model.QuizAnswer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, String> {
     QuizAnswer findByStudentIdAndQuizId(String studentId, String quizId);
@@ -16,4 +17,6 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, String> 
     List<QuizAnswer> findAllByQuizId(String quizId);
 
     List<QuizAnswer> findAllByStudentId(String userId);
+
+    QuizAnswer findByAnswerId(String answerId);
 }

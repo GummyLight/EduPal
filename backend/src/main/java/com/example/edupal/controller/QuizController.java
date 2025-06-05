@@ -74,6 +74,7 @@ public class QuizController {
     * ModifyQuiz：修改测验
     * deleteQuiz：删除测验
     * getQuizStudent：获取测验的学生答题情况
+    * gradeQuiz：批改测验
     * */
 
     @GetMapping("/getTeacherQuiz")
@@ -142,6 +143,22 @@ public class QuizController {
         }
     }
 
+    @PostMapping("/gradeQuiz")
+    public ResponseEntity<?> gradeQuiz(@RequestParam("answerId") String quizId,
+                                       @RequestParam("score") Integer score,
+                                       @RequestParam("feedback") String feedback) {
+        // 调用QuizService批改测验
+        try {
+            Result result = quizService.gradeQuiz(quizId, score, feedback);
+            if (result.isSuccess()) {
+                return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(400, result.getMessage()));
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
+        }
+    }
 
 
 }

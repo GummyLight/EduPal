@@ -16,5 +16,6 @@ public interface QuizService {
     Result deleteQuiz(String quizId) throws Exception;
     GetQuizStudentRepsonse getQuizStudent(String quizId) throws Exception;
     GetMyQuizResponse getMyQuiz(String userId,String quizId) throws Exception;
+    Result gradeQuiz(String answerId,Integer score,String feedback) throws Exception;
 
 }

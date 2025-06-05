@@ -18,11 +18,12 @@ public class GetMyQuizResponse {
     private String teacherId;
     private Integer QuizStatus;
     private Integer score;
+    private String feedback; // 教师反馈
     private String answerId; // 答题内容ID
 
     public GetMyQuizResponse(String status, String message, String quizId, String title, String subject,
                              String difficulty, Date createTime, Date deadline, String teacherName,
-                             String teacherId, Integer quizStatus, Integer score, String answerId) {
+                             String teacherId, Integer quizStatus, Integer score, String feedback,String answerId) {
         this.status = status == null ? "" : status;
         this.message = message == null ? "" : message;
         this.quizId = quizId == null ? "" : quizId;
@@ -35,6 +36,7 @@ public class GetMyQuizResponse {
         this.teacherId = teacherId == null ? "" : teacherId;
         this.QuizStatus = quizStatus == null ? 0 : quizStatus;
         this.score = score == null ? 0 : score;
+        this.feedback = feedback == null ? "" : feedback;
         this.answerId = answerId == null ? "" : answerId;
     }
 }

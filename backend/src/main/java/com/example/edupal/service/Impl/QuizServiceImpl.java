@@ -248,26 +248,46 @@ public class QuizServiceImpl implements QuizService {
                 .orElseThrow(() -> new Exception("User not found with id: " + userId));
 
         if(user == null) {
-            return new GetMyQuizResponse("error","User not found",null,null, null, null, null,null,null,null,0,-1,null);
+            return new GetMyQuizResponse("error","User not found",null,null, null, null, null,null,null,null,0,-1,null,null);
         }
 
         Student student = studentRepository.findByStudentId(userId);
         if(student == null) {
-            return new GetMyQuizResponse("error","Student not found",null,null, null, null, null,null,null,null,0,-1,null);
+            return new GetMyQuizResponse("error","Student not found",null,null, null, null, null,null,null,null,0,-1,null,null);
         }
 
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new Exception("Quiz not found with id: " + quizId));
         if(quiz == null) {
-            return new GetMyQuizResponse("error","Quiz not found",null,null, null, null, null,null,null,null,0,-1,null);
+            return new GetMyQuizResponse("error","Quiz not found",null,null, null, null, null,null,null,null,0,-1,null,null);
         }
         QuizAnswer quizAnswer = quizAnswerRepository.findByStudentIdAndQuizId(userId, quizId);
         if (quizAnswer == null) {
-            return new GetMyQuizResponse("error","Quiz Answer not found",quiz.getQuiz_id(),quiz.getTitle(), quiz.getSubject(), quiz.getDifficulty(), quiz.getCreateTime(),quiz.getDeadline(),quiz.getTeacherName(),quiz.getTeacherId(),0,null,null);
+            return new GetMyQuizResponse("error","Quiz Answer not found",quiz.getQuiz_id(),quiz.getTitle(), quiz.getSubject(), quiz.getDifficulty(), quiz.getCreateTime(),quiz.getDeadline(),quiz.getTeacherName(),quiz.getTeacherId(),0,null,null,null);
         }
         return new GetMyQuizResponse("success","Get Your Quiz", quizId, quiz.getTitle(), quiz.getSubject(),
                 quiz.getDifficulty(), quiz.getCreateTime(), quiz.getDeadline(), quiz.getTeacherName(),
-                quiz.getTeacherId(), quizAnswer.getIsGraded()==0?1:2, quizAnswer.getScore(), quizAnswer.getAnswerId());
+                quiz.getTeacherId(), quizAnswer.getIsGraded()==0?1:2, quizAnswer.getScore(),quizAnswer.getFeedback(), quizAnswer.getAnswerId());
+    }
+
+    @Override
+    public Result gradeQuiz(String answerId,Integer score,String feedback) throws Exception {
+        QuizAnswer quizAnswer = quizAnswerRepository.findByAnswerId(answerId);
+
+        if(quizAnswer == null) {
+            return new Result(false,"Quiz Answer not found",null);
+        }
+
+        // 更新分数和反馈
+        quizAnswer.setScore(score);
+        quizAnswer.setFeedback(feedback);
+        quizAnswer.setIsGraded(1); // 设置为已批改
+        quizAnswer.setGradeTime(new Date()); // 设置批改时间
+
+        // 保存更新后的测验答案
+        quizAnswerRepository.save(quizAnswer);
+
+        return new Result(true,"Quiz graded successfully",quizAnswer);
     }
 
 
