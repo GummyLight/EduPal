@@ -3,6 +3,7 @@ package com.example.edupal.service.Impl;
 import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.CreateQuizRequest;
 import com.example.edupal.dto.request.ModifyQuizRequest;
+import com.example.edupal.dto.response.GetMyQuizResponse;
 import com.example.edupal.dto.response.GetQuizStudentRepsonse;
 import com.example.edupal.dto.response.GetTeacherQuizResponse;
 import com.example.edupal.model.Quiz;
@@ -240,5 +241,35 @@ public class QuizServiceImpl implements QuizService {
 
         return new GetQuizStudentRepsonse("success","Get Students for this Quiz", quizId, Quizzes.size(), Quizzes);
     }
+
+    @Override
+    public GetMyQuizResponse getMyQuiz(String userId,String quizId) throws Exception{
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("User not found with id: " + userId));
+
+        if(user == null) {
+            return new GetMyQuizResponse("error","User not found",null,null, null, null, null,null,null,null,0,-1,null);
+        }
+
+        Student student = studentRepository.findByStudentId(userId);
+        if(student == null) {
+            return new GetMyQuizResponse("error","Student not found",null,null, null, null, null,null,null,null,0,-1,null);
+        }
+
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new Exception("Quiz not found with id: " + quizId));
+        if(quiz == null) {
+            return new GetMyQuizResponse("error","Quiz not found",null,null, null, null, null,null,null,null,0,-1,null);
+        }
+        QuizAnswer quizAnswer = quizAnswerRepository.findByStudentIdAndQuizId(userId, quizId);
+        if (quizAnswer == null) {
+            return new GetMyQuizResponse("error","Quiz Answer not found",quiz.getQuiz_id(),quiz.getTitle(), quiz.getSubject(), quiz.getDifficulty(), quiz.getCreateTime(),quiz.getDeadline(),quiz.getTeacherName(),quiz.getTeacherId(),0,null,null);
+        }
+        return new GetMyQuizResponse("success","Get Your Quiz", quizId, quiz.getTitle(), quiz.getSubject(),
+                quiz.getDifficulty(), quiz.getCreateTime(), quiz.getDeadline(), quiz.getTeacherName(),
+                quiz.getTeacherId(), quizAnswer.getIsGraded()==0?1:2, quizAnswer.getScore(), quizAnswer.getAnswerId());
+    }
+
+
 
 }

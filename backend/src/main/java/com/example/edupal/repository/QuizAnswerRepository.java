@@ -14,4 +14,6 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, String> 
     void deleteByQuizId(String quizId);
 
     List<QuizAnswer> findAllByQuizId(String quizId);
+
+    List<QuizAnswer> findAllByStudentId(String userId);
 }

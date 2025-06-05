@@ -4,6 +4,7 @@ import com.example.edupal.common.ApiResponse;
 import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.CreateQuizRequest;
 import com.example.edupal.dto.request.ModifyQuizRequest;
+import com.example.edupal.dto.response.GetMyQuizResponse;
 import com.example.edupal.dto.response.GetStudentQuizResponse;
 import com.example.edupal.dto.response.GetTeacherQuizResponse;
 import com.example.edupal.dto.response.GetQuizStudentRepsonse;
@@ -21,6 +22,13 @@ public class QuizController {
     @Autowired
     private QuizService quizService;
 
+    /*
+    * 给学生用的：
+    * getStudentQuiz：获取学生的测验列表
+    * submitQuiz：提交测验
+    *
+    * */
+
     @GetMapping("/getStudentQuiz")
     public GetStudentQuizResponse getStudentQuiz(@RequestParam("userId") String userId) {
         // 调用QuizService获取用户的测验列表
@@ -30,6 +38,43 @@ public class QuizController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
         }
     }
+
+//    @GetMapping("/submitQuiz")
+//    public ResponseEntity<?> submitQuiz(@RequestParam("quizId") String quizId,
+//                                                @RequestParam("userId") String userId,
+//                                                @RequestParam("answerContent") String answerContent) {
+//        // 调用QuizService提交测验
+//        try {
+//            Result result = quizService.submitQuiz(quizId, userId, answerContent);
+//            if (result.isSuccess()) {
+//                return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
+//            } else {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(400, result.getMessage()));
+//            }
+//        } catch (Exception e) {
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
+//        }
+//    }
+
+    @GetMapping("/getMyQuiz")
+    public GetMyQuizResponse getMyQuiz(@RequestParam("userId") String userId,
+                                       @RequestParam("quizId") String quizId) {
+        // 调用QuizService获取用户的测验列表
+        try {
+            return quizService.getMyQuiz(userId,quizId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
+        }
+    }
+
+    /*
+    * 给教师用的：
+    * getTeacherQuiz：获取教师布置的的测验列表
+    * createQuiz：创建测验
+    * ModifyQuiz：修改测验
+    * deleteQuiz：删除测验
+    * getQuizStudent：获取测验的学生答题情况
+    * */
 
     @GetMapping("/getTeacherQuiz")
     public GetTeacherQuizResponse getTeacherQuiz(@RequestParam("userId") String userId) {
