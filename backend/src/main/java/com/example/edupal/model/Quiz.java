@@ -37,8 +37,11 @@ public class Quiz {
     @Column(name = "teacher_id", length = 255)
     private String teacherId;
 
-    @Column(name = "class_ids", length = 255)
-    private String classIds;
+    @Column(name = "class1", length = 255)
+    private String class1;
+
+    @Column(name = "class2", length = 255)
+    private String class2;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "create_time")
@@ -51,9 +54,6 @@ public class Quiz {
     @Temporal(TemporalType.DATE)
     @Column(name = "deadline")
     private Date deadline;
-
-    @Column(name = "quiz_subject", length = 8)
-    private String quizSubject;
 
     @Column(name = "teacher_name", length = 255)
     private String teacherName;
