@@ -30,13 +30,12 @@ public class ResourceController {
         }
 
         Resource resource = new Resource();
-        //resource.setResource_id(request.getResource_id());
         resource.setSubject(request.getSubject());
-        resource.setTeacher_id(request.getTeacher_id());
-        resource.setResource_content(request.getResource_content());
-        resource.setClass_id(request.getClass_id());
+        resource.setTeacherId(request.getTeacher_id());
+        resource.setResourceContent(request.getResource_content());
+        resource.setClassId(request.getClass_id());
         resource.setName(request.getName());
-        resource.setUpload_time(request.getUpload_time() != null ? request.getUpload_time() : LocalDateTime.now());
+        resource.setUploadTime(request.getUpload_time() != null ? request.getUpload_time() : LocalDateTime.now());
         resource.setDescription(request.getDescription());
 
         Result result = resourceService.saveResource(resource);

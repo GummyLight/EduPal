@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(home/admin):新增管理员看板功能">
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="test(Post):对于Post类进行基于状态的单元测试，均通过">
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/model/PostCollectionTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/QuizRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/QuizRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/ResourceRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/ResourceRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +55,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "JUnit.AnswerTest.executor": "Run",
     "JUnit.AuthControllerTest.executor": "Run",
     "JUnit.AuthControllerTest.testRegisterUser_Success.executor": "Run",
     "JUnit.AuthServiceImplIntegrationTest.executor": "Run",
@@ -66,10 +65,19 @@
     "JUnit.AuthServiceImplTest.testLoginUserByUserId_Success.executor": "Run",
     "JUnit.AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired.executor": "Run",
     "JUnit.AuthServiceImplTest.testUpdateStudentClass_Success.executor": "Run",
+    "JUnit.PostTest.executor": "Run",
+    "JUnit.QuestionTest.executor": "Run",
+    "JUnit.QuizAnswerTest.executor": "Run",
+    "JUnit.QuizTest.executor": "Run",
     "JUnit.SecurityConfigTest.executor": "Run",
+    "JUnit.StudentTest.executor": "Run",
+    "JUnit.TeacherAnswerTest.executor": "Run",
+    "JUnit.TeacherTest.executor": "Run",
     "JUnit.UserControllerTest.executor": "Run",
     "JUnit.UserServiceImplIntegrationTest.executor": "Run",
     "JUnit.UserServiceImplTest.executor": "Run",
+    "JUnit.UserTest.executor": "Run",
+    "JUnit.ValidationTest.executor": "Run",
     "Maven.backend [clean].executor": "Run",
     "Maven.backend [install].executor": "Run",
     "Maven.backend [package].executor": "Run",
@@ -80,7 +88,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.EduPalApplication.executor": "Debug",
+    "Spring Boot.EduPalApplication.executor": "Run",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "E:/01-08 大三春/01 软件工程 刘光迟/临时测试/EduPal-main (7)/EduPal-main/backend",
@@ -107,7 +115,7 @@
       <recent name="com.example.edupal.service" />
     </key>
   </component>
-  <component name="RunManager" selected="Spring Boot.EduPalApplication">
+  <component name="RunManager">
     <configuration name="AuthServiceImplTest.loginUserByEmailSuccess" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
@@ -254,134 +262,8 @@
       <workItem from="1748846026867" duration="8800000" />
       <workItem from="1748912407224" duration="5164000" />
       <workItem from="1748996265826" duration="7578000" />
-    </task>
-    <task id="LOCAL-00015" summary="fix(auth):统一了前后端忘记密码的router">
-      <option name="closed" value="true" />
-      <created>1748485138323</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1748485138323</updated>
-    </task>
-    <task id="LOCAL-00016" summary="fix(model):增加了 LearningProgress和Quiz的model和数据库的连接">
-      <option name="closed" value="true" />
-      <created>1748487581457</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1748487581457</updated>
-    </task>
-    <task id="LOCAL-00017" summary="fix(auth):修复了重置密码result始终为false的问题">
-      <option name="closed" value="true" />
-      <created>1748488468677</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1748488468677</updated>
-    </task>
-    <task id="LOCAL-00018" summary="同步一下">
-      <option name="closed" value="true" />
-      <created>1748502414680</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1748502414680</updated>
-    </task>
-    <task id="LOCAL-00019" summary="同步一下">
-      <option name="closed" value="true" />
-      <created>1748510477360</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1748510477360</updated>
-    </task>
-    <task id="LOCAL-00020" summary="feat(file):完成了后端与远程服务器交互，上传、下载、删除文件的基本逻辑，请求接口已完成，响应接口未完善。">
-      <option name="closed" value="true" />
-      <created>1748621156521</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1748621156521</updated>
-    </task>
-    <task id="LOCAL-00021" summary="feat(file):完善了上传、下载、删除文件的请求和响应接口，preview功能还未测试">
-      <option name="closed" value="true" />
-      <created>1748655242944</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1748655242944</updated>
-    </task>
-    <task id="LOCAL-00022" summary="feat(file):完成了文件预览功能，返回流式数据，需要前端依赖第三方pdf预览功能实现">
-      <option name="closed" value="true" />
-      <created>1748657972146</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1748657972146</updated>
-    </task>
-    <task id="LOCAL-00023" summary="feat(file):删掉了一些测试用注释">
-      <option name="closed" value="true" />
-      <created>1748659016967</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1748659016967</updated>
-    </task>
-    <task id="LOCAL-00024" summary="feat(ai):添加了获取问答历史的功能，响应采用3层json嵌套，返回一些必要元素">
-      <option name="closed" value="true" />
-      <created>1748662494509</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1748662494509</updated>
-    </task>
-    <task id="LOCAL-00025" summary="feat(document):建立了一个文件夹放文档们">
-      <option name="closed" value="true" />
-      <created>1748671070187</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1748671070187</updated>
-    </task>
-    <task id="LOCAL-00026" summary="fix(ai/history):修复了查看问题历史“只闻其声不知其人”的问题">
-      <option name="closed" value="true" />
-      <created>1748676959270</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1748676959270</updated>
-    </task>
-    <task id="LOCAL-00027" summary="feat(ai/delete):实现了答疑模块删除问题的功能">
-      <option name="closed" value="true" />
-      <created>1748678741345</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1748678741345</updated>
-    </task>
-    <task id="LOCAL-00028" summary="style(Impl):将所有ServiceImpl都单独放在了新的路径下">
-      <option name="closed" value="true" />
-      <created>1748678842560</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1748678842560</updated>
-    </task>
-    <task id="LOCAL-00029" summary="feat(file):给下载文件的端口增加了fileId键，用于上传下载的重命名">
-      <option name="closed" value="true" />
-      <created>1748680248048</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1748680248048</updated>
-    </task>
-    <task id="LOCAL-00030" summary="feat(file):给预览文件的端口增加了fileId键，用于上传下载的重命名">
-      <option name="closed" value="true" />
-      <created>1748680538974</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1748680538974</updated>
+      <workItem from="1749122271298" duration="914000" />
+      <workItem from="1749129153024" duration="5078000" />
     </task>
     <task id="LOCAL-00031" summary="fix(ai/delete):修复了先删除问题对象可能会导致的空指针问题">
       <option name="closed" value="true" />
@@ -647,7 +529,135 @@
       <option name="project" value="LOCAL" />
       <updated>1749106274331</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="feat(home/teacher):更新教师看板的一些统计函数">
+      <option name="closed" value="true" />
+      <created>1749107079928</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1749107079928</updated>
+    </task>
+    <task id="LOCAL-00065" summary="feat(?):commit一下这里突然出现的很多东西">
+      <option name="closed" value="true" />
+      <created>1749125927845</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1749125927846</updated>
+    </task>
+    <task id="LOCAL-00066" summary="fix(quiz):将学生上传作业的接口改成了POST类型">
+      <option name="closed" value="true" />
+      <created>1749130325181</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1749130325182</updated>
+    </task>
+    <task id="LOCAL-00067" summary="fix(quiz):将学生上传作业的接口改回了GET类型">
+      <option name="closed" value="true" />
+      <created>1749130618566</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1749130618566</updated>
+    </task>
+    <task id="LOCAL-00068" summary="fix(register):调整实体类创建顺序以适应外键约束">
+      <option name="closed" value="true" />
+      <created>1749131413213</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1749131413213</updated>
+    </task>
+    <task id="LOCAL-00069" summary="test(user):对于User类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749132382651</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1749132382651</updated>
+    </task>
+    <task id="LOCAL-00070" summary="fix(quiz):修改了quiz_id为驼峰命名法">
+      <option name="closed" value="true" />
+      <created>1749132933289</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1749132933289</updated>
+    </task>
+    <task id="LOCAL-00071" summary="test(Quiz):对于Quiz类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749132983687</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1749132983687</updated>
+    </task>
+    <task id="LOCAL-00072" summary="test(QuizAnswer):对于QuizAnswer类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749133065007</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1749133065007</updated>
+    </task>
+    <task id="LOCAL-00073" summary="test(Student):对于Student类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749133187933</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1749133187933</updated>
+    </task>
+    <task id="LOCAL-00074" summary="test(Teacher):对于Teacher类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749133239616</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1749133239616</updated>
+    </task>
+    <task id="LOCAL-00075" summary="test(TeacherAnswer):对于TeacherAnswer类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749133281509</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1749133281509</updated>
+    </task>
+    <task id="LOCAL-00076" summary="test(Validation):对于Validation类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749133411701</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1749133411701</updated>
+    </task>
+    <task id="LOCAL-00077" summary="test(Question):对于Question类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749133546756</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1749133546756</updated>
+    </task>
+    <task id="LOCAL-00078" summary="test(Answer):对于Answer类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749133584752</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1749133584752</updated>
+    </task>
+    <task id="LOCAL-00079" summary="test(Post):对于Post类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749133960302</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1749133960302</updated>
+    </task>
+    <option name="localTasksCounter" value="80" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -680,22 +690,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix(ai/teacherView):修改请求类型为GET" />
-    <MESSAGE value="fix(ai/teacherView):补充了返回questionid" />
-    <MESSAGE value="fix:修改了数据库的时区问题" />
-    <MESSAGE value="fix:修改了数据库的时区问题？谁给改回来了？" />
-    <MESSAGE value="fix(file):修复了upload404的问题" />
-    <MESSAGE value="fix(file):修复了download404的问题" />
-    <MESSAGE value="fix(file):修复了download失败但有创建文件的问题" />
-    <MESSAGE value="test(AuthServiceImpl):新增AuthServiceImpl单元测试用例，2个自动测试错误，但手动测试可以通过" />
-    <MESSAGE value="feat(admin):新增管理员模块后端" />
-    <MESSAGE value="feat(admin):新增了管理员注册学生、教师、管理员功能" />
-    <MESSAGE value="feat(admin):修改admin/register请求类,将教师授课班记作数组" />
-    <MESSAGE value="feat(home/teacher):新增教师登录界面接口，加了模拟返回信息" />
-    <MESSAGE value="fix(admin/updateTeacherClass):将newClass以数组形式接收" />
-    <MESSAGE value="feat(ai):新增学生获取可转接老师的功能" />
-    <MESSAGE value="fix(ai):规范了getMyTeacher的格式" />
-    <MESSAGE value="fix(ListTeacherResponse):修改Class的格式为String[]" />
     <MESSAGE value="fix(ListTeacherResponse):修改Class为teacherClass" />
     <MESSAGE value="feat(quiz):新增quiz类和quizAnswer类" />
     <MESSAGE value="feat(repository):增加了student DAO层用来查询班级学生的数量和list的功能" />
@@ -705,7 +699,23 @@
     <MESSAGE value="fix(quiz):根据自增编码的类型做了调整" />
     <MESSAGE value="feat(quiz):quiz全部功能测试结束，成功，修改部分细节" />
     <MESSAGE value="feat(home/admin):新增管理员看板功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(home/admin):新增管理员看板功能" />
+    <MESSAGE value="feat(home/teacher):更新教师看板的一些统计函数" />
+    <MESSAGE value="feat(?):commit一下这里突然出现的很多东西" />
+    <MESSAGE value="fix(quiz):将学生上传作业的接口改成了POST类型" />
+    <MESSAGE value="fix(quiz):将学生上传作业的接口改回了GET类型" />
+    <MESSAGE value="fix(register):调整实体类创建顺序以适应外键约束" />
+    <MESSAGE value="test(user):对于User类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="fix(quiz):修改了quiz_id为驼峰命名法" />
+    <MESSAGE value="test(Quiz):对于Quiz类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(QuizAnswer):对于QuizAnswer类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(Student):对于Student类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(Teacher):对于Teacher类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(TeacherAnswer):对于TeacherAnswer类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(Validation):对于Validation类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(Question):对于Question类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(Answer):对于Answer类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(Post):对于Post类进行基于状态的单元测试，均通过" />
+    <option name="LAST_COMMIT_MESSAGE" value="test(Post):对于Post类进行基于状态的单元测试，均通过" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -932,7 +942,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>214</line>
+          <line>215</line>
           <option name="timeStamp" value="123" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -942,17 +952,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>203</line>
+          <line>204</line>
           <option name="timeStamp" value="125" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>207</line>
+          <line>208</line>
           <option name="timeStamp" value="129" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>213</line>
+          <line>214</line>
           <option name="timeStamp" value="130" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -1282,12 +1292,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>139</line>
+          <line>140</line>
           <option name="timeStamp" value="301" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AuthServiceImpl.java</url>
-          <line>138</line>
+          <line>139</line>
           <option name="timeStamp" value="302" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">

@@ -2,7 +2,8 @@
   <div class="home-form">
     <el-card class="welcome-card" shadow="hover">
       <h2>👋 欢迎你，{{ props.username }}！</h2>
-      <p>今天是 {{ today }}，祝你{{ props.usertype === 1 ? '学习愉快' : '生活愉快' }}～</p>
+      <p v-if="props.usertype === 1">今天是 {{ today }}，祝你学习愉快～</p>
+      <p v-else>今天是 {{ today }}，祝你生活愉快～</p>
     </el-card>
 
     <div v-if="props.usertype === 1">

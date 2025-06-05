@@ -65,9 +65,9 @@ public class QuizServiceImpl implements QuizService {
 
         List<GetStudentQuizResponse.quizDetail> Quizzes = quizzes.stream()
                 .map(quiz -> {
-                    QuizAnswer quizAnswerForQuiz = quizAnswerRepository.findByStudentIdAndQuizId(userId, quiz.getQuiz_id());
+                    QuizAnswer quizAnswerForQuiz = quizAnswerRepository.findByStudentIdAndQuizId(userId, quiz.getQuizId());
                     return new GetStudentQuizResponse.quizDetail(
-                            quiz.getQuiz_id(),
+                            quiz.getQuizId(),
                             quiz.getTitle(),
                             quiz.getSubject(),
                             quiz.getContentType(),
@@ -107,11 +107,11 @@ public class QuizServiceImpl implements QuizService {
         List<GetTeacherQuizResponse.quizDetail> Quizzes = quizzes.stream()
                 .map(quiz -> {
                     int studentNum= studentRepository.countByStudentClass(quiz.getClass1(),quiz.getClass2());
-                    int submitNum = quizAnswerRepository.countByQuizId(quiz.getQuiz_id());
+                    int submitNum = quizAnswerRepository.countByQuizId(quiz.getQuizId());
                     int unSubmitNum = studentNum - submitNum;
-                    int gradedNum = quizAnswerRepository.countByQuizIdAndIsGraded(quiz.getQuiz_id(), 1);
+                    int gradedNum = quizAnswerRepository.countByQuizIdAndIsGraded(quiz.getQuizId(), 1);
                     return new GetTeacherQuizResponse.quizDetail(
-                            quiz.getQuiz_id(),
+                            quiz.getQuizId(),
                             quiz.getTitle(),
                             quiz.getSubject(),
                             quiz.getContentType(),
@@ -263,7 +263,7 @@ public class QuizServiceImpl implements QuizService {
         }
         QuizAnswer quizAnswer = quizAnswerRepository.findByStudentIdAndQuizId(userId, quizId);
         if (quizAnswer == null) {
-            return new GetMyQuizResponse("success","Get Your Quiz Without Answer",quiz.getQuiz_id(),quiz.getTitle(), quiz.getSubject(), quiz.getDifficulty(), quiz.getCreateTime(),quiz.getDeadline(),quiz.getTeacherName(),quiz.getTeacherId(),0,null,null,-1);
+            return new GetMyQuizResponse("success","Get Your Quiz Without Answer",quiz.getQuizId(),quiz.getTitle(), quiz.getSubject(), quiz.getDifficulty(), quiz.getCreateTime(),quiz.getDeadline(),quiz.getTeacherName(),quiz.getTeacherId(),0,null,null,-1);
         }
         return new GetMyQuizResponse("success","Get Your Quiz", quizId, quiz.getTitle(), quiz.getSubject(),
                 quiz.getDifficulty(), quiz.getCreateTime(), quiz.getDeadline(), quiz.getTeacherName(),
