@@ -49,7 +49,7 @@ public class QuizController {
         return ResponseEntity.ok(new ApiResponse<>(200, "最大 answer_id 获取成功", maxId));
     }
 
-    @GetMapping("/submitQuiz")
+    @PostMapping("/submitQuiz")
     public ResponseEntity<?> submitQuiz(@RequestParam("quizId") Integer quizId,
                                                 @RequestParam("userId") String userId,
                                                 @RequestParam("answerContent") String answerContent) {
