@@ -15,7 +15,7 @@
         <p><strong>发布教师:</strong> {{ exerciseDetail?.发布人 }}</p>
 
         <el-divider>练习文件</el-divider>
-        <div v-if="exerciseDetail?.习题文件路径">
+        <div v-if="exerciseDetail?.习题号">
           <el-button type="primary" icon="el-icon-download" @click="downloadExerciseFile">
             下载练习题文件
           </el-button>
@@ -28,14 +28,15 @@
         <div v-if="mySubmission.status === '已批改'">
           <p><strong>提交状态:</strong> <el-tag type="success">已批改</el-tag></p>
           <p><strong>我的得分:</strong> <el-tag type="warning" size="large">{{ mySubmission.score }}</el-tag></p>
-          <p v-if="mySubmission.submissionFilePath">
+          <p v-if="mySubmission.status === '已批改'">
             <strong>我的提交:</strong>
             <el-button type="text" @click="downloadSubmissionFile">下载我的提交</el-button>
           </p>
+          <p><strong>教师评语:</strong> <el-tag type="warning" size="large">{{mySubmission.feedback}}</el-tag></p>
         </div>
         <div v-else-if="mySubmission.status === '已提交'">
           <p><strong>提交状态:</strong> <el-tag type="info">已提交</el-tag> (等待批改)</p>
-          <p v-if="mySubmission.submissionFilePath">
+          <p v-if="mySubmission.status === '已提交'">
             <strong>我的提交:</strong>
             <el-button type="text" @click="downloadSubmissionFile">下载我的提交</el-button>
           </p>
@@ -56,7 +57,7 @@
               :on-exceed="handleExceed"
               :on-remove="handleRemove"
           >
-            <el-button size="small" type="success">上传作业文件</el-button>
+            <el-button size="small" type="success" @click="">上传作业文件</el-button>
             <template #tip>
               <div class="el-upload__tip">只能上传一份作业文件，文件大小不超过5MB。</div>
             </template>
@@ -64,19 +65,71 @@
         </div>
       </el-card>
     </el-main>
+
+    <!-- 下载设置弹窗 -->
+    <el-dialog
+        v-model="downloadDialogVisible"
+        title="下载设置"
+        width="30%"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+    >
+      <el-form :model="downloadForm" label-width="120px">
+        <el-form-item label="原始文件名">
+          <el-input v-model="downloadForm.originalName" disabled />
+        </el-form-item>
+        <el-form-item label="下载文件名">
+          <el-input v-model="downloadForm.fileName" placeholder="请输入下载文件名" />
+        </el-form-item>
+        <el-form-item label="保存到文件夹">
+          <el-input v-model="downloadForm.outFile" placeholder="请输入服务器上的保存文件夹路径" />
+          <el-alert type="warning" show-icon :closable="false" style="margin-top: 10px;">
+            <template #title>注意：此处路径指服务器上的临时下载文件夹。</template>
+          </el-alert>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="downloadDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="confirmDownload">确定下载</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, defineProps } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
-import { getDownloadFileUrl } from '../api/materialsApi';
+import {ElAlert, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElMessage} from 'element-plus';
+import axios from 'axios';
+import {
+  ResourceResponse,
+  getPreviewFileUrl,
+  getDownloadFileUrl,
+  deleteFile,
+  fetchAllResources,
+  searchResourcesByName,
+  deleteResourceById
+} from '../api/materialsApi';
+// API 基地址
+const API_BASE = 'http://localhost:8080';
 
 const props = defineProps({
-  usertype: Number,
-  username: String,
-  userid: String,
+  usertype: {
+    type: Number,
+    required: true,
+  },
+  username: {
+    type: String,
+    required: true,
+  },
+  userid: {
+    type: String,
+    required: true,
+  },
 });
 
 const route = useRoute();
@@ -84,70 +137,176 @@ const router = useRouter();
 const exerciseId = route.params.exerciseId as string;
 
 const exerciseDetail = ref<any>(null);
-const mySubmission = ref<any>({ status: '未提交', score: null, submissionFilePath: null });
+const mySubmission = ref<any>({ status: '未提交', score: null, submissionFilePath: null,feedback: null });
 const uploadHeaders = ref({});
 const fileList = ref<any[]>([]);
 
-onMounted(() => {
-  fetchExerciseDetail();
-  fetchMySubmissionStatus();
+// 状态映射函数
+const mapQuizStatus = (status: number | null) => {
+  if (status === null) return '未提交';
+  switch (status) {
+    case 0:
+      return '未提交';
+    case 1:
+      return '已提交';
+    case 2:
+      return '已批改';
+    default:
+      return '未知';
+  }
+};
+
+// 从路由状态或后端获取练习详情
+const fetchExerciseDetail = async () => {
+  if (route.state?.exercise) {
+    // 优先从路由状态获取
+    exerciseDetail.value = {
+      习题号: route.state.exercise.习题号,
+      内容: route.state.exercise.内容,
+      科目: route.state.exercise.科目,
+      类型: route.state.exercise.类型,
+      难度: route.state.exercise.难度,
+      知识点: route.state.exercise.知识点,
+      发布时间: route.state.exercise.发布时间,
+      截止时间: route.state.exercise.截止时间,
+      发布人: route.state.exercise.发布人,
+      习题文件路径: route.state.exercise.习题文件路径 || '',
+    };
+    ElMessage.success('练习详情加载成功');
+  } else {
+    // 路由状态丢失，尝试从后端获取
+    try {
+      const response = await axios.get(`${API_BASE}/quiz/getMyQuiz`, {
+        params: {
+          userId: props.userid,
+          quizId: exerciseId,
+        },
+      });
+      if (response.data.status === 'success') {
+        exerciseDetail.value = {
+          习题号: response.data.quizId,
+          内容: response.data.title,
+          科目: response.data.subject,
+          类型: response.data.contentType,
+          难度: response.data.difficulty,
+          知识点: response.data.knowledgePoints,
+          发布时间: response.data.createTime,
+          截止时间: response.data.deadline,
+          发布人: response.data.teacherName,
+          习题文件路径: response.data.answerId,
+          教师评语: response.data.feedback,
+        };
+        ElMessage.success('练习详情加载成功');
+      } else {
+        ElMessage.error('获取练习详情失败');
+        router.push('/practice');
+      }
+    } catch (error) {
+      ElMessage.error('请求失败，请稍后重试');
+      console.error(error);
+      router.push('/practice');
+    }
+  }
+};
+
+// 获取提交状态
+const fetchMySubmissionStatus = async () => {
+  try {
+    const response = await axios.get(`${API_BASE}/quiz/getMyQuiz`, {
+      params: {
+        userId: props.userid,
+        quizId: exerciseId,
+      },
+    });
+    if (response.data.status === 'success') {
+      mySubmission.value = {
+        status: mapQuizStatus(response.data.quizStatus),
+        score: response.data.score === -1 ? null : response.data.score,
+        submissionFilePath: response.data.answerId || '',
+        feedback: response.data.feedback ,
+      };
+      ElMessage.success('提交状态加载成功');
+    } else {
+      ElMessage.error('获取提交状态失败');
+    }
+  } catch (error) {
+    ElMessage.error('请求失败，请稍后重试');
+    console.error(error);
+  }
+};
+
+const downloadDialogVisible = ref(false);
+const currentDownloadRow = ref<{ id: string; name: string; resource_content: string } | null>(null);
+const downloadForm = ref({
+  originalName: '', // 显示原始的资料名称
+  fileName: '',     // 用户可编辑的下载文件名 (包含扩展名)
+  outFile: 'E:/downloadsedge/test/', // 默认下载到服务器上的这个路径（示例），用户可修改
 });
 
-function fetchExerciseDetail() {
-  exerciseDetail.value = {
-    习题号: exerciseId,
-    科目: 'math',
-    内容: '函数与图像基础练习',
-    发布时间: '2025-05-20 10:00:00',
-    截止时间: '2025-06-01 23:59:59',
-    发布人: '张老师',
-    习题文件路径: `/files/exercises/${exerciseId}.pdf`,
-    类型: '选择题',
-    难度: '中等',
-    知识点: '函数图像',
+const openDownloadDialog = () => {
+  downloadForm.value = {
+    originalName:  `${exerciseId}.pdf`,
+    fileName: `${exerciseId}.pdf`,
+    outFile: 'E:/downloadsedge/test/',
   };
-}
 
-function fetchMySubmissionStatus() {
-  const studentId = props.userid;
-  if (exerciseId === 'EX20250503') {
-    mySubmission.value = { status: '已批改', score: 95, submissionFilePath: `/files/submissions/${exerciseId}_${studentId}.pdf` };
-  } else if (exerciseId === 'EX20250502') {
-    mySubmission.value = { status: '已提交', score: null, submissionFilePath: `/files/submissions/${exerciseId}_${studentId}.pdf` };
-  } else {
-    mySubmission.value = { status: '未提交', score: null, submissionFilePath: null };
+  downloadDialogVisible.value = true;
+};
+const openSubmissionDownloadDialog = () => {
+  downloadForm.value = {
+    originalName:  `${mySubmission.value.submissionFilePath}.pdf`,
+    fileName: `${mySubmission.value.submissionFilePath}.pdf`,
+    outFile: 'E:/downloadsedge/test/',
+  };
+
+  downloadDialogVisible.value = true;
+};
+// 确认下载
+const confirmDownload = () => {
+  if (!downloadForm.value.fileName) {
+    ElMessage.warning('下载文件名不能为空！');
+    return;
   }
-}
+  if (!downloadForm.value.outFile) {
+    ElMessage.warning('服务器保存路径不能为空！');
+    return;
+  }
+  downloadDialogVisible.value = false;
+  handleDownload(
+      exerciseId,
+      downloadForm.value.fileName,
+      downloadForm.value.outFile
+  );
+};
 
-function handleDownload(resourceId: string, fileName: string, outFile: string) {
+// 以下为未修改的文件相关函数，保持原样
+const handleDownload=async(resourceId: string, fileName: string, outFile: string)=> {
   try {
     const url = getDownloadFileUrl({
       fileId: resourceId,
-      path: '',
+      path: 'quiz/',
       fileName: fileName,
       outFile: outFile,
     });
-    const link = document.createElement('a');
-    link.href = url;
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    ElMessage.success(`文件 ${fileName} 正在下载！`);
+
+    const res = await axios.get(url);
+    if (res.data.code === 200) {
+      ElMessage.success(`文件 ${downloadForm.value.fileName} 下载成功！`);
+    } else {
+      ElMessage.error(res.data.message || '下载失败');
+    }
   } catch (err) {
     ElMessage.error('下载失败');
     console.error(err);
   }
 }
 
-function downloadExerciseFile() {
-  const fileName = `${exerciseId}.pdf`;
-  handleDownload(exerciseId, fileName, `exercises/${fileName}`);
-}
+const downloadExerciseFile = () => {
+  openDownloadDialog();
+};
 
 function downloadSubmissionFile() {
-  const fileName = `${exerciseId}_${props.userid}.pdf`;
-  handleDownload(`${exerciseId}_${props.userid}`, fileName, `submissions/${fileName}`);
+  openSubmissionDownloadDialog()
 }
 
 function beforeUpload(file: File) {
@@ -181,6 +340,17 @@ function handleExceed() {
 function handleRemove(file: File) {
   console.log('File removed:', file);
 }
+
+// 组件挂载时加载数据
+onMounted(() => {
+  if (props.usertype !== 1) {
+    ElMessage.error('仅学生可访问此页面');
+    router.push('/practice');
+    return;
+  }
+  fetchExerciseDetail();
+  fetchMySubmissionStatus();
+});
 </script>
 
 <style scoped>

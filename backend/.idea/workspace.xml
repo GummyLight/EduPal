@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(home/admin):新增管理员看板功能">
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(home/teacher):更新教师看板的一些统计函数">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/QuizRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/QuizRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/ResourceRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/ResourceRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -55,53 +53,53 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "JUnit.AuthControllerTest.executor": "Run",
-    "JUnit.AuthControllerTest.testRegisterUser_Success.executor": "Run",
-    "JUnit.AuthServiceImplIntegrationTest.executor": "Run",
-    "JUnit.AuthServiceImplTest.executor": "Run",
-    "JUnit.AuthServiceImplTest.loginUserByEmailSuccess.executor": "Run",
-    "JUnit.AuthServiceImplTest.loginUserByEmail_ReturnsError_WhenEmailIsNull.executor": "Run",
-    "JUnit.AuthServiceImplTest.testLoginUserByUserId_Success.executor": "Run",
-    "JUnit.AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired.executor": "Run",
-    "JUnit.AuthServiceImplTest.testUpdateStudentClass_Success.executor": "Run",
-    "JUnit.SecurityConfigTest.executor": "Run",
-    "JUnit.UserControllerTest.executor": "Run",
-    "JUnit.UserServiceImplIntegrationTest.executor": "Run",
-    "JUnit.UserServiceImplTest.executor": "Run",
-    "Maven.backend [clean].executor": "Run",
-    "Maven.backend [install].executor": "Run",
-    "Maven.backend [package].executor": "Run",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Spring Boot.EduPalApplication.executor": "Debug",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "E:/01-08 大三春/01 软件工程 刘光迟/临时测试/EduPal-main (7)/EduPal-main/backend",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "vcs.Git",
-    "ts.external.directory.path": "D:\\Program Files\\JetBrains\\IntelliJ IDEA 2023.3.5\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;JUnit.AuthControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthControllerTest.testRegisterUser_Success.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplIntegrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplTest.loginUserByEmailSuccess.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplTest.loginUserByEmail_ReturnsError_WhenEmailIsNull.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplTest.testLoginUserByUserId_Success.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AuthServiceImplTest.testUpdateStudentClass_Success.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.SecurityConfigTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.UserControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.UserServiceImplIntegrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.UserServiceImplTest.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.backend [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.backend [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.backend [package].executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Spring Boot.EduPalApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/01-08 大三春/01 软件工程 刘光迟/临时测试/EduPal-main (7)/EduPal-main/backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Program Files\\JetBrains\\IntelliJ IDEA 2023.3.5\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql_aurora_aws"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql_aurora_aws&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.example.edupal.service" />
@@ -254,14 +252,7 @@
       <workItem from="1748846026867" duration="8800000" />
       <workItem from="1748912407224" duration="5164000" />
       <workItem from="1748996265826" duration="7578000" />
-    </task>
-    <task id="LOCAL-00015" summary="fix(auth):统一了前后端忘记密码的router">
-      <option name="closed" value="true" />
-      <created>1748485138323</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1748485138323</updated>
+      <workItem from="1749122271298" duration="617000" />
     </task>
     <task id="LOCAL-00016" summary="fix(model):增加了 LearningProgress和Quiz的model和数据库的连接">
       <option name="closed" value="true" />
@@ -647,7 +638,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749106274331</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="feat(home/teacher):更新教师看板的一些统计函数">
+      <option name="closed" value="true" />
+      <created>1749107079928</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1749107079928</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -680,7 +679,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix(ai/teacherView):修改请求类型为GET" />
     <MESSAGE value="fix(ai/teacherView):补充了返回questionid" />
     <MESSAGE value="fix:修改了数据库的时区问题" />
     <MESSAGE value="fix:修改了数据库的时区问题？谁给改回来了？" />
@@ -705,7 +703,8 @@
     <MESSAGE value="fix(quiz):根据自增编码的类型做了调整" />
     <MESSAGE value="feat(quiz):quiz全部功能测试结束，成功，修改部分细节" />
     <MESSAGE value="feat(home/admin):新增管理员看板功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(home/admin):新增管理员看板功能" />
+    <MESSAGE value="feat(home/teacher):更新教师看板的一些统计函数" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(home/teacher):更新教师看板的一些统计函数" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

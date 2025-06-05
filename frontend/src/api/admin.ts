@@ -1,6 +1,5 @@
 import api from './request';
 import { ElMessage } from 'element-plus';
-import axios from 'axios';
 import type { ApiResponse } from './auth'; // 导入 ApiResponse 类型，因为都是从后端得到的注册数据
 
 // 注册请求数据类型
@@ -169,7 +168,11 @@ export const register = async (userId: string, userName: string, password: strin
       }
     }
 
-    const response = await axios.post<ApiResponse>('/admin/register', params);
+    const response = await api.post<ApiResponse>('/admin/register', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -187,7 +190,11 @@ export const deleteAccount = async (userType: number, userId: string): Promise<A
     params.append('userType', userType.toString());
     params.append('userId', userId);
     
-    const response = await axios.post<ApiResponse>('/admin/delete', params);
+    const response = await api.post<ApiResponse>('/admin/delete', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -207,7 +214,11 @@ export const updateAccount = async (userId: string, newUserName: string, newEmai
     params.append('newEmail', newEmail);
     params.append('newPassword', newPassword);
     
-    const response = await axios.post<ApiResponse>('/admin/update', params);
+    const response = await api.post<ApiResponse>('/admin/update', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -225,7 +236,11 @@ export const updateStudentClass = async (studentId: string, newClassId: string):
     params.append('studentId', studentId);
     params.append('newClassId', newClassId);
     
-    const response = await axios.post<ApiResponse>('/admin/updateStudentClass', params);
+    const response = await api.post<ApiResponse>('/admin/updateStudentClass', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -249,7 +264,11 @@ export const updateTeacherClass = async (teacherId: string, newClass: string[]):
       params.append('newClass', classItem);
     });
     
-    const response = await axios.post<ApiResponse>('/admin/updateTeacherClass', params);
+    const response = await api.post<ApiResponse>('/admin/updateTeacherClass', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -267,7 +286,11 @@ export const updateTeacherSubject = async (teacherId: string, newSubject: string
     params.append('teacherId', teacherId);
     params.append('newSubject', newSubject);
     
-    const response = await axios.post<ApiResponse>('/admin/updateTeacherSubject', params);
+    const response = await api.post<ApiResponse>('/admin/updateTeacherSubject', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -281,7 +304,7 @@ export const updateTeacherSubject = async (teacherId: string, newSubject: string
 export const listTeachers = async (): Promise<ListTeachers> => {
   try {
     // 后端路由是 /admin/listTeachers，直接返回 ListTeacherResponse 对象
-    const response = await axios.get<ListTeachers>('/admin/listTeachers');
+    const response = await api.get<ListTeachers>('/admin/listTeachers');
     return response.data; // 返回后端响应的 data 部分
   } catch (error: any) {
     // 错误处理
@@ -296,7 +319,7 @@ export const listTeachers = async (): Promise<ListTeachers> => {
 export const listStudents = async (): Promise<ListStudents> => {
   try {
     // 后端路由是 /admin/listStudents，直接返回 ListStudentResponse 对象
-    const response = await axios.get<ListStudents>('/admin/listStudents');
+    const response = await api.get<ListStudents>('/admin/listStudents');
     return response.data; // 返回后端响应的 data 部分
   } catch (error: any) {
     // 错误处理
@@ -311,7 +334,7 @@ export const listStudents = async (): Promise<ListStudents> => {
 export const listUsers = async (): Promise<ListUsers> => {
   try {
     // 后端路由是 /admin/listUsers，直接返回 ListUserResponse 对象
-    const response = await axios.get<ListUsers>('/admin/listUsers');
+    const response = await api.get<ListUsers>('/admin/listUsers');
     return response.data; // 返回后端响应的 data 部分
   } catch (error: any) {
     // 错误处理

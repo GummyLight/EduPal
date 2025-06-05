@@ -213,7 +213,7 @@
           
           <div class="conversation-history">
             <div 
-              v-for="conv in conversations" 
+              v-for="conv in sortedConversations" 
               :key="conv.id"
               class="conversation-item"
               :class="{ 'active': currentConversationId === conv.id }"
@@ -250,21 +250,37 @@
   <el-dialog
     v-model="transferDialogVisible"
     title="转交问题给老师"
-    width="400px"
+    width="450px"
     :close-on-click-modal="false"
   >
     <el-form :model="{ teacherUserId }" label-width="100px">
-      <el-form-item label="老师用户ID" required>
-        <el-input
+      <el-form-item label="选择老师" required>
+        <el-select
           v-model="teacherUserId"
-          placeholder="请输入老师的用户ID"
-          :disabled="isTransferring"
-        />
+          placeholder="请选择要转交的老师"
+          :disabled="isTransferring || isLoadingTeachers"
+          :loading="isLoadingTeachers"
+          style="width: 100%"
+          clearable
+          filterable
+        >
+          <el-option
+            v-for="teacher in availableTeachers"
+            :key="teacher.teacherId"
+            :label="`${teacher.teacherName} - ${teacher.teacherSubject}`"
+            :value="teacher.teacherId"
+          >
+            <span style="float: left">{{ teacher.teacherName }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">
+              {{ teacher.teacherSubject }}
+            </span>
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <div class="transfer-tip">
           <el-icon><InfoFilled /></el-icon>
-          <span>输入老师的用户ID后，该问题将转交给对应老师回答</span>
+          <span>选择老师后，该问题将转交给对应老师回答</span>
         </div>
       </el-form-item>
     </el-form>
@@ -278,6 +294,7 @@
           type="primary" 
           @click="confirmTransferToTeacher"
           :loading="isTransferring"
+          :disabled="!teacherUserId || isLoadingTeachers"
         >
           确认转交
         </el-button>
@@ -294,7 +311,7 @@ import {
   Promotion, ArrowRight, Service, Operation, Close, User, InfoFilled
 } from '@element-plus/icons-vue';
 // 导入真实的AI API和类型
-import { askAI, getConversationHistory, deleteConversation, type HistoryResponse, type QA, type AnswerDetail } from '../api/ai';
+import { askAI, getConversationHistory, deleteConversation, getMyTeacher, type HistoryResponse, type QA, type AnswerDetail, type GetMyTeacherResponse, type TItem } from '../api/ai';
 // 导入教师转交API
 import { transferQuestionToTeacher } from '../api/teacher';
 // 导入axios用于取消令牌
@@ -304,7 +321,7 @@ import userIconDefault from '../assets/userIconDefault.jpg';
 // 导入AI默认头像
 import aiIconDefault from '../assets/aiIconDefault.jpg';
 // 导入教师默认头像
-import teacherIconDefault from '../assets/teacherIconDefault.jpg';
+import teacherIconDefault from '../assets/teacherIconDefault.png';
 // 导入KaTeX用于LaTeX渲染
 import * as katex from 'katex';
 import 'katex/dist/katex.min.css';
@@ -360,6 +377,8 @@ const transferDialogVisible = ref(false);
 const teacherUserId = ref('');
 const transferringQuestionId = ref('');
 const isTransferring = ref(false);
+const availableTeachers = ref<TItem[]>([]);
+const isLoadingTeachers = ref(false);
 
 // 对话管理
 const conversations = ref<Conversation[]>([]);
@@ -388,6 +407,25 @@ const currentMessages = computed(() => {
 
 const hasLocalConversations = computed(() => {
   return conversations.value.some(conv => !conv.isFromBackend);
+});
+
+// 排序后的对话列表：本地对话优先，然后是云端对话，各自按时间倒序
+const sortedConversations = computed(() => {
+  const localConversations = conversations.value.filter(conv => !conv.isFromBackend);
+  const backendConversations = conversations.value.filter(conv => conv.isFromBackend);
+  
+  // 本地对话按时间倒序排列
+  const sortedLocal = localConversations.sort((a, b) => 
+    new Date(b.lastTime).getTime() - new Date(a.lastTime).getTime()
+  );
+  
+  // 云端对话按时间倒序排列
+  const sortedBackend = backendConversations.sort((a, b) => 
+    new Date(b.lastTime).getTime() - new Date(a.lastTime).getTime()
+  );
+  
+  // 本地对话在前，云端对话在后
+  return [...sortedLocal, ...sortedBackend];
 });
 
 // 方法
@@ -489,11 +527,8 @@ const loadAndMergeBackendHistory = async () => {
         return !hasMatchInBackend;
       });
       
-      // 合并去重后的对话并按时间倒序排列（最新的在上面）
-      const allConversations = [...localConversations, ...backendConversations];
-      conversations.value = allConversations.sort((a, b) => 
-        new Date(b.lastTime).getTime() - new Date(a.lastTime).getTime()
-      );
+      // 合并去重后的对话，但不在这里排序，排序交给计算属性处理
+      conversations.value = [...localConversations, ...backendConversations];
       
       console.log(`成功加载 ${backendConversations.length} 个后端对话，去重后保留 ${localConversations.length} 条本地对话，总共 ${conversations.value.length} 条对话`);
     }
@@ -515,6 +550,54 @@ const getSubjectName = (subject: string): string => {
     'other': '其他'
   };
   return subjectNames[subject] || subject;
+};
+
+// 获取当前转交问题的学科
+const getCurrentQuestionSubject = (): string => {
+  // 如果有转交的questionId，从消息中查找对应的学科
+  if (transferringQuestionId.value) {
+    const conv = conversations.value.find(c => 
+      c.messages.some(m => m.questionId === transferringQuestionId.value)
+    );
+    if (conv) {
+      const questionMessage = conv.messages.find(m => 
+        m.questionId === transferringQuestionId.value && m.type === 'user'
+      );
+      return questionMessage?.subject || conv.subject || currentSubject.value;
+    }
+  }
+  
+  // 如果没有questionId，尝试从当前对话获取学科
+  const currentConv = conversations.value.find(c => c.id === currentConversationId.value);
+  if (currentConv && currentConv.subject) {
+    return currentConv.subject;
+  }
+  
+  // 最后使用当前选择的学科
+  return currentSubject.value;
+};
+
+// 将后端学科代码映射为前端统一格式
+const normalizeSubject = (subject: string): string => {
+  const subjectMapping: Record<string, string> = {
+    '数学': 'math',
+    'math': 'math',
+    '物理': 'physics', 
+    'physics': 'physics',
+    '化学': 'chemistry',
+    'chemistry': 'chemistry',
+    'chem': 'chemistry',
+    '编程': 'programming',
+    'programming': 'programming',
+    'prog': 'programming',
+    '计算机': 'programming',
+    '计算机科学': 'programming',
+    '数据结构': 'programming',
+    '算法': 'programming',
+    '其他': 'other',
+    'other': 'other'
+  };
+  return subjectMapping[subject] || subject.toLowerCase();
 };
 
 // 实时同步功能：在成功发送消息后同步到云端
@@ -1018,44 +1101,103 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 // 转交老师相关方法
-const openTransferDialog = (questionId: string) => {
-  transferringQuestionId.value = questionId;
-  teacherUserId.value = '';
-  transferDialogVisible.value = true;
+// 获取可用的教师列表（按学科筛选）
+const loadAvailableTeachers = async () => {
+  if (isLoadingTeachers.value) return;
+  
+  isLoadingTeachers.value = true;
+  try {
+    const response = await getMyTeacher(currentUser.value.studentId);
+    
+    if (response.status === 'success') {
+      // 获取当前问题的学科
+      const currentQuestionSubject = getCurrentQuestionSubject();
+      console.log('当前问题学科:', currentQuestionSubject);
+      
+      // 筛选匹配学科的教师
+      if (currentQuestionSubject && currentQuestionSubject !== 'other') {
+        // 将前端学科代码转换为后端格式进行匹配
+        const normalizedSubject = normalizeSubject(currentQuestionSubject);
+        console.log('标准化学科代码:', normalizedSubject);
+        
+        // 筛选教师：匹配学科或相关学科
+        const matchingTeachers = response.teachers.filter(teacher => {
+          const teacherSubject = normalizeSubject(teacher.teacherSubject);
+          return teacherSubject === normalizedSubject || 
+                 teacher.teacherSubject === getSubjectName(normalizedSubject);
+        });
+        
+        availableTeachers.value = matchingTeachers;
+        
+        if (matchingTeachers.length === 0) {
+          ElMessage.warning(`暂无${getSubjectName(currentQuestionSubject)}学科的专业教师，请联系管理员添加相关教师`);
+        } else {
+          console.log(`找到 ${matchingTeachers.length} 位${getSubjectName(currentQuestionSubject)}学科教师`);
+        }
+      } else {
+        // 如果是"其他"学科，显示所有教师
+        availableTeachers.value = response.teachers || [];
+      }
+      
+      if (availableTeachers.value.length === 0) {
+        ElMessage.warning('暂无可转交的老师，请联系管理员');
+      }
+    } else {
+      ElMessage.error(response.message || '获取教师列表失败');
+      availableTeachers.value = [];
+    }
+  } catch (error: any) {
+    console.error('获取教师列表失败:', error);
+    ElMessage.error(error.message || '获取教师列表失败，请稍后重试');
+    availableTeachers.value = [];
+  } finally {
+    isLoadingTeachers.value = false;
+  }
 };
 
+// 打开转交对话框
+const openTransferDialog = (questionId: string) => {
+  transferringQuestionId.value = questionId;
+  transferDialogVisible.value = true;
+  teacherUserId.value = '';
+  
+  // 立即加载教师列表
+  loadAvailableTeachers();
+};
+
+// 关闭转交对话框
 const closeTransferDialog = () => {
   transferDialogVisible.value = false;
   transferringQuestionId.value = '';
   teacherUserId.value = '';
-  isTransferring.value = false;
+  availableTeachers.value = [];
 };
 
+// 确认转交给教师
 const confirmTransferToTeacher = async () => {
-  if (!teacherUserId.value.trim()) {
-    ElMessage.warning('请输入老师的用户ID');
+  if (!teacherUserId.value || !transferringQuestionId.value) {
+    ElMessage.error('请选择要转交的老师');
     return;
   }
-
-  if (!transferringQuestionId.value) {
-    ElMessage.error('未找到要转交的问题ID');
-    return;
-  }
-
-  isTransferring.value = true;
   
+  isTransferring.value = true;
   try {
-    const response = await transferQuestionToTeacher({
+    const result = await transferQuestionToTeacher({
       userId: currentUser.value.studentId,
       questionId: transferringQuestionId.value,
-      teacherId: teacherUserId.value.trim()
+      teacherId: teacherUserId.value
     });
-
-    if (response.code === 200) {
-      ElMessage.success('问题已成功转交给老师');
+    
+    if (result.code === 200) {
+      ElMessage.success('问题转交成功！教师将为您详细解答');
       closeTransferDialog();
+      
+      // 可选：重新加载历史记录以显示转交状态
+      loadAndMergeBackendHistory().catch(error => {
+        console.warn('重新加载历史失败:', error);
+      });
     } else {
-      ElMessage.error(response.message || '转交失败');
+      ElMessage.error(result.message || '问题转交失败');
     }
   } catch (error: any) {
     console.error('转交问题失败:', error);
@@ -2203,7 +2345,7 @@ watch(conversations, saveConversations, { deep: true });
 .chat-messages::-webkit-scrollbar-thumb,
 .conversation-history::-webkit-scrollbar-thumb {
   background: #c1c1c1;
-  border-radius: 2px;
+   border-radius: 2px;
 }
 
 .chat-messages::-webkit-scrollbar-thumb:hover,
