@@ -17,5 +17,8 @@ public interface QuizService {
     GetQuizStudentRepsonse getQuizStudent(String quizId) throws Exception;
     GetMyQuizResponse getMyQuiz(String userId,String quizId) throws Exception;
     Result gradeQuiz(String answerId,Integer score,String feedback) throws Exception;
+    Integer getMaxAnswerId();
+    Integer getMaxQuizId();
+    Result submitQuiz(String quizId, String userId, String answerContent) throws Exception;
 
 }

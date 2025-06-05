@@ -65,9 +65,9 @@ public class QuizServiceImpl implements QuizService {
 
         List<GetStudentQuizResponse.quizDetail> Quizzes = quizzes.stream()
                 .map(quiz -> {
-                    QuizAnswer quizAnswerForQuiz = quizAnswerRepository.findByStudentIdAndQuizId(userId, quiz.getQuiz_id());
+                    QuizAnswer quizAnswerForQuiz = quizAnswerRepository.findByStudentIdAndQuizId(userId, quiz.getQuiz_id().toString());
                     return new GetStudentQuizResponse.quizDetail(
-                            quiz.getQuiz_id(),
+                            quiz.getQuiz_id().toString(),
                             quiz.getTitle(),
                             quiz.getSubject(),
                             quiz.getContentType(),
@@ -107,11 +107,11 @@ public class QuizServiceImpl implements QuizService {
         List<GetTeacherQuizResponse.quizDetail> Quizzes = quizzes.stream()
                 .map(quiz -> {
                     int studentNum= studentRepository.countByStudentClass(quiz.getClass1(),quiz.getClass2());
-                    int submitNum = quizAnswerRepository.countByQuizId(quiz.getQuiz_id());
+                    int submitNum = quizAnswerRepository.countByQuizId(quiz.getQuiz_id().toString());
                     int unSubmitNum = studentNum - submitNum;
-                    int gradedNum = quizAnswerRepository.countByQuizIdAndIsGraded(quiz.getQuiz_id(), 1);
+                    int gradedNum = quizAnswerRepository.countByQuizIdAndIsGraded(quiz.getQuiz_id().toString(), 1);
                     return new GetTeacherQuizResponse.quizDetail(
-                            quiz.getQuiz_id(),
+                            quiz.getQuiz_id().toString(),
                             quiz.getTitle(),
                             quiz.getSubject(),
                             quiz.getContentType(),
@@ -233,7 +233,7 @@ public class QuizServiceImpl implements QuizService {
                                 status, // status based on isGraded
                                 answer.getScore(), // score
                                 answer.getSubmitTime() == null ? null : answer.getSubmitTime().toString(), // answerTime
-                                answer.getAnswerId(), // answerId
+                                answer.getAnswerId().toString(), // answerId
                                 answer.getAnswerContent() // answerContent
                         );
                     }
@@ -263,11 +263,11 @@ public class QuizServiceImpl implements QuizService {
         }
         QuizAnswer quizAnswer = quizAnswerRepository.findByStudentIdAndQuizId(userId, quizId);
         if (quizAnswer == null) {
-            return new GetMyQuizResponse("error","Quiz Answer not found",quiz.getQuiz_id(),quiz.getTitle(), quiz.getSubject(), quiz.getDifficulty(), quiz.getCreateTime(),quiz.getDeadline(),quiz.getTeacherName(),quiz.getTeacherId(),0,null,null,null);
+            return new GetMyQuizResponse("error","Quiz Answer not found",quiz.getQuiz_id().toString(),quiz.getTitle(), quiz.getSubject(), quiz.getDifficulty(), quiz.getCreateTime(),quiz.getDeadline(),quiz.getTeacherName(),quiz.getTeacherId(),0,null,null,null);
         }
         return new GetMyQuizResponse("success","Get Your Quiz", quizId, quiz.getTitle(), quiz.getSubject(),
                 quiz.getDifficulty(), quiz.getCreateTime(), quiz.getDeadline(), quiz.getTeacherName(),
-                quiz.getTeacherId(), quizAnswer.getIsGraded()==0?1:2, quizAnswer.getScore(),quizAnswer.getFeedback(), quizAnswer.getAnswerId());
+                quiz.getTeacherId(), quizAnswer.getIsGraded()==0?1:2, quizAnswer.getScore(),quizAnswer.getFeedback(), quizAnswer.getAnswerId().toString());
     }
 
     @Override
@@ -290,6 +290,49 @@ public class QuizServiceImpl implements QuizService {
         return new Result(true,"Quiz graded successfully",quizAnswer);
     }
 
+    @Override
+    public  Integer getMaxAnswerId(){
+        return quizAnswerRepository.findMaxResourceId();
+    }
 
+    @Override
+    public Integer getMaxQuizId(){
+        return quizRepository.findMaxQuizId();
+    }
+
+    @Override
+    public Result submitQuiz(String quizId, String userId, String answerContent) throws Exception{
+        // 检查测验是否存在
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new Exception("Quiz not found with id: " + quizId));
+
+        if(quiz == null) {
+            return new Result(false,"Quiz not found",null);
+        }
+
+        // 检查学生是否存在
+        Student student = studentRepository.findByStudentId(userId);
+        if(student == null) {
+            return new Result(false,"Student not found",null);
+        }
+
+        // 创建或更新测验答案
+        QuizAnswer quizAnswer = quizAnswerRepository.findByStudentIdAndQuizId(userId, quizId);
+        if (quizAnswer == null) {
+            quizAnswer = new QuizAnswer();
+            quizAnswer.setQuizId(Integer.parseInt(quizId));
+            quizAnswer.setStudentId(userId);
+            quizAnswer.setSubmitTime(new Date());
+        }
+
+        quizAnswer.setAnswerContent(answerContent);
+        quizAnswer.setIsGraded(0); // 设置为未批改
+        quizAnswer.setSubmitTime(new Date());
+
+        // 保存测验答案到数据库
+        quizAnswerRepository.save(quizAnswer);
+
+        return new Result(true,"Quiz submitted successfully",quizAnswer);
+    }
 
 }

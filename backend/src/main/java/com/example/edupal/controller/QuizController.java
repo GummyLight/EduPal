@@ -39,22 +39,31 @@ public class QuizController {
         }
     }
 
-//    @GetMapping("/submitQuiz")
-//    public ResponseEntity<?> submitQuiz(@RequestParam("quizId") String quizId,
-//                                                @RequestParam("userId") String userId,
-//                                                @RequestParam("answerContent") String answerContent) {
-//        // 调用QuizService提交测验
-//        try {
-//            Result result = quizService.submitQuiz(quizId, userId, answerContent);
-//            if (result.isSuccess()) {
-//                return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
-//            } else {
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(400, result.getMessage()));
-//            }
-//        } catch (Exception e) {
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
-//        }
-//    }
+    @GetMapping("/max-answer-id")
+    public ResponseEntity<?> getMaxResourceId() {
+        Integer maxId = quizService.getMaxAnswerId();
+        if (maxId == null) {
+            maxId = 0;  // 表为空时默认0
+        }
+        return ResponseEntity.ok(new ApiResponse<>(200, "最大 resource_id 获取成功", maxId));
+    }
+
+    @GetMapping("/submitQuiz")
+    public ResponseEntity<?> submitQuiz(@RequestParam("quizId") String quizId,
+                                                @RequestParam("userId") String userId,
+                                                @RequestParam("answerContent") String answerContent) {
+        // 调用QuizService提交测验
+        try {
+            Result result = quizService.submitQuiz(quizId, userId, answerContent);
+            if (result.isSuccess()) {
+                return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(400, result.getMessage()));
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
+        }
+    }
 
     @GetMapping("/getMyQuiz")
     public GetMyQuizResponse getMyQuiz(@RequestParam("userId") String userId,
@@ -85,6 +94,15 @@ public class QuizController {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
         }
+    }
+
+    @GetMapping("/max-quiz-id")
+    public ResponseEntity<?> getMaxQuizId() {
+        Integer maxId = quizService.getMaxQuizId();
+        if (maxId == null) {
+            maxId = 0;  // 表为空时默认0
+        }
+        return ResponseEntity.ok(new ApiResponse<>(200, "最大 quiz_id 获取成功", maxId));
     }
 
     @PostMapping("/createQuiz")

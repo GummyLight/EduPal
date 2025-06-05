@@ -12,11 +12,12 @@ import java.util.Date;
 @Table(name = "quiz_answer")
 public class QuizAnswer {
     @Id
-    @Column(name = "answer_id", length = 36)
-    private String answerId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "answer_id")
+    private Integer answerId;
 
-    @Column(name = "quiz_id", length = 255)
-    private String quizId;
+    @Column(name = "quiz_id")
+    private Integer quizId;
 
     @Column(name = "student_id", length = 255)
     private String studentId;
