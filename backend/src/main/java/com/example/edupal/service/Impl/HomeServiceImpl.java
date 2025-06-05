@@ -3,15 +3,14 @@ package com.example.edupal.service.Impl;
 import com.example.edupal.dto.response.HomeAdminResponse;
 import com.example.edupal.dto.response.HomeStudentResponse;
 import com.example.edupal.dto.response.HomeTeacherResponse;
-import com.example.edupal.model.LearningProgress;
-import com.example.edupal.model.Question;
-import com.example.edupal.model.Student;
+import com.example.edupal.model.*;
 import com.example.edupal.repository.*;
 import com.example.edupal.service.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -39,6 +38,9 @@ public class HomeServiceImpl implements HomeService {
 
     @Autowired
     QuizRepository quizRepository;
+
+    @Autowired
+    TeacherAnswerRepository teacherAnswerRepository;
 
     @Override
     public HomeStudentResponse getStudentHomeData(String userId, Integer userType) {
@@ -122,10 +124,10 @@ public class HomeServiceImpl implements HomeService {
                     teacher.getTeacherName(),
                     "2",
                     teacher.getTeacherId(),
-                    3,
-                    0, // Placeholder for uploadExercises
-                    0, // Placeholder for uploadResources
-                    Arrays.asList("Class 1", "Class 2"), // Example class IDs
+                    teacherGetUnfinishedQA(userId), // Unfinished Q&A count
+                    quizRepository.countByTeacherId(userId), // Placeholder for uploadExercises
+                    resourceRepository.countByTeacherId(userId), // Placeholder for uploadResources
+                    teacherRepository.findClassesByTeacherId(userId), // Example class IDs
                     Arrays.asList(
                             new HomeTeacherResponse.StudentDetails("S1", "Student 1", 85.5, 2.3),
                             new HomeTeacherResponse.StudentDetails("S2", "Student 2", 90.0, 1.8)
@@ -196,6 +198,16 @@ public class HomeServiceImpl implements HomeService {
         );
     }
 
+    private int teacherGetUnfinishedQA(String teacherId) {
+        List<TeacherAnswer> teacherAnswer = teacherAnswerRepository.findByTeacherId(teacherId);
+        int unfinishedCount = 0;
+        for (TeacherAnswer answer : teacherAnswer) {
+            if (answer.getAnswerId()==null) {
+                unfinishedCount++;
+            }
+        }
+        return unfinishedCount;
+    }
 
 
 }

@@ -15,6 +15,9 @@ public interface QuizRepository extends JpaRepository<Quiz, String> {
 
     List<Quiz> findByTeacherId(String teacherId);
 
+    @Query("SELECT COUNT(q) FROM Quiz q WHERE q.teacherId = :teacherId")
+    int countByTeacherId(String teacherId);
+
     @Query("SELECT MAX(q.quiz_id)+1 FROM Quiz q")
     Integer findMaxQuizId();
 

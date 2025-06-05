@@ -19,4 +19,7 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
 
     @Query("SELECT COUNT(r) FROM Resource r")
     int countResource();
+
+    @Query("SELECT COUNT(r) FROM Resource r WHERE r.teacher_id = :userId")
+    int countByTeacherId(String userId);
 }
