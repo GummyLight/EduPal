@@ -75,6 +75,8 @@ import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage, ElNotification } from 'element-plus';
 import JSZip from 'jszip'; // 引入 JSZip 库用于文件打包下载
+import axios from 'axios';
+const API_BASE = 'http://localhost:8080';
 
 const route = useRoute();
 const router = useRouter();
@@ -93,61 +95,35 @@ onMounted(() => {
  * @param {string} classId - 班级ID (如果教师筛选了班级)
  */
 async function fetchStudentSubmissions() {
-  console.log(`fetching student submissions for exercise ${exerciseId}`);
-  // 实际：调用后端API获取学生提交列表，包含学生姓名、提交时间、提交文件路径、分数等
-  // try {
-  //   const response = await axios.get(`/api/exercises/${exerciseId}/submissions`, {
-  //     params: { classId: route.query.classId } // 如果有班级筛选
-  //   });
-  //   studentSubmissions.value = response.data.map(item => ({ ...item, isScoring: false })); // 添加评分状态
-  // } catch (error) {
-  //   ElMessage.error('获取学生提交列表失败');
-  //   console.error('Error fetching submissions:', error);
-  // }
-
-  // 模拟数据
-  studentSubmissions.value = [
-    {
-      submissionId: 'sub001',
-      studentId: 'S2023001',
-      studentName: '王小明',
-      submissionTime: '2025-05-28 14:30:00',
-      submissionFilePath: `/files/submissions/${exerciseId}_S2023001.pdf`,
-      score: null,
-      comment: '', // 添加教师评语字段
-      isScoring: false,
-    },
-    {
-      submissionId: 'sub002',
-      studentId: 'S2023002',
-      studentName: '李华',
-      submissionTime: '2025-05-28 15:00:00',
-      submissionFilePath: `/files/submissions/${exerciseId}_S2023002.docx`,
-      score: 88,
-      comment: '非常好，继续保持！', // 示例评语
-      isScoring: false,
-    },
-    {
-      submissionId: 'sub003',
-      studentId: 'S2023003',
-      studentName: '张丽',
-      submissionTime: '2025-05-29 09:00:00',
-      submissionFilePath: null,
-      score: null,
-      comment: '', // 添加教师评语字段
-      isScoring: false,
-    },
-    {
-      submissionId: 'sub004',
-      studentId: 'S2023004',
-      studentName: '赵强',
-      submissionTime: '2025-05-29 10:00:00',
-      submissionFilePath: `/files/submissions/${exerciseId}_S2023004.zip`,
-      score: null,
-      comment: '', // 添加教师评语字段
-      isScoring: false,
-    },
-  ];
+  try {
+    const response = await axios.get(`${API_BASE}/quiz/getQuizStudent`, {
+      params: { quizId: exerciseId },
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    if (response.data.status === 'success') {
+      studentSubmissions.value = response.data.answers.map((item: any) => ({
+        submissionId: item.answerId,
+        studentId: item.studentId,
+        studentName: item.userName, // 映射到后端的 userName
+        submissionTime: item.answerTime || null, // 映射到后端的 answerTime
+        submissionFilePath: item.answerContent || null, // 假设 answerContent 是文件路径
+        score: item.score || null,
+        comment: item.feedback || '', // 后端未提供 feedback，设为空字符串
+        isScoring: false,
+      }));
+      ElMessage.success('学生提交列表加载成功');
+    } else {
+      ElMessage.error(`获取学生提交列表失败：${response.data.message}`);
+    }
+  } catch (error: any) {
+    if (error.response?.status === 403) {
+      ElMessage.error('无权限访问该作业');
+      router.push('/login');
+    } else {
+      ElMessage.error(`请求失败：${error.response?.data?.message || '请稍后重试'}`);
+    }
+    console.error('Error fetching submissions:', error);
+  }
 }
 
 /**
@@ -261,27 +237,44 @@ async function submitScore(submission: any) {
     ElMessage.warning('请输入分数！');
     return;
   }
-  submission.isScoring = true; // 设置加载状态
-  console.log(`Submitting score ${submission.score} for submission ${submission.submissionId}`);
-  // 实际：调用后端API更新学生提交表的分数
-  // try {
-  //   await axios.post(`/api/submissions/${submission.submissionId}/score`, { score: submission.score });
-  //   ElMessage.success(`${submission.studentName} 的分数提交成功！`);
-  //   submission.isScoring = false;
-  //   fetchStudentSubmissions(); // 重新获取数据以更新状态
-  // } catch (error) {
-  //   ElMessage.error('提交分数失败，请重试！');
-  //   console.error('Error submitting score:', error);
-  //   submission.isScoring = false;
-  // }
-
-  // 模拟成功
-  setTimeout(() => {
-    ElMessage.success(`${submission.studentName} 的分数提交成功！`);
+  if (!Number.isInteger(submission.score) || submission.score < 0 || submission.score > 100) {
+    ElMessage.warning('分数必须为 0-100 之间的整数！');
+    return;
+  }
+  if (submission.comment && submission.comment.length > 500) {
+    ElMessage.warning('评语不能超过500字！');
+    return;
+  }
+  submission.isScoring = true;
+  try {
+    const response = await axios.post(`${API_BASE}/quiz/gradeQuiz`, null, {
+      params: {
+        answerId: submission.submissionId,
+        score: submission.score,
+        feedback: submission.comment || '',
+      },
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    if (response.data.code === 200) {
+      ElMessage.success(`${submission.studentName} 的分数提交成功！`);
+      const index = studentSubmissions.value.findIndex(s => s.submissionId === submission.submissionId);
+      if (index !== -1) {
+        studentSubmissions.value[index] = {
+          ...studentSubmissions.value[index],
+          score: submission.score,
+          comment: submission.comment || '',
+          isScoring: false,
+        };
+      }
+    } else {
+      ElMessage.error(`提交分数失败：${response.data.message}`);
+    }
+  } catch (error: any) {
+    ElMessage.error(`提交分数失败：${error.response?.data?.message || '请重试'}`);
+    console.error('Error submitting score:', error);
+  } finally {
     submission.isScoring = false;
-    submission.score = submission.score; // 确保数据模型更新
-    fetchStudentSubmissions(); // 重新加载以更新表格状态，例如 '已批改'
-  }, 1000);
+  }
 }
 </script>
 
