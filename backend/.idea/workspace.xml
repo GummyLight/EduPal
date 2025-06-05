@@ -4,9 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="test(Post):对于Post类进行基于状态的单元测试，均通过">
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/model/PostCollectionTest.java" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="test(Resource):对于Resource类进行基于状态的单元测试，均通过">
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/request/CreateQuizRequestTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/request/LoginRequestTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/request/ModifyQuizRequestTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/request/PostRequestTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/PostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/EmailCodeRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/PostForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/PostRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/ReplyForm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/ReplyRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/Speech.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/PostServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/PostServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/PostService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,10 +78,14 @@
     "JUnit.AuthServiceImplTest.testLoginUserByUserId_Success.executor": "Run",
     "JUnit.AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired.executor": "Run",
     "JUnit.AuthServiceImplTest.testUpdateStudentClass_Success.executor": "Run",
+    "JUnit.CreateQuizRequestTest.executor": "Run",
+    "JUnit.LoginRequestTest.executor": "Run",
+    "JUnit.ModifyQuizRequestTest.executor": "Run",
     "JUnit.PostTest.executor": "Run",
     "JUnit.QuestionTest.executor": "Run",
     "JUnit.QuizAnswerTest.executor": "Run",
     "JUnit.QuizTest.executor": "Run",
+    "JUnit.ReplyTest.executor": "Run",
     "JUnit.SecurityConfigTest.executor": "Run",
     "JUnit.StudentTest.executor": "Run",
     "JUnit.TeacherAnswerTest.executor": "Run",
@@ -263,47 +280,7 @@
       <workItem from="1748912407224" duration="5164000" />
       <workItem from="1748996265826" duration="7578000" />
       <workItem from="1749122271298" duration="914000" />
-      <workItem from="1749129153024" duration="5078000" />
-    </task>
-    <task id="LOCAL-00031" summary="fix(ai/delete):修复了先删除问题对象可能会导致的空指针问题">
-      <option name="closed" value="true" />
-      <created>1748680845387</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1748680845387</updated>
-    </task>
-    <task id="LOCAL-00032" summary="feat(ai/transTeacher):增加了问题转交的功能">
-      <option name="closed" value="true" />
-      <created>1748744618046</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1748744618046</updated>
-    </task>
-    <task id="LOCAL-00033" summary="fix(ai/transTeacher):修改了teacher_answer表的变量名格式">
-      <option name="closed" value="true" />
-      <created>1748746349016</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1748746349016</updated>
-    </task>
-    <task id="LOCAL-00034" summary="fix(ai/transTeacher):修复了报错信息与成功信息格式不匹配的问题">
-      <option name="closed" value="true" />
-      <created>1748746453614</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1748746453614</updated>
-    </task>
-    <task id="LOCAL-00035" summary="feat(ai/teacherView):增加了教师查看学生问题转交情况的功能">
-      <option name="closed" value="true" />
-      <created>1748754973854</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1748754973854</updated>
+      <workItem from="1749129153024" duration="6272000" />
     </task>
     <task id="LOCAL-00036" summary="fix(url):修复了资源和作业模块的url错误">
       <option name="closed" value="true" />
@@ -657,7 +634,47 @@
       <option name="project" value="LOCAL" />
       <updated>1749133960302</updated>
     </task>
-    <option name="localTasksCounter" value="80" />
+    <task id="LOCAL-00080" summary="test(PostCollection):对于PostCollection类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749134772466</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1749134772466</updated>
+    </task>
+    <task id="LOCAL-00081" summary="test(Reply):对于Reply类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749134826104</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1749134826104</updated>
+    </task>
+    <task id="LOCAL-00082" summary="style(Resource):对于Resource的实体类变量做了驼峰命名法的统一">
+      <option name="closed" value="true" />
+      <created>1749135251932</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1749135251932</updated>
+    </task>
+    <task id="LOCAL-00083" summary="style(Quiz):对于Quiz的实体类变量做了驼峰命名法的统一">
+      <option name="closed" value="true" />
+      <created>1749135306232</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1749135306232</updated>
+    </task>
+    <task id="LOCAL-00084" summary="test(Resource):对于Resource类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749135323258</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1749135323259</updated>
+    </task>
+    <option name="localTasksCounter" value="85" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -690,11 +707,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix(ListTeacherResponse):修改Class为teacherClass" />
-    <MESSAGE value="feat(quiz):新增quiz类和quizAnswer类" />
-    <MESSAGE value="feat(repository):增加了student DAO层用来查询班级学生的数量和list的功能" />
-    <MESSAGE value="feat(quiz):新增学生查看详细作业情况的功能" />
-    <MESSAGE value="feat(quiz):新增老师给学生打分的功能" />
     <MESSAGE value="feat(quiz):新增get自增ID（answer和quiz），新增学生提交作业" />
     <MESSAGE value="fix(quiz):根据自增编码的类型做了调整" />
     <MESSAGE value="feat(quiz):quiz全部功能测试结束，成功，修改部分细节" />
@@ -715,7 +727,12 @@
     <MESSAGE value="test(Question):对于Question类进行基于状态的单元测试，均通过" />
     <MESSAGE value="test(Answer):对于Answer类进行基于状态的单元测试，均通过" />
     <MESSAGE value="test(Post):对于Post类进行基于状态的单元测试，均通过" />
-    <option name="LAST_COMMIT_MESSAGE" value="test(Post):对于Post类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(PostCollection):对于PostCollection类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(Reply):对于Reply类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="style(Resource):对于Resource的实体类变量做了驼峰命名法的统一" />
+    <MESSAGE value="style(Quiz):对于Quiz的实体类变量做了驼峰命名法的统一" />
+    <MESSAGE value="test(Resource):对于Resource类进行基于状态的单元测试，均通过" />
+    <option name="LAST_COMMIT_MESSAGE" value="test(Resource):对于Resource类进行基于状态的单元测试，均通过" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -927,17 +944,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
-          <line>74</line>
+          <line>72</line>
           <option name="timeStamp" value="120" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
-          <line>82</line>
+          <line>80</line>
           <option name="timeStamp" value="121" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
-          <line>84</line>
+          <line>82</line>
           <option name="timeStamp" value="122" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -947,7 +964,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/AuthController.java</url>
-          <line>80</line>
+          <line>78</line>
           <option name="timeStamp" value="124" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">

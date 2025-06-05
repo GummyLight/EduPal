@@ -1,7 +1,7 @@
 package com.example.edupal.controller;
 
-import com.example.edupal.dto.request.PostForm;
-import com.example.edupal.dto.request.ReplyForm;
+import com.example.edupal.dto.request.PostRequest;
+import com.example.edupal.dto.request.ReplyRequest;
 import com.example.edupal.dto.response.PostDTO;
 import com.example.edupal.dto.response.ReplyDTO;
 import com.example.edupal.service.PostService;
@@ -34,7 +34,7 @@ public class PostController {
 
     // 3. 创建帖子 POST /community/posts
     @PostMapping("/posts")
-    public PostDTO createPost(@RequestBody PostForm form) {
+    public PostDTO createPost(@RequestBody PostRequest form) {
         return postService.createPost(form);
     }
 
@@ -61,7 +61,7 @@ public class PostController {
 
     // 5. 创建回复 POST /community/posts/{postId}/replies
     @PostMapping("/posts/{postId}/replies")
-    public ReplyDTO createReply(@PathVariable String postId, @RequestBody ReplyForm form) {
+    public ReplyDTO createReply(@PathVariable String postId, @RequestBody ReplyRequest form) {
         return postService.createReply(postId, form);
     }
 

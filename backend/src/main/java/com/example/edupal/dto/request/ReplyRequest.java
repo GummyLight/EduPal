@@ -3,10 +3,8 @@ package com.example.edupal.dto.request;
 import lombok.Data;
 
 @Data
-public class PostForm {
-    private String authorId;
-    private String title;
+public class ReplyRequest {
     private String content;
+    private String authorId;
     private String attachedFileUrl;
-
 }

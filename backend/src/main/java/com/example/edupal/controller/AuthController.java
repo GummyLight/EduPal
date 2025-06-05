@@ -1,10 +1,8 @@
 package com.example.edupal.controller;
 
 import com.example.edupal.dto.request.LoginRequest;
-import com.example.edupal.dto.request.RegisterRequest;
 import com.example.edupal.dto.response.LoginResponse;
 import com.example.edupal.dto.request.ResetPasswordRequest;
-import com.example.edupal.dto.request.EmailCodeRequest;
 import com.example.edupal.service.AuthService;
 import com.example.edupal.common.ApiResponse;
 import com.example.edupal.common.Result;
@@ -57,12 +55,12 @@ public class AuthController {
     }
 
     @PostMapping("/send-code")
-    public ResponseEntity<?> sendCode(@RequestBody EmailCodeRequest emailCodeRequest) throws MessagingException {
-        if (emailCodeRequest.getEmail() == null || emailCodeRequest.getEmail().isEmpty()) {
+    public ResponseEntity<?> sendCode(@RequestParam("email") String email) throws MessagingException {
+        if (email.isEmpty()) {
             return ResponseEntity.badRequest().body(new ApiResponse<>(400, "Email is required"));
         }
 
-        Result result = authService.sendVerificationCode(emailCodeRequest.getEmail());
+        Result result = authService.sendVerificationCode(email);
         if (result.isSuccess()) {
             return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
         } else {
