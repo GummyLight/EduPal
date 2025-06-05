@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import CourseForm from '../components/CourseForm.vue';
-import CommunityForm from "@/components/CommunityForm.vue";
+//import CommunityForm from "@/components/CommunityForm.vue";
 
 import { defineProps } from 'vue'; // 确保导入 defineProps
 

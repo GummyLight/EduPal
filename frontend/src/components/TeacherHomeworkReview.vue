@@ -14,7 +14,9 @@
 
         <el-table :data="studentSubmissions" border style="width: 100%">
           <el-table-column type="index" label="序号" width="60" />
-          <el-table-column prop="studentName" label="学生姓名" /> <el-table-column prop="studentId" label="学号" /> <el-table-column prop="submissionTime" label="提交时间" />
+          <el-table-column prop="studentName" label="学生姓名" />
+          <el-table-column prop="studentId" label="学号" />
+          <el-table-column prop="submissionTime" label="提交时间" />
           <el-table-column prop="submissionStatus" label="提交状态">
             <template #default="scope">
               <el-tag :type="scope.row.score !== null ? 'success' : (scope.row.submissionFilePath ? 'info' : 'danger')">
@@ -37,10 +39,24 @@
                   controls-position="right"
                   :disabled="scope.row.isScoring"
               />
+            </template>
+          </el-table-column>
+          <el-table-column label="教师评语" width="250">
+            <template #default="scope">
+              <el-input
+                  v-model="scope.row.comment"
+                  placeholder="请输入评语"
+                  type="textarea"
+                  :autosize="{ minRows: 2, maxRows: 4 }"
+                  :disabled="scope.row.isScoring"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="150">
+            <template #default="scope">
               <el-button
                   type="primary"
-                  size="small"
-                  style="margin-left: 10px;"
+                  size="huge"
                   @click="submitScore(scope.row)"
                   :loading="scope.row.isScoring"
               >
@@ -94,10 +110,11 @@ async function fetchStudentSubmissions() {
     {
       submissionId: 'sub001',
       studentId: 'S2023001',
-      studentName: '王小明', // 模拟关联学生表获取
+      studentName: '王小明',
       submissionTime: '2025-05-28 14:30:00',
       submissionFilePath: `/files/submissions/${exerciseId}_S2023001.pdf`,
-      score: null, // null 表示未批改
+      score: null,
+      comment: '', // 添加教师评语字段
       isScoring: false,
     },
     {
@@ -106,7 +123,8 @@ async function fetchStudentSubmissions() {
       studentName: '李华',
       submissionTime: '2025-05-28 15:00:00',
       submissionFilePath: `/files/submissions/${exerciseId}_S2023002.docx`,
-      score: 88, // 已批改
+      score: 88,
+      comment: '非常好，继续保持！', // 示例评语
       isScoring: false,
     },
     {
@@ -114,8 +132,9 @@ async function fetchStudentSubmissions() {
       studentId: 'S2023003',
       studentName: '张丽',
       submissionTime: '2025-05-29 09:00:00',
-      submissionFilePath: null, // 未提交文件
+      submissionFilePath: null,
       score: null,
+      comment: '', // 添加教师评语字段
       isScoring: false,
     },
     {
@@ -125,6 +144,7 @@ async function fetchStudentSubmissions() {
       submissionTime: '2025-05-29 10:00:00',
       submissionFilePath: `/files/submissions/${exerciseId}_S2023004.zip`,
       score: null,
+      comment: '', // 添加教师评语字段
       isScoring: false,
     },
   ];

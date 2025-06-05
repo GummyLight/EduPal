@@ -28,7 +28,25 @@ const routes = [
     component: Home,
     children: [
       { path: '', component: HomeForm }, // 默认子页面 /home
-      { path: 'course', component: Course },
+      //{ path: 'course', component: Course },
+      {
+        path:'course', // 这是 /home/materials 路由
+        component: Course, // Materials.vue 是一个容器，它内部直接引入了 MaterialsForm
+        // 关键修改：将 upload 路由作为 materials 的子路由
+        children: [
+          {
+            path: '', // 默认子路由，当访问 /home/materials 时，会渲染 MaterialsForm
+            name: 'CourseList', // 给资料列表页一个名字
+            component: () => import('../components/CourseForm.vue') // 注意：这里直接指向 MaterialsForm
+          },
+          {
+            path: 'upload', // 这将匹配 /home/materials/upload
+            name: 'MaterialUpload',
+            component: MaterialUpload,
+            meta: { requiresAuth: true, roles: ['teacher'] }
+          }
+        ]
+      },
       { path: 'community', component: Community },
       {
         path:'materials', // 这是 /home/materials 路由

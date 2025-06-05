@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -53,32 +54,26 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostDTO createPost(PostForm form) {
-        String userId = getCurrentUserId();
-        User author = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("用户不存在"));
-
+        User author = userRepository.findById(form.getAuthorId())
+                .orElseThrow(() -> new RuntimeException("用户不存在，ID: " + form.getAuthorId()));
         Post post = new Post();
         post.setId(UUID.randomUUID().toString());
         post.setTitle(form.getTitle());
         post.setContent(form.getContent());
-        post.setAuthorId(userId);
+        post.setAuthorId(form.getAuthorId());
         post.setAuthorName(author.getUserName());
         post.setPublishTime(LocalDateTime.now());
         post.setAttachedFileUrl(form.getAttachedFileUrl()); // 直接设置URL
 
-        return convertToPostDTO(postRepository.save(post), userId);
+        return convertToPostDTO(postRepository.save(post), form.getAuthorId());
     }
 
     @Override
     @Transactional
     public void deletePost(String postId) {
-        String userId = getCurrentUserId();
+        // 获取当前登录用户（真实ID）
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        if (!post.getAuthorId().equals(userId)) {
-            throw new RuntimeException("Only author can delete the post");
-        }
+                .orElseThrow(() -> new RuntimeException("帖子不存在"));
 
         postRepository.delete(post);
     }
@@ -86,17 +81,17 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public ReplyDTO createReply(String postId, ReplyForm form) {
-        String userId = getCurrentUserId();
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        User author = userRepository.findById(userId)
+        User author = userRepository.findById(form.getAuthorId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Reply reply = new Reply();
         reply.setId(UUID.randomUUID().toString());
         reply.setPostId(postId);
-        reply.setAuthorId(userId);
+        reply.setAuthorId(form.getAuthorId());
         reply.setAuthorName(author.getUserName());
         reply.setContent(form.getContent());
         reply.setPublishTime(LocalDateTime.now());
@@ -108,21 +103,15 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void deleteReply(String replyId) {
-        String userId = getCurrentUserId();
         Reply reply = replyRepository.findById(replyId)
                 .orElseThrow(() -> new RuntimeException("Reply not found"));
-
-        if (!reply.getAuthorId().equals(userId)) {
-            throw new RuntimeException("Only author can delete the reply");
-        }
 
         replyRepository.delete(reply);
     }
 
     @Override
     @Transactional
-    public void toggleCollect(String postId, boolean collect) {
-        String userId = getCurrentUserId();
+    public void toggleCollect(String postId, boolean collect,String userId) {
         if (collect) {
             if (!postCollectionRepository.existsByUserIdAndPostId(userId, postId)) {
                 PostCollection collection = new PostCollection();
@@ -133,6 +122,23 @@ public class PostServiceImpl implements PostService {
         } else {
             postCollectionRepository.deleteByUserIdAndPostId(userId, postId);
         }
+    }
+    @Override
+    public List<PostDTO> getCollectedPosts(String userId) {
+        // 查询用户收藏的帖子ID列表
+        List<String> collectedPostIds = postCollectionRepository.findPostIdsByUserId(userId);
+
+        if (collectedPostIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 根据帖子ID列表查询帖子详情
+        List<Post> posts = postRepository.findByIds(collectedPostIds);
+
+        // 转换为DTO并标记为已收藏
+        return posts.stream()
+                .map(post -> convertToPostDTO(post, userId))
+                .collect(Collectors.toList());
     }
 
     // 私有方法

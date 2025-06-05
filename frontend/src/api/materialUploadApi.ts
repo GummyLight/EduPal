@@ -97,4 +97,20 @@ export async function submitMaterialInfo(data: MaterialSubmitData): Promise<Mate
         ElMessage.error(errorMessage); // 统一错误提示
         throw error; // 继续抛出错误
     }
+
+
 }
+
+export const getMaxResourceId = async (): Promise<number> => {
+    try {
+        const response = await axios.get<ApiResponse<number>>('/resource/max-id');
+        if (response.data.code === 200) {
+            return response.data.data; // 返回最大 resource_id
+        } else {
+            throw new Error(response.data.message || '获取最大 resource_id 失败');
+        }
+    } catch (error) {
+        console.error('获取最大 resource_id 错误:', error);
+        throw error;
+    }
+};
