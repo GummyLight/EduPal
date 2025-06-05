@@ -4,15 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="test(Request):对于Request进行基于状态的单元测试，均通过">
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/request/QuestionRequestTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/request/RegisterRequestTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/request/ReplyRequestTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/request/ResetPasswordRequestTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/request/ResourceRequestTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/request/SubmitAnswerRequestTest.java" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="style(dto):统一dto命名">
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/AnswerResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/GetHistoryResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/GetMyQuizResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/GetMyTeacherResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/GetQuizStudentResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/GetStudentQuizResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/GetTeacherQuizResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/HistoryResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/HomeAdminResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/HomeStudentResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/HomeTeacherResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/ListStudentResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/ListTeacherResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/ListUserResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/LoginResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/PostResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/ReplyResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/ResourceResponseTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/ViewQuestionResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/TeachingContentRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/TeachingContentRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/PostResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/PostResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/ReplyResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/ReplyResponse.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,9 +86,21 @@
     "JUnit.AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired.executor": "Run",
     "JUnit.AuthServiceImplTest.testUpdateStudentClass_Success.executor": "Run",
     "JUnit.CreateQuizRequestTest.executor": "Run",
+    "JUnit.GetMyQuizResponseTest.executor": "Run",
+    "JUnit.GetMyTeacherResponseTest.executor": "Run",
+    "JUnit.GetQuizStudentResponseTest.executor": "Run",
+    "JUnit.GetStudentQuizResponseTest.executor": "Run",
+    "JUnit.HistoryResponseTest.executor": "Run",
+    "JUnit.HomeAdminResponseTest.executor": "Run",
+    "JUnit.HomeTeacherResponseTest.executor": "Run",
+    "JUnit.ListStudentResponseTest.executor": "Run",
+    "JUnit.ListTeacherResponseTest.executor": "Run",
+    "JUnit.ListUserResponseTest.executor": "Run",
     "JUnit.LoginRequestTest.executor": "Run",
+    "JUnit.LoginResponseTest.executor": "Run",
     "JUnit.ModifyQuizRequestTest.executor": "Run",
     "JUnit.PostRequestTest.executor": "Run",
+    "JUnit.PostResponseTest.executor": "Run",
     "JUnit.PostTest.executor": "Run",
     "JUnit.QuestionRequestTest.executor": "Run",
     "JUnit.QuestionTest.executor": "Run",
@@ -87,6 +113,7 @@
     "JUnit.ResourceRequestTest.executor": "Run",
     "JUnit.SecurityConfigTest.executor": "Run",
     "JUnit.StudentTest.executor": "Run",
+    "JUnit.SubmitAnswerRequestTest.executor": "Run",
     "JUnit.TeacherAnswerTest.executor": "Run",
     "JUnit.TeacherTest.executor": "Run",
     "JUnit.UserControllerTest.executor": "Run",
@@ -279,23 +306,7 @@
       <workItem from="1748912407224" duration="5164000" />
       <workItem from="1748996265826" duration="7578000" />
       <workItem from="1749122271298" duration="914000" />
-      <workItem from="1749129153024" duration="6637000" />
-    </task>
-    <task id="LOCAL-00037" summary="feat(ai/teacherAnswer):新增教师回答问题功能">
-      <option name="closed" value="true" />
-      <created>1748755864273</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1748755864273</updated>
-    </task>
-    <task id="LOCAL-00038" summary="feat(home/student):新增学生首页显示功能">
-      <option name="closed" value="true" />
-      <created>1748759702278</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1748759702278</updated>
+      <workItem from="1749129153024" duration="8110000" />
     </task>
     <task id="LOCAL-00039" summary="fix(ai/teacherView):修改请求类型为GET">
       <option name="closed" value="true" />
@@ -673,7 +684,23 @@
       <option name="project" value="LOCAL" />
       <updated>1749136005565</updated>
     </task>
-    <option name="localTasksCounter" value="86" />
+    <task id="LOCAL-00086" summary="test(Request):对于剩余Request进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749136334163</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1749136334163</updated>
+    </task>
+    <task id="LOCAL-00087" summary="style(dto):统一dto命名">
+      <option name="closed" value="true" />
+      <created>1749136424674</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1749136424674</updated>
+    </task>
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -706,8 +733,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix(quiz):根据自增编码的类型做了调整" />
-    <MESSAGE value="feat(quiz):quiz全部功能测试结束，成功，修改部分细节" />
     <MESSAGE value="feat(home/admin):新增管理员看板功能" />
     <MESSAGE value="feat(home/teacher):更新教师看板的一些统计函数" />
     <MESSAGE value="feat(?):commit一下这里突然出现的很多东西" />
@@ -731,7 +756,9 @@
     <MESSAGE value="style(Quiz):对于Quiz的实体类变量做了驼峰命名法的统一" />
     <MESSAGE value="test(Resource):对于Resource类进行基于状态的单元测试，均通过" />
     <MESSAGE value="test(Request):对于Request进行基于状态的单元测试，均通过" />
-    <option name="LAST_COMMIT_MESSAGE" value="test(Request):对于Request进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(Request):对于剩余Request进行基于状态的单元测试，均通过" />
+    <MESSAGE value="style(dto):统一dto命名" />
+    <option name="LAST_COMMIT_MESSAGE" value="style(dto):统一dto命名" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
