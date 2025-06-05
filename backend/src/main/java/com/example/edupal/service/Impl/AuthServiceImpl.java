@@ -79,14 +79,7 @@ public class AuthServiceImpl implements AuthService {
         if (!result.isSuccess()) {
             return result; // 如果注册用户失败，直接返回错误信息
         }
-        // 创建学生对象
-        Student student = new Student();
-        student.setStudentId(userId);
-        student.setStudentName(userName);
-        student.setStudentClass(studentClass);
-        student.setStudentGender(studentGender);
-        studentRepository.save(student);
-        //创建user
+                //创建user
         User user=new User();
         user.setUserId(userId);
         user.setUserName(userName);
@@ -95,6 +88,13 @@ public class AuthServiceImpl implements AuthService {
         user.setUserType(userType);
         user.setCreateTime(new Date());
         userRepository.save(user);
+        // 创建学生对象
+        Student student = new Student();
+        student.setStudentId(userId);
+        student.setStudentName(userName);
+        student.setStudentClass(studentClass);
+        student.setStudentGender(studentGender);
+        studentRepository.save(student);
 
 
         return new Result(true, "学生注册成功");
@@ -107,14 +107,7 @@ public class AuthServiceImpl implements AuthService {
         if (!result.isSuccess()) {
             return result; // 如果注册用户失败，直接返回错误信息
         }
-        // 创建教师对象
-        Teacher teacher = new Teacher();
-        teacher.setTeacherId(userId);
-        teacher.setTeacherName(userName);
-        teacher.setTeachingSubject(teachingSubject);
-        teacher.setClass1(teacherClass[0]);
-        teacher.setClass2(teacherClass[1]);
-        teacherRepository.save(teacher);
+
         //创建user
         User user=new User();
         user.setUserId(userId);
@@ -124,6 +117,14 @@ public class AuthServiceImpl implements AuthService {
         user.setUserType(userType);
         user.setCreateTime(new Date());
         userRepository.save(user);
+        // 创建教师对象
+        Teacher teacher = new Teacher();
+        teacher.setTeacherId(userId);
+        teacher.setTeacherName(userName);
+        teacher.setTeachingSubject(teachingSubject);
+        teacher.setClass1(teacherClass[0]);
+        teacher.setClass2(teacherClass[1]);
+        teacherRepository.save(teacher);
 
         return new Result(true, "教师注册成功");
     }
