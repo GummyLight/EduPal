@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="test(TeacherAnswer):对于TeacherAnswer类进行基于状态的单元测试，均通过">
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/model/ValidationTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="test(Answer):对于Answer类进行基于状态的单元测试，均通过" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -55,6 +52,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "JUnit.AnswerTest.executor": "Run",
     "JUnit.AuthControllerTest.executor": "Run",
     "JUnit.AuthControllerTest.testRegisterUser_Success.executor": "Run",
     "JUnit.AuthServiceImplIntegrationTest.executor": "Run",
@@ -64,6 +62,7 @@
     "JUnit.AuthServiceImplTest.testLoginUserByUserId_Success.executor": "Run",
     "JUnit.AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired.executor": "Run",
     "JUnit.AuthServiceImplTest.testUpdateStudentClass_Success.executor": "Run",
+    "JUnit.QuestionTest.executor": "Run",
     "JUnit.QuizAnswerTest.executor": "Run",
     "JUnit.QuizTest.executor": "Run",
     "JUnit.SecurityConfigTest.executor": "Run",
@@ -74,6 +73,7 @@
     "JUnit.UserServiceImplIntegrationTest.executor": "Run",
     "JUnit.UserServiceImplTest.executor": "Run",
     "JUnit.UserTest.executor": "Run",
+    "JUnit.ValidationTest.executor": "Run",
     "Maven.backend [clean].executor": "Run",
     "Maven.backend [install].executor": "Run",
     "Maven.backend [package].executor": "Run",
@@ -259,31 +259,7 @@
       <workItem from="1748912407224" duration="5164000" />
       <workItem from="1748996265826" duration="7578000" />
       <workItem from="1749122271298" duration="914000" />
-      <workItem from="1749129153024" duration="3815000" />
-    </task>
-    <task id="LOCAL-00027" summary="feat(ai/delete):实现了答疑模块删除问题的功能">
-      <option name="closed" value="true" />
-      <created>1748678741345</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1748678741345</updated>
-    </task>
-    <task id="LOCAL-00028" summary="style(Impl):将所有ServiceImpl都单独放在了新的路径下">
-      <option name="closed" value="true" />
-      <created>1748678842560</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1748678842560</updated>
-    </task>
-    <task id="LOCAL-00029" summary="feat(file):给下载文件的端口增加了fileId键，用于上传下载的重命名">
-      <option name="closed" value="true" />
-      <created>1748680248048</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1748680248048</updated>
+      <workItem from="1749129153024" duration="4118000" />
     </task>
     <task id="LOCAL-00030" summary="feat(file):给预览文件的端口增加了fileId键，用于上传下载的重命名">
       <option name="closed" value="true" />
@@ -653,7 +629,31 @@
       <option name="project" value="LOCAL" />
       <updated>1749133281509</updated>
     </task>
-    <option name="localTasksCounter" value="76" />
+    <task id="LOCAL-00076" summary="test(Validation):对于Validation类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749133411701</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1749133411701</updated>
+    </task>
+    <task id="LOCAL-00077" summary="test(Question):对于Question类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749133546756</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1749133546756</updated>
+    </task>
+    <task id="LOCAL-00078" summary="test(Answer):对于Answer类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749133584752</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1749133584752</updated>
+    </task>
+    <option name="localTasksCounter" value="79" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -686,9 +686,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix(admin/updateTeacherClass):将newClass以数组形式接收" />
-    <MESSAGE value="feat(ai):新增学生获取可转接老师的功能" />
-    <MESSAGE value="fix(ai):规范了getMyTeacher的格式" />
     <MESSAGE value="fix(ListTeacherResponse):修改Class的格式为String[]" />
     <MESSAGE value="fix(ListTeacherResponse):修改Class为teacherClass" />
     <MESSAGE value="feat(quiz):新增quiz类和quizAnswer类" />
@@ -711,7 +708,10 @@
     <MESSAGE value="test(Student):对于Student类进行基于状态的单元测试，均通过" />
     <MESSAGE value="test(Teacher):对于Teacher类进行基于状态的单元测试，均通过" />
     <MESSAGE value="test(TeacherAnswer):对于TeacherAnswer类进行基于状态的单元测试，均通过" />
-    <option name="LAST_COMMIT_MESSAGE" value="test(TeacherAnswer):对于TeacherAnswer类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(Validation):对于Validation类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(Question):对于Question类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(Answer):对于Answer类进行基于状态的单元测试，均通过" />
+    <option name="LAST_COMMIT_MESSAGE" value="test(Answer):对于Answer类进行基于状态的单元测试，均通过" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
