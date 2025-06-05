@@ -15,6 +15,7 @@ import TeacherHomeworkReview from '../components/TeacherHomeworkReview.vue';
 import PracticeEdit from '../views/PracticeEdit.vue'
 import MaterialUpload from '../components/MaterialUpload.vue';
 import CreditsGame from '../views/CreditsGame.vue'; // 导入弹幕游戏页面
+import PracticeUpload  from "../components/PracticeUpload.vue";
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -92,6 +93,11 @@ const routes = [
             name: 'PracticeEdit',
             component: PracticeEdit,
             props: true, // 允许通过 props 接收路由参数
+          },
+          {
+            path: 'upload', // 这将匹配 /home/practice/upload
+            name: 'PracticeUpload',
+            component: PracticeUpload,
           }
         ]
       },

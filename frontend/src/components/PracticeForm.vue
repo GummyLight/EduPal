@@ -14,13 +14,7 @@
           <el-form-item label="关键词">
             <el-input v-model="filters.keyword" placeholder="请输入关键词" />
           </el-form-item>
-          <el-form-item label="章节">
-            <el-select v-model="filters.chapter" placeholder="请选择章节" clearable>
-              <el-option label="第一章" value="1" />
-              <el-option label="第二章" value="2" />
-              <el-option label="第三章" value="3" />
-            </el-select>
-          </el-form-item>
+
           <el-form-item label="难易级别">
             <el-select v-model="filters.difficulty" placeholder="请选择难度" clearable>
               <el-option label="简单" value="easy" />
@@ -222,8 +216,6 @@ const fetchTeacherQuizzes = async (userId: string) => {
         已提交人数: quiz.submitNum,
         未提交人数: quiz.unSubmitNum,
         已批改人数: quiz.gradedNum,
-        习题文件路径: '', // 后端未提供
-        chapter: '', // 后端未提供
         我的状态: '', // 教师端无需显示
         我的分数: null, // 教师端无需显示
         classId: quiz.classId || '', // 假设后端可能返回

@@ -57,7 +57,7 @@
               :on-exceed="handleExceed"
               :on-remove="handleRemove"
           >
-            <el-button size="small" type="success" @click="">上传作业文件</el-button>
+            <el-button type="success" icon="el-icon-upload" @click="handleUpload">上传资料</el-button>
             <template #tip>
               <div class="el-upload__tip">只能上传一份作业文件，文件大小不超过5MB。</div>
             </template>
@@ -96,6 +96,45 @@
       </template>
     </el-dialog>
 
+    <!-- 上传设置弹窗 -->
+    <el-dialog
+        v-model="uploadDialogVisible"
+        title="上传作业文件"
+        width="30%"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+    >
+      <el-form :model="uploadForm" label-width="120px">
+        <el-form-item label="文件名">
+          <el-input v-model="uploadForm.fileName" placeholder="请输入文件名（包含扩展名）" />
+        </el-form-item>
+        <el-form-item label="选择文件">
+          <el-upload
+              class="upload-demo"
+              action="#"
+              :auto-upload="false"
+              :file-list="uploadForm.fileList"
+              :limit="1"
+              :on-change="handleUploadFileChange"
+              :on-remove="handleUploadFileRemove"
+              :on-exceed="handleExceed"
+              :before-upload="beforeUpload"
+              ref="uploadRef"
+          >
+            <el-button size="small" type="primary">选择文件</el-button>
+            <template #tip>
+              <div class="el-upload__tip">只能上传一份文件，最大5MB</div>
+            </template>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="uploadDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="confirmUpload">确认上传</el-button>
+        </span>
+      </template>
+    </el-dialog>
 
   </div>
 </template>
@@ -309,38 +348,11 @@ function downloadSubmissionFile() {
   openSubmissionDownloadDialog()
 }
 
-function beforeUpload(file: File) {
-  const isLt5M = file.size / 1024 / 1024 < 5;
-  if (!isLt5M) ElMessage.error('上传作业文件大小不能超过 5MB!');
-  return isLt5M;
-}
-
-function handleUploadSuccess(response: any) {
-  if (response?.code === 200) {
-    ElMessage.success('作业提交成功！等待老师批改。');
-    mySubmission.value = {
-      status: '已提交',
-      score: null,
-      submissionFilePath: response.filePath,
-    };
-  } else {
-    ElMessage.error('作业提交失败：' + (response.message || '未知错误'));
-  }
-}
-
-function handleUploadError(error: any) {
-  console.error('Upload error:', error);
-  ElMessage.error('作业提交失败，请重试！');
-}
-
-function handleExceed() {
-  ElMessage.warning('只能上传一份作业文件，请先移除现有文件。');
-}
-
-function handleRemove(file: File) {
-  console.log('File removed:', file);
-}
-
+const handleUpload = () => {
+  console.log('跳转到上传作业界面',exerciseId);
+  localStorage.setItem('quizId', exerciseId);
+  router.push('/home/practice/upload');
+};
 // 组件挂载时加载数据
 onMounted(() => {
   if (props.usertype !== 1) {
