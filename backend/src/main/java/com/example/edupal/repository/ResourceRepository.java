@@ -16,4 +16,7 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
     // 查找 resource_id 的最大值
     @Query("SELECT MAX(r.resource_id)+1 FROM Resource r")
     Integer findMaxResourceId();
+
+    @Query("SELECT COUNT(r) FROM Resource r")
+    int countResource();
 }

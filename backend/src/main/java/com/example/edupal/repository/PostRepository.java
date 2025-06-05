@@ -20,4 +20,7 @@ public interface PostRepository extends JpaRepository<Post, String> {
 
     @Query("SELECT p FROM Post p WHERE p.id IN :postIds ORDER BY p.publishTime DESC")
     List<Post> findByIds(@Param("postIds") List<String> postIds);
+
+    @Query("SELECT COUNT(p) FROM Post p")
+    int countPost();
 }

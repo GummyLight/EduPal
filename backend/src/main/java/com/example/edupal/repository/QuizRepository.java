@@ -20,4 +20,7 @@ public interface QuizRepository extends JpaRepository<Quiz, String> {
 
     @Query("SELECT q FROM Quiz q WHERE q.quiz_id = :quizId")
     Quiz findByQuizId(Integer quizId);
+
+    @Query("SELECT COUNT(q) FROM Quiz q")
+    int countAllQuiz();
 }

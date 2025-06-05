@@ -1,14 +1,12 @@
 package com.example.edupal.service.Impl;
 
+import com.example.edupal.dto.response.HomeAdminResponse;
 import com.example.edupal.dto.response.HomeStudentResponse;
 import com.example.edupal.dto.response.HomeTeacherResponse;
 import com.example.edupal.model.LearningProgress;
 import com.example.edupal.model.Question;
 import com.example.edupal.model.Student;
-import com.example.edupal.repository.LearningProgressRepository;
-import com.example.edupal.repository.QuestionRepository;
-import com.example.edupal.repository.StudentRepository;
-import com.example.edupal.repository.TeacherRepository;
+import com.example.edupal.repository.*;
 import com.example.edupal.service.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +16,8 @@ import java.util.List;
 
 @Service
 public class HomeServiceImpl implements HomeService {
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     StudentRepository studentRepository;
@@ -30,6 +30,15 @@ public class HomeServiceImpl implements HomeService {
 
     @Autowired
     QuestionRepository questionRepository;
+
+    @Autowired
+    ResourceRepository resourceRepository;
+
+    @Autowired
+    PostRepository postRepository;
+
+    @Autowired
+    QuizRepository quizRepository;
 
     @Override
     public HomeStudentResponse getStudentHomeData(String userId, Integer userType) {
@@ -139,6 +148,51 @@ public class HomeServiceImpl implements HomeService {
                 null,
                 null,
                 null
+        );
+    }
+
+    @Override
+    public HomeAdminResponse getAdminHomeData(String userId, Integer userType){
+        if (userType == 0) { // Assuming userType 0 corresponds to admin
+            int totalUsers = userRepository.countUser(); // Example method to count total users
+            int totalTeachers = userRepository.countTeacher();
+            int totalStudents = userRepository.countStudent();
+            int todayLoggedInTeachers = userRepository.countTeacherLoggedInToday();
+            int todayLoggedInStudents = userRepository.countStudentLoggedInToday();
+            int todayLoggedInUsers = userRepository.countLoggedInToday();
+            int totalTeachingMaterials = resourceRepository.countResource(); // Example method
+            int totalExercises = quizRepository.countAllQuiz(); // Example method
+            int totalCommunityTopics = postRepository.countPost(); // Example method
+            int totalStudentQuestions = questionRepository.countAllQuestion(); // Example method
+
+            return new HomeAdminResponse(
+                    "success",
+                    "统计数据成功",
+                    totalUsers,
+                    totalTeachers,
+                    totalStudents,
+                    todayLoggedInTeachers,
+                    todayLoggedInStudents,
+                    todayLoggedInUsers,
+                    totalTeachingMaterials,
+                    totalExercises,
+                    totalCommunityTopics,
+                    totalStudentQuestions
+            );
+        }
+        return new HomeAdminResponse(
+                "error",
+                "用户类型错误",
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
         );
     }
 

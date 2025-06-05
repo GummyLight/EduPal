@@ -17,4 +17,5 @@ public interface TeacherRepository extends JpaRepository<Teacher, String> {
 
     @Query("SELECT t.class1, t.class2 FROM Teacher t WHERE t.teacherId = :userId")
     List<String> findClassesByTeacherId(String userId);
+
 }
