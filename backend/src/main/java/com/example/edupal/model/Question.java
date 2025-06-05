@@ -16,7 +16,7 @@ public class Question {
     private String questionId;
 
     @PrePersist
-    private void generateUUID() {
+    void generateUUID() {
         if (this.questionId == null) {
             this.questionId = java.util.UUID.randomUUID().toString();
         }
