@@ -31,12 +31,18 @@
           <el-form-item label="所属学科">
             <el-select v-model="filters.subject" placeholder="请选择学科" clearable>
               <el-option label="数学" value="math" />
-              <el-option label="物理" value="physics">物理</el-option> <el-option label="化学" value="chemistry">化学</el-option> </el-select>
+              <el-option label="物理" value="physics" />
+              <el-option label="化学" value="chemistry" />
+            </el-select>
           </el-form-item>
           <el-form-item v-if="userType === 2" label="选择班级">
             <el-select v-model="filters.classId" placeholder="请选择班级" clearable @change="handleSelectClass">
-              <el-option label="高一(1)班" value="class1" />
-              <el-option label="高一(2)班" value="class2" />
+              <el-option
+                  v-for="classItem in classList"
+                  :key="classItem.classId"
+                  :label="classItem.className"
+                  :value="classItem.classId"
+              />
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -52,14 +58,9 @@
           <el-button type="success" icon="el-icon-plus" @click="handleAdd">添加练习</el-button>
           <el-button type="primary" icon="el-icon-pie-chart" @click="handleViewAnalytics">查看学情分析</el-button>
         </template>
-
         <template v-if="userType === 1">
           <el-button type="primary" icon="el-icon-data-analysis" @click="handleViewProgress">查看学习进度</el-button>
         </template>
-
-<!--        <el-button type="warning" icon="el-icon-download" @click="handleExport">-->
-<!--          {{ userType === 2 ? '导出练习完成情况' : '导出我的练习情况' }}-->
-<!--        </el-button>-->
       </div>
 
       <el-card class="table-card" shadow="never">
@@ -71,19 +72,20 @@
           <el-table-column prop="类型" label="题目类型" />
           <el-table-column prop="难度" label="难度等级" />
           <el-table-column prop="知识点" label="关联知识点" />
-
           <el-table-column v-if="userType === 2" prop="已提交人数" label="已提交人数" />
           <el-table-column v-if="userType === 2" prop="未提交人数" label="未提交人数" />
           <el-table-column v-if="userType === 2" prop="已批改人数" label="已批改人数" />
           <el-table-column v-if="userType === 2" prop="发布时间" label="发布日期" />
           <el-table-column v-if="userType === 2" prop="截止时间" label="截止日期" />
           <el-table-column v-if="userType === 2" prop="发布人" label="发布教师" />
-
           <el-table-column v-if="userType === 1" prop="发布时间" label="发布日期" />
           <el-table-column v-if="userType === 1" prop="截止时间" label="截止日期" />
           <el-table-column v-if="userType === 1" prop="我的状态" label="我的状态" />
-          <el-table-column v-if="userType === 1" prop="我的分数" label="我的分数" />
-
+          <el-table-column v-if="userType === 1" prop="我的分数" label="我的分数">
+            <template #default="scope">
+              {{ scope.row.我的分数 ?? '--' }}
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="200" v-if="userType === 2 || userType === 1">
             <template #default="scope">
               <div v-if="userType === 2" class="operation-buttons-horizontal">
@@ -105,33 +107,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed ,defineProps} from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { ElMessage, ElMessageBox } from 'element-plus'; // 导入 ElMessage 和 ElMessageBox
+import { ElMessage, ElMessageBox } from 'element-plus';
+import axios from 'axios';
 
-const router = useRouter();
+// API 基地址（根据实际环境配置）
+const API_BASE = 'http://localhost:8080';
 
+// 定义 props
 const props = defineProps({
   usertype: {
-    type: Number, // 明确类型
+    type: Number,
     required: true,
   },
-  username: { // 确保也接收 username，因为您在模板中也使用了它
+  username: {
     type: String,
     required: true,
   },
   userid: {
     type: String,
     required: true,
-  }
+  },
 });
 
-//const userType = computed(() => props.usertype);
-const userType=computed(() => props.usertype);
+const router = useRouter();
+const userType = computed(() => props.usertype);
 const username = computed(() => props.username);
 const userId = computed(() => props.userid);
 
-
+// 筛选条件
 const filters = ref({
   keyword: '',
   chapter: '',
@@ -140,152 +145,235 @@ const filters = ref({
   classId: '',
 });
 
-const tableData = ref([
-  {
-    习题号: 'EX20250501',
-    科目: 'math',
-    内容: '函数与图像基础练习',
-    发布时间: '2025-05-20 10:00:00',
-    截止时间: '2025-06-01 23:59:59',
-    发布人: '张老师',
-    习题文件路径: '/files/exercises/EX20250501.pdf',
-    类型: '选择题',
-    难度: '中等',
-    知识点: '函数图像',
-    已提交人数: 15,
-    未提交人数: 10,
-    已批改人数: 10,
-    我的状态: '未提交',
-    我的分数: null,
-    chapter: '1' // 添加 chapter 字段用于筛选
-  },
-  {
-    习题号: 'EX20250502',
-    科目: 'physics',
-    内容: '牛顿运动定律训练',
-    发布时间: '2025-05-15 09:30:00',
-    截止时间: '2025-05-30 23:59:59',
-    发布人: '李老师',
-    习题文件路径: '/files/exercises/EX20250502.docx',
-    类型: '填空题',
-    难度: '困难',
-    知识点: '牛顿力学',
-    已提交人数: 20,
-    未提交人数: 5,
-    已批改人数: 15,
-    我的状态: '已提交',
-    我的分数: null,
-    chapter: '2' // 添加 chapter 字段用于筛选
-  },
-  {
-    习题号: 'EX20250503',
-    科目: 'chemistry',
-    内容: '元素周期表复习',
-    发布时间: '2025-05-25 14:00:00',
-    截止时间: '2025-06-05 23:59:59',
-    发布人: '王老师',
-    习题文件路径: '/files/exercises/EX20250503.zip',
-    类型: '判断题',
-    难度: '简单',
-    知识点: '元素性质',
-    已提交人数: 25,
-    未提交人数: 0,
-    已批改人数: 25,
-    我的状态: '已批改',
-    我的分数: 95,
-    chapter: '3' // 添加 chapter 字段用于筛选
-  },
-]);
+// 班级列表（教师用）
+const classList = ref([]);
 
+// 表格数据
+const tableData = ref([]);
+
+// 状态映射函数（学生端使用）
+const mapQuizStatus = (status: number | null) => {
+  if (status === null) return '';
+  switch (status) {
+    case 0:
+      return '未提交';
+    case 1:
+      return '已提交';
+    case 2:
+      return '已批改';
+    default:
+      return '未知';
+  }
+};
+
+// 获取学生测验数据
+const fetchStudentQuizzes = async (userId: string) => {
+  try {
+    const response = await axios.get(`${API_BASE}/quiz/getStudentQuiz`, {
+      params: { userId },
+    });
+    if (response.data.status === 'success') {
+      tableData.value = response.data.quizDetails.map((quiz: any) => ({
+        习题号: quiz.quizId,
+        内容: quiz.title,
+        科目: quiz.subject,
+        类型: quiz.contentType,
+        难度: quiz.difficulty,
+        知识点: quiz.knowledgePoints,
+        发布时间: quiz.createTime,
+        截止时间: quiz.deadline,
+        发布人: quiz.teacherName,
+        我的状态: mapQuizStatus(quiz.quizStatus),
+        我的分数: quiz.score === -1 ? null : quiz.score,
+        习题文件路径: '', // 后端未提供，设为空
+        chapter: '', // 后端未提供，设为空
+        已提交人数: 0, // 学生端无需显示
+        未提交人数: 0,
+        已批改人数: 0,
+        classId: quiz.classId || '', // 假设后端可能返回
+      }));
+      ElMessage.success('测验列表加载成功');
+    } else {
+      ElMessage.error('获取测验列表失败');
+    }
+  } catch (error) {
+    ElMessage.error('请求失败，请稍后重试');
+    console.error(error);
+  }
+};
+
+// 获取教师测验数据
+const fetchTeacherQuizzes = async (userId: string) => {
+  try {
+    const response = await axios.get(`${API_BASE}/quiz/getTeacherQuiz`, {
+      params: { userId },
+    });
+    if (response.data.status === 'success') {
+      tableData.value = response.data.quizzes.map((quiz: any) => ({
+        习题号: quiz.quizId,
+        内容: quiz.title,
+        科目: quiz.subject,
+        类型: quiz.contentType,
+        难度: quiz.difficulty,
+        知识点: quiz.knowledgePoints,
+        发布时间: quiz.createTime,
+        截止时间: quiz.deadline,
+        发布人: quiz.teacherName,
+        已提交人数: quiz.submitNum,
+        未提交人数: quiz.unSubmitNum,
+        已批改人数: quiz.gradedNum,
+        习题文件路径: '', // 后端未提供
+        chapter: '', // 后端未提供
+        我的状态: '', // 教师端无需显示
+        我的分数: null, // 教师端无需显示
+        classId: quiz.classId || '', // 假设后端可能返回
+      }));
+      ElMessage.success('测验列表加载成功');
+    } else {
+      ElMessage.error('获取测验列表失败');
+    }
+  } catch (error) {
+    ElMessage.error('请求失败，请稍后重试');
+    console.error(error);
+  }
+};
+
+// 获取教师班级列表
+const fetchTeacherClasses = async (userId: string) => {
+  try {
+    const response = await axios.get(`${API_BASE}/quiz/getTeacherClass`, {
+      params: { userId },
+    });
+    if (response.data.code === 200) {
+      classList.value = response.data.data.map((cls: any) => ({
+        classId: cls.classId,
+        className: cls.className,
+      }));
+      ElMessage.success('班级列表加载成功');
+    } else {
+      ElMessage.error('获取班级列表失败');
+    }
+  } catch (error) {
+    ElMessage.error('请求班级列表失败，请稍后重试');
+    console.error(error);
+  }
+};
+
+// 筛选数据
 const filteredData = computed(() => {
   return tableData.value.filter(item => {
-    const keywordMatch = filters.value.keyword === '' ||
+    const keywordMatch =
+        filters.value.keyword === '' ||
         item.内容.includes(filters.value.keyword) ||
-        item.习题号.includes(filters.value.keyword);
-    // 确保 item.chapter 存在再进行比较
-    const chapterMatch = !filters.value.chapter || (item.chapter && item.chapter === filters.value.chapter);
+        item.习题号.toString().includes(filters.value.keyword);
+    const chapterMatch = !filters.value.chapter; // 后端未提供章节，暂时跳过
     const difficultyMatch = !filters.value.difficulty || item.难度 === filters.value.difficulty;
     const subjectMatch = !filters.value.subject || item.科目 === filters.value.subject;
-    return keywordMatch && chapterMatch && difficultyMatch && subjectMatch;
+    const classMatch = !filters.value.classId || item.classId === filters.value.classId;
+    return keywordMatch && chapterMatch && difficultyMatch && subjectMatch && classMatch;
   });
 });
 
-function handleSearch() {
+// 搜索
+const handleSearch = () => {
   console.log('搜索条件:', filters.value, '用户类型:', userType.value);
   ElMessage.success('正在搜索...');
-}
+};
 
-function handleAdd() {
+// 添加练习
+const handleAdd = () => {
   console.log('教师操作: 添加练习');
   router.push({ name: 'PracticeEdit' });
-}
+};
 
-function handleExport() {
-  if (userType.value === 2) {
-    console.log('教师操作: 导出练习完成情况', filteredData.value);
-    ElMessage.success('正在导出练习完成情况...');
-  } else {
-    console.log('学生操作: 导出我的练习情况', filteredData.value);
-    ElMessage.success('正在导出我的练习情况...');
-  }
-}
-
-function handleEdit(row: any) {
+// 编辑练习
+const handleEdit = (row: any) => {
   console.log('教师操作: 编辑练习内容:', row);
   router.push({ name: 'PracticeEdit', params: { exerciseId: row.习题号 } });
-}
+};
 
-function handleDelete(row: any) {
-  ElMessageBox.confirm(`确定删除练习《${row.内容}》吗？`, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(() => {
-    tableData.value = tableData.value.filter(item => item.习题号 !== row.习题号);
-    ElMessage.success('练习删除成功！');
-  }).catch(() => {
-    ElMessage.info('已取消删除。');
-  });
-}
+// 删除练习
+const handleDelete = async (row: any) => {
+  try {
+    await ElMessageBox.confirm(`确定删除练习《${row.内容}》吗？`, '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    });
+    const response = await axios.post(`${API_BASE}/quiz/deleteQuiz`, null, {
+      params: { quizId: row.习题号 },
+    });
+    if (response.data.code === 200) {
+      tableData.value = tableData.value.filter(item => item.习题号 !== row.习题号);
+      ElMessage.success('练习删除成功！');
+    } else {
+      ElMessage.error('删除失败：' + response.data.message);
+    }
+  } catch (error) {
+    if (error === 'cancel') {
+      ElMessage.info('已取消删除。');
+    } else {
+      ElMessage.error('删除失败，请稍后重试');
+      console.error(error);
+    }
+  }
+};
 
-function logout() {
+// 退出登录
+const logout = () => {
   console.log('退出登录');
   router.push('/login');
   ElMessage.info('您已退出登录。');
-}
+};
 
-function handleViewAnalytics() {
+// 查看学情分析
+const handleViewAnalytics = () => {
   console.log('教师操作: 查看学情分析');
   ElMessage.info('正在查看学情分析...');
-}
+};
 
-function handleSelectClass() {
+// 选择班级
+const handleSelectClass = () => {
   console.log('教师操作: 选择了班级', filters.value.classId);
-  handleSearch(); // 班级选择后立即搜索
-}
+  handleSearch();
+};
 
-function handleViewProgress() {
+// 查看学习进度
+const handleViewProgress = () => {
   console.log('学生操作: 查看学习进度');
   ElMessage.info('正在查看学习进度...');
-}
+};
 
-function handleViewSubmissions(row: any) {
+// 查看学生提交
+const handleViewSubmissions = (row: any) => {
   console.log('教师操作: 查看学生提交情况，练习ID:', row.习题号);
   router.push({
     name: 'TeacherHomeworkReview',
-    params: { exerciseId: row.习题号, exerciseTitle: row.内容 }
+    params: { exerciseId: row.习题号, exerciseTitle: row.内容 },
   });
-}
+};
 
-function handleGoToPracticeDetail(row: any) {
-  console.log('学生操作: 进入练习详情，练习ID:', row.习题号);
+// 进入练习详情
+// 在 Practice.vue 的 <script setup> 中修改
+const handleGoToPracticeDetail = (row: any) => {
+  console.log('学生操作: 进入练习详情，练习ID:', row.习题号, '行数据:', row);
   router.push({
     name: 'PracticeDetail',
-    params: { exerciseId: row.习题号 }
+    params: { exerciseId: row.习题号 },
+    state: { exercise: { ...row } }, // 深拷贝确保数据完整传递
   });
-}
-</script>
+};
 
+// 组件挂载时加载数据
+onMounted(() => {
+  if (userType.value === 1) {
+    fetchStudentQuizzes(userId.value);
+  } else if (userType.value === 2) {
+    fetchTeacherQuizzes(userId.value);
+    fetchTeacherClasses(userId.value);
+  }
+});
+</script>
 
 <style scoped>
 .practice-form {
@@ -345,12 +433,10 @@ function handleGoToPracticeDetail(row: any) {
 .el-button [class*="el-icon-"] + span {
   margin-left: 5px;
 }
-
-/* 重点修改：为操作列的按钮容器添加 flex 布局 */
 .operation-buttons-horizontal {
   display: flex;
-  gap: 8px; /* 按钮之间的间距 */
-  flex-wrap: wrap; /* 如果按钮过多，允许换行 */
-  justify-content: flex-start; /* 按钮左对齐 */
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 </style>

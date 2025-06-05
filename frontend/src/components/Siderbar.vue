@@ -22,7 +22,7 @@
       </el-menu-item>
       <el-menu-item v-if="props.usertype === 1" index="/home/practice">
         <i class="el-icon-edit-outline"></i>
-        <span>在线练习</span>
+        <span>随堂作业</span>
       </el-menu-item>
       <el-menu-item v-if="props.usertype === 1" index="/home/community">
         <i class="el-icon-chat-line-square"></i>
@@ -42,7 +42,7 @@
       </el-menu-item>
       <el-menu-item v-if="props.usertype === 2" index="/home/practice">
         <i class="el-icon-edit-outline"></i>
-        <span>在线练习</span>
+        <span>作业批改</span>
       </el-menu-item>
       <el-menu-item v-if="props.usertype === 2" index="/home/community">
         <i class="el-icon-chat-line-square"></i>
