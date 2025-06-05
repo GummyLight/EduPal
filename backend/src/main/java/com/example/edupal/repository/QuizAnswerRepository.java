@@ -10,16 +10,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, String> {
-    QuizAnswer findByStudentIdAndQuizId(String studentId, String quizId);
-    Integer countByQuizId(String quizId);
-    Integer countByQuizIdAndIsGraded(String quizId, Integer isGraded);
-    void deleteByQuizId(String quizId);
+    QuizAnswer findByStudentIdAndQuizId(String studentId, Integer quizId);
+    Integer countByQuizId(Integer quizId);
+    Integer countByQuizIdAndIsGraded(Integer quizId, Integer isGraded);
+    void deleteByQuizId(Integer quizId);
 
-    List<QuizAnswer> findAllByQuizId(String quizId);
+    List<QuizAnswer> findAllByQuizId(Integer quizId);
 
     List<QuizAnswer> findAllByStudentId(String userId);
 
-    QuizAnswer findByAnswerId(String answerId);
+    QuizAnswer findByAnswerId(Integer answerId);
     @Query("SELECT MAX(r.answerId)+1 FROM QuizAnswer r")
     Integer findMaxResourceId();
 }

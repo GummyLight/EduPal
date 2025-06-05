@@ -265,13 +265,22 @@ public class AIServiceImpl implements AIService {
         // 构建问题集合
         List<ViewQuestionResponse.QA> questionSet = teacherAnswers.stream().map(ta -> {
             Question question = questionRepository.findByQuestionId(ta.getQuestionId());
+            if (question == null) {
+                throw new IllegalArgumentException("Question not found for ID: " + ta.getQuestionId());
+            }
+
             Student student = studentRepository.findByStudentId(ta.getStudentId());
+            if (student == null) {
+                throw new IllegalArgumentException("Student not found for ID: " + ta.getStudentId());
+            }
 
             // 获取教师回答集合
             List<Answer> AnswerList = answerRepository.findAnswersByQuestionId(ta.getQuestionId());
 
             // Map teacher answers to AnswerDetail objects
-            List<ViewQuestionResponse.QA.AnswerDetail> teacherAnswersDetails = AnswerList.stream()
+            List<ViewQuestionResponse.QA.AnswerDetail> teacherAnswersDetails = AnswerList == null || AnswerList.isEmpty()
+                    ? List.of()
+                    : AnswerList.stream()
                     .map(answer -> new ViewQuestionResponse.QA.AnswerDetail(
                             answer.getAnswerType(),
                             answer.getAnswerContent(),

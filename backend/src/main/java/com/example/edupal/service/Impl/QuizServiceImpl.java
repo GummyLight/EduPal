@@ -4,7 +4,7 @@ import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.CreateQuizRequest;
 import com.example.edupal.dto.request.ModifyQuizRequest;
 import com.example.edupal.dto.response.GetMyQuizResponse;
-import com.example.edupal.dto.response.GetQuizStudentRepsonse;
+import com.example.edupal.dto.response.GetQuizStudentResponse;
 import com.example.edupal.dto.response.GetTeacherQuizResponse;
 import com.example.edupal.model.Quiz;
 import com.example.edupal.model.QuizAnswer;
@@ -65,9 +65,9 @@ public class QuizServiceImpl implements QuizService {
 
         List<GetStudentQuizResponse.quizDetail> Quizzes = quizzes.stream()
                 .map(quiz -> {
-                    QuizAnswer quizAnswerForQuiz = quizAnswerRepository.findByStudentIdAndQuizId(userId, quiz.getQuiz_id().toString());
+                    QuizAnswer quizAnswerForQuiz = quizAnswerRepository.findByStudentIdAndQuizId(userId, quiz.getQuiz_id());
                     return new GetStudentQuizResponse.quizDetail(
-                            quiz.getQuiz_id().toString(),
+                            quiz.getQuiz_id(),
                             quiz.getTitle(),
                             quiz.getSubject(),
                             quiz.getContentType(),
@@ -76,9 +76,9 @@ public class QuizServiceImpl implements QuizService {
                             quiz.getDescription(),
                             quiz.getTeacherId(),
                             quiz.getTeacherName(),
-                            quiz.getCreateTime().toString(),
-                            quiz.getUpdatedTime().toString(),
-                            quiz.getDeadline().toString(),
+                            quiz.getCreateTime(),
+                            quiz.getUpdatedTime(),
+                            quiz.getDeadline(),
                             quizAnswerForQuiz == null ? 0 : quizAnswerForQuiz.getIsGraded() == 0 ? 1 : 2,
                             quizAnswerForQuiz == null ? -1 : quizAnswerForQuiz.getScore() == null ? 0 : quizAnswerForQuiz.getScore()
                     );
@@ -107,11 +107,11 @@ public class QuizServiceImpl implements QuizService {
         List<GetTeacherQuizResponse.quizDetail> Quizzes = quizzes.stream()
                 .map(quiz -> {
                     int studentNum= studentRepository.countByStudentClass(quiz.getClass1(),quiz.getClass2());
-                    int submitNum = quizAnswerRepository.countByQuizId(quiz.getQuiz_id().toString());
+                    int submitNum = quizAnswerRepository.countByQuizId(quiz.getQuiz_id());
                     int unSubmitNum = studentNum - submitNum;
-                    int gradedNum = quizAnswerRepository.countByQuizIdAndIsGraded(quiz.getQuiz_id().toString(), 1);
+                    int gradedNum = quizAnswerRepository.countByQuizIdAndIsGraded(quiz.getQuiz_id(), 1);
                     return new GetTeacherQuizResponse.quizDetail(
-                            quiz.getQuiz_id().toString(),
+                            quiz.getQuiz_id(),
                             quiz.getTitle(),
                             quiz.getSubject(),
                             quiz.getContentType(),
@@ -120,9 +120,9 @@ public class QuizServiceImpl implements QuizService {
                             quiz.getDescription(),
                             quiz.getTeacherId(),
                             quiz.getTeacherName(),
-                            quiz.getCreateTime().toString(),
-                            quiz.getUpdatedTime().toString(),
-                            quiz.getDeadline().toString(),
+                            quiz.getCreateTime(),
+                            quiz.getUpdatedTime(),
+                            quiz.getDeadline(),
                             submitNum,
                             unSubmitNum,
                             gradedNum
@@ -178,10 +178,9 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public Result deleteQuiz(String quizId) {
+    public Result deleteQuiz(Integer quizId) {
         // 删除测验逻辑
-        Quiz quiz = quizRepository.findById(quizId)
-                .orElseThrow(() -> new RuntimeException("Quiz not found with id: " + quizId));
+        Quiz quiz = quizRepository.findByQuizId(quizId);
 
         // 删除测验答案
         quizAnswerRepository.deleteByQuizId(quizId);
@@ -193,85 +192,83 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public GetQuizStudentRepsonse getQuizStudent(String quizId) throws Exception{
-        Quiz quiz = quizRepository.findById(quizId)
-                .orElseThrow(() -> new Exception("Quiz not found with id: " + quizId));
+    public GetQuizStudentResponse getQuizStudent(Integer quizId) throws Exception{
+        Quiz quiz = quizRepository.findByQuizId(quizId);
 
         if(quiz == null) {
-            return new GetQuizStudentRepsonse("error","Quiz not found", quizId, 0, null);
+            return new GetQuizStudentResponse("error","Quiz not found", quizId, 0, null);
         }
 
         // 查询测验的学生列表
         List<QuizAnswer> quizAnswers = quizAnswerRepository.findAllByQuizId(quizId);
 
         if (quizAnswers == null || quizAnswers.isEmpty()) {
-            return new GetQuizStudentRepsonse("success","No Students for this Quiz", quizId, 0, null);
+            return new GetQuizStudentResponse("success","No Students for this Quiz", quizId, 0, null);
         }
 
         List<Student> students = studentRepository.findByStudentClass(quiz.getClass1(), quiz.getClass2());
 
-        List<GetQuizStudentRepsonse.answerDetail> Quizzes = students.stream()
+        List<GetQuizStudentResponse.answerDetail> Quizzes = students.stream()
                 .map(student -> {
                     QuizAnswer answer = quizAnswerRepository.findByStudentIdAndQuizId(student.getStudentId(), quizId);
                     if (answer == null) {
                         // Student does not have a QuizAnswer
-                        return new GetQuizStudentRepsonse.answerDetail(
+                        return new GetQuizStudentResponse.answerDetail(
                                 student.getStudentId(),
                                 student.getStudentName(),
                                 0, // status
                                 null, // score
                                 null, // answerTime
-                                null, // answerId
+                                -1, // answerId
                                 null  // answerContent
                         );
                     } else {
                         // Student has a QuizAnswer
                         int status = answer.getIsGraded() == 0 ? 1 : 2;
-                        return new GetQuizStudentRepsonse.answerDetail(
+                        return new GetQuizStudentResponse.answerDetail(
                                 student.getStudentId(),
                                 student.getStudentName(),
                                 status, // status based on isGraded
                                 answer.getScore(), // score
                                 answer.getSubmitTime() == null ? null : answer.getSubmitTime().toString(), // answerTime
-                                answer.getAnswerId().toString(), // answerId
+                                answer.getAnswerId(), // answerId
                                 answer.getAnswerContent() // answerContent
                         );
                     }
                 }).toList();
 
-        return new GetQuizStudentRepsonse("success","Get Students for this Quiz", quizId, Quizzes.size(), Quizzes);
+        return new GetQuizStudentResponse("success","Get Students for this Quiz", quizId, Quizzes.size(), Quizzes);
     }
 
     @Override
-    public GetMyQuizResponse getMyQuiz(String userId,String quizId) throws Exception{
+    public GetMyQuizResponse getMyQuiz(String userId,Integer quizId) throws Exception{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("User not found with id: " + userId));
 
         if(user == null) {
-            return new GetMyQuizResponse("error","User not found",null,null, null, null, null,null,null,null,0,-1,null,null);
+            return new GetMyQuizResponse("error","User not found",null,null, null, null, null,null,null,null,0,-1,null,-1);
         }
 
         Student student = studentRepository.findByStudentId(userId);
         if(student == null) {
-            return new GetMyQuizResponse("error","Student not found",null,null, null, null, null,null,null,null,0,-1,null,null);
+            return new GetMyQuizResponse("error","Student not found",null,null, null, null, null,null,null,null,0,-1,null,-1);
         }
 
-        Quiz quiz = quizRepository.findById(quizId)
-                .orElseThrow(() -> new Exception("Quiz not found with id: " + quizId));
+        Quiz quiz = quizRepository.findByQuizId(quizId);
         if(quiz == null) {
-            return new GetMyQuizResponse("error","Quiz not found",null,null, null, null, null,null,null,null,0,-1,null,null);
+            return new GetMyQuizResponse("error","Quiz not found",null,null, null, null, null,null,null,null,0,-1,null,-1);
         }
         QuizAnswer quizAnswer = quizAnswerRepository.findByStudentIdAndQuizId(userId, quizId);
         if (quizAnswer == null) {
-            return new GetMyQuizResponse("error","Quiz Answer not found",quiz.getQuiz_id().toString(),quiz.getTitle(), quiz.getSubject(), quiz.getDifficulty(), quiz.getCreateTime(),quiz.getDeadline(),quiz.getTeacherName(),quiz.getTeacherId(),0,null,null,null);
+            return new GetMyQuizResponse("error","Quiz Answer not found",quiz.getQuiz_id(),quiz.getTitle(), quiz.getSubject(), quiz.getDifficulty(), quiz.getCreateTime(),quiz.getDeadline(),quiz.getTeacherName(),quiz.getTeacherId(),0,null,null,-1);
         }
         return new GetMyQuizResponse("success","Get Your Quiz", quizId, quiz.getTitle(), quiz.getSubject(),
                 quiz.getDifficulty(), quiz.getCreateTime(), quiz.getDeadline(), quiz.getTeacherName(),
-                quiz.getTeacherId(), quizAnswer.getIsGraded()==0?1:2, quizAnswer.getScore(),quizAnswer.getFeedback(), quizAnswer.getAnswerId().toString());
+                quiz.getTeacherId(), quizAnswer.getIsGraded()==0?1:2, quizAnswer.getScore(),quizAnswer.getFeedback(), quizAnswer.getAnswerId());
     }
 
     @Override
-    public Result gradeQuiz(String answerId,Integer score,String feedback) throws Exception {
+    public Result gradeQuiz(Integer answerId,Integer score,String feedback) throws Exception {
         QuizAnswer quizAnswer = quizAnswerRepository.findByAnswerId(answerId);
 
         if(quizAnswer == null) {
@@ -301,10 +298,9 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public Result submitQuiz(String quizId, String userId, String answerContent) throws Exception{
+    public Result submitQuiz(Integer quizId, String userId, String answerContent) throws Exception{
         // 检查测验是否存在
-        Quiz quiz = quizRepository.findById(quizId)
-                .orElseThrow(() -> new Exception("Quiz not found with id: " + quizId));
+        Quiz quiz = quizRepository.findByQuizId(quizId);
 
         if(quiz == null) {
             return new Result(false,"Quiz not found",null);
@@ -320,7 +316,7 @@ public class QuizServiceImpl implements QuizService {
         QuizAnswer quizAnswer = quizAnswerRepository.findByStudentIdAndQuizId(userId, quizId);
         if (quizAnswer == null) {
             quizAnswer = new QuizAnswer();
-            quizAnswer.setQuizId(Integer.parseInt(quizId));
+            quizAnswer.setQuizId(quizId);
             quizAnswer.setStudentId(userId);
             quizAnswer.setSubmitTime(new Date());
         }

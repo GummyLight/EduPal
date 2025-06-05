@@ -5,9 +5,9 @@ import com.example.edupal.common.Result;
 import com.example.edupal.dto.request.CreateQuizRequest;
 import com.example.edupal.dto.request.ModifyQuizRequest;
 import com.example.edupal.dto.response.GetMyQuizResponse;
+import com.example.edupal.dto.response.GetQuizStudentResponse;
 import com.example.edupal.dto.response.GetStudentQuizResponse;
 import com.example.edupal.dto.response.GetTeacherQuizResponse;
-import com.example.edupal.dto.response.GetQuizStudentRepsonse;
 import com.example.edupal.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,7 +49,7 @@ public class QuizController {
     }
 
     @GetMapping("/submitQuiz")
-    public ResponseEntity<?> submitQuiz(@RequestParam("quizId") String quizId,
+    public ResponseEntity<?> submitQuiz(@RequestParam("quizId") Integer quizId,
                                                 @RequestParam("userId") String userId,
                                                 @RequestParam("answerContent") String answerContent) {
         // 调用QuizService提交测验
@@ -67,7 +67,7 @@ public class QuizController {
 
     @GetMapping("/getMyQuiz")
     public GetMyQuizResponse getMyQuiz(@RequestParam("userId") String userId,
-                                       @RequestParam("quizId") String quizId) {
+                                       @RequestParam("quizId") Integer quizId) {
         // 调用QuizService获取用户的测验列表
         try {
             return quizService.getMyQuiz(userId,quizId);
@@ -137,7 +137,7 @@ public class QuizController {
     }
 
     @PostMapping("/deleteQuiz")
-    public ResponseEntity<?> deleteQuiz(@RequestParam("quizId") String quizId) {
+    public ResponseEntity<?> deleteQuiz(@RequestParam("quizId") Integer quizId) {
         // 调用QuizService删除测验
         try {
             Result result = quizService.deleteQuiz(quizId);
@@ -152,7 +152,7 @@ public class QuizController {
     }
 
     @GetMapping("/getQuizStudent")
-    public GetQuizStudentRepsonse getQuizStudent(@RequestParam("quizId") String quizId) {
+    public GetQuizStudentResponse getQuizStudent(@RequestParam("quizId") Integer quizId) {
         // 调用QuizService获取学生的测验列表
         try {
             return quizService.getQuizStudent(quizId);
@@ -162,12 +162,12 @@ public class QuizController {
     }
 
     @PostMapping("/gradeQuiz")
-    public ResponseEntity<?> gradeQuiz(@RequestParam("answerId") String quizId,
+    public ResponseEntity<?> gradeQuiz(@RequestParam("answerId") Integer answerId,
                                        @RequestParam("score") Integer score,
                                        @RequestParam("feedback") String feedback) {
         // 调用QuizService批改测验
         try {
-            Result result = quizService.gradeQuiz(quizId, score, feedback);
+            Result result = quizService.gradeQuiz(answerId, score, feedback);
             if (result.isSuccess()) {
                 return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage()));
             } else {
