@@ -13,9 +13,9 @@ public interface StudentRepository extends JpaRepository<Student, String> {
 
     List<Student> findByStudentName(String studentName);
 
-    @Query("SELECT COUNT(s) FROM Student s WHERE s.studentClass =: class1 OR s.studentClass =: class2")
+    @Query("SELECT COUNT(s) FROM Student s WHERE s.studentClass =:class1 OR s.studentClass =:class2")
     Integer countByStudentClass(String class1, String class2);
 
-    @Query("SELECT s FROM Student s WHERE s.studentClass =: class1 OR s.studentClass =: class2")
+    @Query("SELECT s FROM Student s WHERE s.studentClass =:class1 OR s.studentClass =:class2")
     List<Student> findByStudentClass(String class1, String class2);
 }

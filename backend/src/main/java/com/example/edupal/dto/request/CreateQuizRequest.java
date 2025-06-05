@@ -18,9 +18,11 @@ public class CreateQuizRequest {
 
     private Date createTime; // 创建时间
     private Date deadline; // 截止时间
+    private String class1; // 班级1
+    private String class2; // 班级2
 
     public CreateQuizRequest(String title, String subject, String contentType, String difficulty,
-                             String knowledgePoints, String description, String teacherId, Date createTime,Date deadline) {
+                             String knowledgePoints, String description, String teacherId, Date createTime,Date deadline,String class1,String class2) {
         this.title = title;
         this.subject = subject;
         this.contentType = contentType;
@@ -30,6 +32,8 @@ public class CreateQuizRequest {
         this.teacherId = teacherId;
         this.createTime = createTime;
         this.deadline = deadline;
+        this.class1 = class1;
+        this.class2 = class2;
     }
 
     // Getters and Setters omitted for brevity

@@ -10,10 +10,7 @@ import com.example.edupal.model.Quiz;
 import com.example.edupal.model.QuizAnswer;
 import com.example.edupal.model.Student;
 import com.example.edupal.model.User;
-import com.example.edupal.repository.QuizAnswerRepository;
-import com.example.edupal.repository.QuizRepository;
-import com.example.edupal.repository.StudentRepository;
-import com.example.edupal.repository.UserRepository;
+import com.example.edupal.repository.*;
 import com.example.edupal.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +33,9 @@ public class QuizServiceImpl implements QuizService {
 
     @Autowired
     private QuizAnswerRepository quizAnswerRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
 
 
     @Override
@@ -144,6 +144,8 @@ public class QuizServiceImpl implements QuizService {
         quiz.setDescription(quizRequest.getDescription());
         quiz.setTeacherId(quizRequest.getTeacherId());
         quiz.setTeacherName(quizRequest.getTeacherName());
+        quiz.setClass1(quizRequest.getClass1());
+        quiz.setClass2(quizRequest.getClass2());
         quiz.setCreateTime(new Date());
         quiz.setUpdatedTime(new Date());
         quiz.setDeadline(quizRequest.getDeadline());
@@ -157,8 +159,7 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public Result modifyQuiz(ModifyQuizRequest quizRequest) {
         // 修改测验逻辑
-        Quiz quiz = quizRepository.findById(quizRequest.getQuizId())
-                .orElseThrow(() -> new RuntimeException("Quiz not found with id: " + quizRequest.getQuizId()));
+        Quiz quiz = quizRepository.findByQuizId(quizRequest.getQuizId());
 
         quiz.setTitle(quizRequest.getTitle());
         quiz.setSubject(quizRequest.getSubject());
@@ -168,6 +169,8 @@ public class QuizServiceImpl implements QuizService {
         quiz.setDescription(quizRequest.getDescription());
         quiz.setTeacherId(quizRequest.getTeacherId());
         quiz.setTeacherName(quizRequest.getTeacherName());
+        quiz.setClass1(quizRequest.getClass1());
+        quiz.setClass2(quizRequest.getClass2());
         quiz.setUpdatedTime(new Date());
         quiz.setDeadline(quizRequest.getDeadline());
 
@@ -260,7 +263,7 @@ public class QuizServiceImpl implements QuizService {
         }
         QuizAnswer quizAnswer = quizAnswerRepository.findByStudentIdAndQuizId(userId, quizId);
         if (quizAnswer == null) {
-            return new GetMyQuizResponse("error","Quiz Answer not found",quiz.getQuiz_id(),quiz.getTitle(), quiz.getSubject(), quiz.getDifficulty(), quiz.getCreateTime(),quiz.getDeadline(),quiz.getTeacherName(),quiz.getTeacherId(),0,null,null,-1);
+            return new GetMyQuizResponse("success","Get Your Quiz Without Answer",quiz.getQuiz_id(),quiz.getTitle(), quiz.getSubject(), quiz.getDifficulty(), quiz.getCreateTime(),quiz.getDeadline(),quiz.getTeacherName(),quiz.getTeacherId(),0,null,null,-1);
         }
         return new GetMyQuizResponse("success","Get Your Quiz", quizId, quiz.getTitle(), quiz.getSubject(),
                 quiz.getDifficulty(), quiz.getCreateTime(), quiz.getDeadline(), quiz.getTeacherName(),
@@ -329,6 +332,25 @@ public class QuizServiceImpl implements QuizService {
         quizAnswerRepository.save(quizAnswer);
 
         return new Result(true,"Quiz submitted successfully",quizAnswer);
+    }
+
+    @Override
+    public Result getTeacherClass(String userId) throws Exception{
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("User not found with id: " + userId));
+
+        if(user == null) {
+            return new Result(false,"User not found",null);
+        }
+
+        // 查询教师的班级列表
+        List<String> classes = teacherRepository.findClassesByTeacherId(userId);
+
+        if (classes == null || classes.isEmpty()) {
+            return new Result(true,"No Classes found for this Teacher",null);
+        }
+
+        return new Result(true,"Get Teacher Classes successfully",classes);
     }
 
 }

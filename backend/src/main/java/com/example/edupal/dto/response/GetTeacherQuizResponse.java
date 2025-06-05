@@ -11,12 +11,14 @@ public class GetTeacherQuizResponse {
     private String message;
     private String teacherId;
     private Integer quizNum;
+    private List<quizDetail> quizzes;
 
     public GetTeacherQuizResponse(String success, String getYourQuiz, String userId, int size, List<quizDetail> quizzes) {
         this.status = success;
         this.message = getYourQuiz;
         this.teacherId = userId;
         this.quizNum = size;
+        this.quizzes = quizzes;
     }
 
     @Data

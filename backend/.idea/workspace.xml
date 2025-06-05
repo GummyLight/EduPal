@@ -4,17 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="feat(quiz):新增get自增ID（answer和quiz），新增学生提交作业">
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(quiz):根据自增编码的类型做了调整">
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/GetMyQuizResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/GetMyQuizResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/GetQuizStudentRepsonse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/GetQuizStudentResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/GetStudentQuizResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/GetStudentQuizResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/CreateQuizRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/CreateQuizRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/ModifyQuizRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/ModifyQuizRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/GetTeacherQuizResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/GetTeacherQuizResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/QuizAnswerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/QuizAnswerRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/QuizRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/QuizRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/AIServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/StudentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/StudentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/TeacherRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/repository/TeacherRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/QuizService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/QuizService.java" afterDir="false" />
     </list>
@@ -262,14 +260,6 @@
       <workItem from="1748846026867" duration="8800000" />
       <workItem from="1748912407224" duration="5164000" />
       <workItem from="1748996265826" duration="7578000" />
-    </task>
-    <task id="LOCAL-00012" summary="fix(auth):增加了忘记密码功能：发送验证码，验证验证码">
-      <option name="closed" value="true" />
-      <created>1748445279682</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1748445279682</updated>
     </task>
     <task id="LOCAL-00013" summary="fix(auth):增加了忘记密码功能：发送验证码，验证验证码">
       <option name="closed" value="true" />
@@ -655,7 +645,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749087151846</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="fix(quiz):根据自增编码的类型做了调整">
+      <option name="closed" value="true" />
+      <created>1749091771551</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1749091771551</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -688,7 +686,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix(url):修复了资源和作业模块的url错误" />
     <MESSAGE value="feat(ai/teacherAnswer):新增教师回答问题功能" />
     <MESSAGE value="feat(home/student):新增学生首页显示功能" />
     <MESSAGE value="fix(ai/teacherView):修改请求类型为GET" />
@@ -713,7 +710,8 @@
     <MESSAGE value="feat(quiz):新增学生查看详细作业情况的功能" />
     <MESSAGE value="feat(quiz):新增老师给学生打分的功能" />
     <MESSAGE value="feat(quiz):新增get自增ID（answer和quiz），新增学生提交作业" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(quiz):新增get自增ID（answer和quiz），新增学生提交作业" />
+    <MESSAGE value="fix(quiz):根据自增编码的类型做了调整" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(quiz):根据自增编码的类型做了调整" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1308,6 +1306,71 @@
           <line>50</line>
           <option name="timeStamp" value="311" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
+          <line>161</line>
+          <option name="timeStamp" value="333" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
+          <line>179</line>
+          <option name="timeStamp" value="334" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java</url>
+          <line>143</line>
+          <option name="timeStamp" value="338" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java</url>
+          <line>36</line>
+          <option name="timeStamp" value="340" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
+          <line>57</line>
+          <option name="timeStamp" value="343" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
+          <line>59</line>
+          <option name="timeStamp" value="344" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java</url>
+          <line>93</line>
+          <option name="timeStamp" value="346" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
+          <line>92</line>
+          <option name="timeStamp" value="347" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
+          <line>100</line>
+          <option name="timeStamp" value="348" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
+          <line>103</line>
+          <option name="timeStamp" value="349" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
+          <line>131</line>
+          <option name="timeStamp" value="355" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
+          <line>106</line>
+          <option name="timeStamp" value="356" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/repository/StudentRepository.java</url>
+          <line>15</line>
+          <option name="timeStamp" value="358" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java</url>
           <line>11</line>
@@ -1352,6 +1415,33 @@
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="312" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java</url>
+          <line>140</line>
+          <properties class="com.example.edupal.controller.QuizController" method="deleteQuiz">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="339" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/repository/QuizRepository.java</url>
+          <line>13</line>
+          <properties class="com.example.edupal.repository.QuizRepository" method="findByClassId">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="345" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/repository/StudentRepository.java</url>
+          <line>16</line>
+          <properties class="com.example.edupal.repository.StudentRepository" method="countByStudentClass">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="357" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

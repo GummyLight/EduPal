@@ -21,5 +21,6 @@ public interface QuizService {
     Integer getMaxAnswerId();
     Integer getMaxQuizId();
     Result submitQuiz(Integer quizId, String userId, String answerContent) throws Exception;
+    Result getTeacherClass(String userId) throws Exception;
 
 }

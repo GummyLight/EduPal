@@ -26,7 +26,8 @@ public class QuizController {
     * 给学生用的：
     * getStudentQuiz：获取学生的测验列表
     * submitQuiz：提交测验
-    *
+    * getMyQuiz: 获取学生的测验详情
+    * getMaxAnswerId：获取最大answer_id
     * */
 
     @GetMapping("/getStudentQuiz")
@@ -45,7 +46,7 @@ public class QuizController {
         if (maxId == null) {
             maxId = 0;  // 表为空时默认0
         }
-        return ResponseEntity.ok(new ApiResponse<>(200, "最大 resource_id 获取成功", maxId));
+        return ResponseEntity.ok(new ApiResponse<>(200, "最大 answer_id 获取成功", maxId));
     }
 
     @GetMapping("/submitQuiz")
@@ -175,6 +176,17 @@ public class QuizController {
             }
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
+        }
+    }
+
+    @GetMapping("/getTeacherClass")
+    public ResponseEntity<?> getTeacherClass(@RequestParam("userId") String userId) throws Exception {
+        // 调用QuizService获取教师的班级列表
+        Result result = quizService.getTeacherClass(userId);
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(new ApiResponse<>(200, result.getMessage(), result.getData()));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(400, result.getMessage()));
         }
     }
 
