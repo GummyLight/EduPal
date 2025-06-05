@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="test(Answer):对于Answer类进行基于状态的单元测试，均通过" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="test(Post):对于Post类进行基于状态的单元测试，均通过">
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/model/PostCollectionTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -62,6 +65,7 @@
     "JUnit.AuthServiceImplTest.testLoginUserByUserId_Success.executor": "Run",
     "JUnit.AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired.executor": "Run",
     "JUnit.AuthServiceImplTest.testUpdateStudentClass_Success.executor": "Run",
+    "JUnit.PostTest.executor": "Run",
     "JUnit.QuestionTest.executor": "Run",
     "JUnit.QuizAnswerTest.executor": "Run",
     "JUnit.QuizTest.executor": "Run",
@@ -259,15 +263,7 @@
       <workItem from="1748912407224" duration="5164000" />
       <workItem from="1748996265826" duration="7578000" />
       <workItem from="1749122271298" duration="914000" />
-      <workItem from="1749129153024" duration="4118000" />
-    </task>
-    <task id="LOCAL-00030" summary="feat(file):给预览文件的端口增加了fileId键，用于上传下载的重命名">
-      <option name="closed" value="true" />
-      <created>1748680538974</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1748680538974</updated>
+      <workItem from="1749129153024" duration="5078000" />
     </task>
     <task id="LOCAL-00031" summary="fix(ai/delete):修复了先删除问题对象可能会导致的空指针问题">
       <option name="closed" value="true" />
@@ -653,7 +649,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749133584752</updated>
     </task>
-    <option name="localTasksCounter" value="79" />
+    <task id="LOCAL-00079" summary="test(Post):对于Post类进行基于状态的单元测试，均通过">
+      <option name="closed" value="true" />
+      <created>1749133960302</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1749133960302</updated>
+    </task>
+    <option name="localTasksCounter" value="80" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -686,7 +690,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix(ListTeacherResponse):修改Class的格式为String[]" />
     <MESSAGE value="fix(ListTeacherResponse):修改Class为teacherClass" />
     <MESSAGE value="feat(quiz):新增quiz类和quizAnswer类" />
     <MESSAGE value="feat(repository):增加了student DAO层用来查询班级学生的数量和list的功能" />
@@ -711,7 +714,8 @@
     <MESSAGE value="test(Validation):对于Validation类进行基于状态的单元测试，均通过" />
     <MESSAGE value="test(Question):对于Question类进行基于状态的单元测试，均通过" />
     <MESSAGE value="test(Answer):对于Answer类进行基于状态的单元测试，均通过" />
-    <option name="LAST_COMMIT_MESSAGE" value="test(Answer):对于Answer类进行基于状态的单元测试，均通过" />
+    <MESSAGE value="test(Post):对于Post类进行基于状态的单元测试，均通过" />
+    <option name="LAST_COMMIT_MESSAGE" value="test(Post):对于Post类进行基于状态的单元测试，均通过" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
