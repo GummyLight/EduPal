@@ -11,10 +11,12 @@
       <!-- 顶部操作栏 -->
       <el-card class="action-card" shadow="never">
         <div class="action-buttons">
-          <el-button type="primary" icon="Plus" @click="openRegisterDialog">
+          <el-button type="primary" @click="openRegisterDialog">
+            <el-icon><Plus /></el-icon>
             新增用户
           </el-button>
-          <el-button type="success" icon="Refresh" @click="refreshUserData">
+          <el-button type="success" @click="refreshUserData">
+            <el-icon><Refresh /></el-icon>
             刷新数据
           </el-button>
         </div>
@@ -62,7 +64,7 @@
                 <el-option label="学生" :value="1" />
                 <el-option label="教师" :value="2" />
               </el-select>
-              <el-input v-model="searchKeyword" placeholder="搜索用户名或ID" clearable style="width: 200px;" />
+              <el-input v-model="searchKeyword" placeholder="搜索用户名" clearable style="width: 200px;" />
             </div>
           </div>
         </template>
