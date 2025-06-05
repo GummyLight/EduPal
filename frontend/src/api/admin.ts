@@ -168,7 +168,11 @@ export const register = async (userId: string, userName: string, password: strin
       }
     }
 
-    const response = await api.post<ApiResponse>('/admin/register', params);
+    const response = await api.post<ApiResponse>('/admin/register', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -186,7 +190,11 @@ export const deleteAccount = async (userType: number, userId: string): Promise<A
     params.append('userType', userType.toString());
     params.append('userId', userId);
     
-    const response = await api.post<ApiResponse>('/admin/delete', params);
+    const response = await api.post<ApiResponse>('/admin/delete', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -206,7 +214,11 @@ export const updateAccount = async (userId: string, newUserName: string, newEmai
     params.append('newEmail', newEmail);
     params.append('newPassword', newPassword);
     
-    const response = await api.post<ApiResponse>('/admin/update', params);
+    const response = await api.post<ApiResponse>('/admin/update', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -224,7 +236,11 @@ export const updateStudentClass = async (studentId: string, newClassId: string):
     params.append('studentId', studentId);
     params.append('newClassId', newClassId);
     
-    const response = await api.post<ApiResponse>('/admin/updateStudentClass', params);
+    const response = await api.post<ApiResponse>('/admin/updateStudentClass', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -248,7 +264,11 @@ export const updateTeacherClass = async (teacherId: string, newClass: string[]):
       params.append('newClass', classItem);
     });
     
-    const response = await api.post<ApiResponse>('/admin/updateTeacherClass', params);
+    const response = await api.post<ApiResponse>('/admin/updateTeacherClass', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -266,7 +286,11 @@ export const updateTeacherSubject = async (teacherId: string, newSubject: string
     params.append('teacherId', teacherId);
     params.append('newSubject', newSubject);
     
-    const response = await api.post<ApiResponse>('/admin/updateTeacherSubject', params);
+    const response = await api.post<ApiResponse>('/admin/updateTeacherSubject', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
