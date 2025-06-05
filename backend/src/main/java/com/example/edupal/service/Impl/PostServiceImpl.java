@@ -31,14 +31,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDTO> getPosts() {
+    public List<PostResponse> getPosts() {
         String userId = getCurrentUserId();
         List<Post> posts = postRepository.findAllByOrderByPublishTimeDesc();
         return posts.stream().map(post -> convertToPostDTO(post, userId)).collect(Collectors.toList());
     }
 
     @Override
-    public PostDTO getPostDetail(String postId) {
+    public PostResponse getPostDetail(String postId) {
         String userId = getCurrentUserId();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -49,7 +49,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public PostDTO createPost(PostRequest form) {
+    public PostResponse createPost(PostRequest form) {
         User author = userRepository.findById(form.getAuthorId())
                 .orElseThrow(() -> new RuntimeException("用户不存在，ID: " + form.getAuthorId()));
         Post post = new Post();
@@ -76,7 +76,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public ReplyDTO createReply(String postId, ReplyRequest form) {
+    public ReplyResponse createReply(String postId, ReplyRequest form) {
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -120,7 +120,7 @@ public class PostServiceImpl implements PostService {
         }
     }
     @Override
-    public List<PostDTO> getCollectedPosts(String userId) {
+    public List<PostResponse> getCollectedPosts(String userId) {
         // 查询用户收藏的帖子ID列表
         List<String> collectedPostIds = postCollectionRepository.findPostIdsByUserId(userId);
 
@@ -138,14 +138,14 @@ public class PostServiceImpl implements PostService {
     }
 
     // 私有方法
-    private PostDTO convertToPostDTO(Post post, String userId) {
+    private PostResponse convertToPostDTO(Post post, String userId) {
         return convertToPostDTO(post, userId, null);
     }
 
-    private PostDTO convertToPostDTO(Post post, String userId, List<Reply> replies) {
+    private PostResponse convertToPostDTO(Post post, String userId, List<Reply> replies) {
         boolean isCollected = postCollectionRepository.existsByUserIdAndPostId(userId, post.getId());
 
-        PostDTO dto = new PostDTO();
+        PostResponse dto = new PostResponse();
         dto.setId(post.getId());
         dto.setTitle(post.getTitle());
         dto.setContent(post.getContent());
@@ -164,8 +164,8 @@ public class PostServiceImpl implements PostService {
         return dto;
     }
 
-    private ReplyDTO convertToReplyDTO(Reply reply) {
-        ReplyDTO dto = new ReplyDTO();
+    private ReplyResponse convertToReplyDTO(Reply reply) {
+        ReplyResponse dto = new ReplyResponse();
         dto.setId(reply.getId());
         dto.setAuthorId(reply.getAuthorId());
         dto.setAuthorName(reply.getAuthorName());

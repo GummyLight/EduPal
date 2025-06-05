@@ -6,12 +6,12 @@ import com.example.edupal.dto.response.*;
 import java.util.List;
 
 public interface PostService {
-    List<PostDTO> getPosts();
-    PostDTO getPostDetail(String postId);
-    PostDTO createPost(PostRequest form);
+    List<PostResponse> getPosts();
+    PostResponse getPostDetail(String postId);
+    PostResponse createPost(PostRequest form);
     void deletePost(String postId);
-    ReplyDTO createReply(String postId, ReplyRequest form);
+    ReplyResponse createReply(String postId, ReplyRequest form);
     void deleteReply(String replyId);
-    List<PostDTO> getCollectedPosts(String userId);
+    List<PostResponse> getCollectedPosts(String userId);
     void toggleCollect(String postId, boolean collect,String userId);
 }

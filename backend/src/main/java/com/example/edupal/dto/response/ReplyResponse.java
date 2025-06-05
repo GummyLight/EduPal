@@ -2,17 +2,13 @@ package com.example.edupal.dto.response;
 
 import lombok.Data;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
-public class PostDTO {
+public class ReplyResponse {
     private String id;
-    private String title;
-    private String content;
     private String authorId;
     private String authorName;
+    private String content;
     private LocalDateTime publishTime;
-    private Boolean isCollected;
     private String attachedFileUrl;
-    private List<ReplyDTO> replies;
 }

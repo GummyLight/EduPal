@@ -2,8 +2,8 @@ package com.example.edupal.controller;
 
 import com.example.edupal.dto.request.PostRequest;
 import com.example.edupal.dto.request.ReplyRequest;
-import com.example.edupal.dto.response.PostDTO;
-import com.example.edupal.dto.response.ReplyDTO;
+import com.example.edupal.dto.response.PostResponse;
+import com.example.edupal.dto.response.ReplyResponse;
 import com.example.edupal.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,19 +22,19 @@ public class PostController {
 
     // 1. 获取帖子列表 GET /community/posts
     @GetMapping("/posts")
-    public List<PostDTO> getPosts() {
+    public List<PostResponse> getPosts() {
         return postService.getPosts();
     }
 
     // 2. 获取帖子详情 GET /community/posts/{postId}
     @GetMapping("/posts/{postId}")
-    public PostDTO getPostDetail(@PathVariable String postId) {
+    public PostResponse getPostDetail(@PathVariable String postId) {
         return postService.getPostDetail(postId);
     }
 
     // 3. 创建帖子 POST /community/posts
     @PostMapping("/posts")
-    public PostDTO createPost(@RequestBody PostRequest form) {
+    public PostResponse createPost(@RequestBody PostRequest form) {
         return postService.createPost(form);
     }
 
@@ -61,7 +61,7 @@ public class PostController {
 
     // 5. 创建回复 POST /community/posts/{postId}/replies
     @PostMapping("/posts/{postId}/replies")
-    public ReplyDTO createReply(@PathVariable String postId, @RequestBody ReplyRequest form) {
+    public ReplyResponse createReply(@PathVariable String postId, @RequestBody ReplyRequest form) {
         return postService.createReply(postId, form);
     }
 
@@ -113,8 +113,8 @@ public class PostController {
 
     // 9. 获取用户收藏的帖子列表 GET /community/users/{userId}/collected-posts
     @GetMapping("/users/{userId}/collected-posts")
-    public ResponseEntity<List<PostDTO>> getCollectedPosts(@PathVariable String userId) {
-        List<PostDTO> posts = postService.getCollectedPosts(userId);
+    public ResponseEntity<List<PostResponse>> getCollectedPosts(@PathVariable String userId) {
+        List<PostResponse> posts = postService.getCollectedPosts(userId);
         return ResponseEntity.ok(posts);
     }
 
