@@ -14,7 +14,7 @@ public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "quiz_id", length = 8)
-    private Integer quiz_id;
+    private Integer quizId;
 
     @Column(name = "title", length = 255)
     private String title;
