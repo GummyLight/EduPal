@@ -30,6 +30,6 @@ public class TeachingContentRequest {
         this.class_id = class_id;
         this.name = name;
         this.upload_time = upload_time;
-        this.description = description;
+        this.description= description;
     }
 }
