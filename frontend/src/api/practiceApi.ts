@@ -55,9 +55,18 @@ export async function uploadFile(file: File, fileId: string, toPath: string, pat
     } catch (error: any) {
         let errorMessage = '文件上传失败，请检查网络或后端服务。';
         if (axios.isAxiosError(error)) {
-            errorMessage = error.response?.data?.message || `文件上传失败：HTTP 错误 ${error.response?.status}`;
+            const status = error.response?.status;
+            const responseMessage = error.response?.data?.message;
+            
+            if (status === 500) {
+                errorMessage = '服务器内部错误，请稍后重试';
+            } else {
+                errorMessage = responseMessage || `文件上传失败：HTTP 错误 ${status}`;
+            }
+            
             console.error('HTTP 错误响应数据:', error.response?.data);
-            console.error('HTTP 错误状态码:', error.response?.status);
+            console.error('HTTP 错误状态码:', status);
+            console.error('完整错误信息:', error);
         } else if (error.request) {
             errorMessage = '文件上传请求未收到响应，请检查后端服务是否运行。';
         }
@@ -111,8 +120,8 @@ export const getMaxanswerId = async (): Promise<number> => {
     try {
         // 使用全局 service 实例发送请求
         const response = await service.get<ApiResponse<number>>('/quiz/max-answer-id');
-        if (response.data.code === 200) {
-            return response.data.data; // 返回最大 resource_id
+        if (response.data.code === 200 && response.data.data !== undefined) {
+            return response.data.data; // 返回最大 answer_id
         } else {
             throw new Error(response.data.message || '获取最大 answer-id 失败');
         }

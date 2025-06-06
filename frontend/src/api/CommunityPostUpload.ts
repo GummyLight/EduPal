@@ -45,6 +45,25 @@ interface PostSubmitResponse {
     data?: any; // 后端 ApiResponse 的 data 字段
 }
 
+// **更新：对应后端 ResourceRequest 的接口**
+interface MaterialSubmitData {
+    resource_id: string;      // 对应 ResourceRequest 的 resource_id
+    subject: string;          // 对应 ResourceRequest 的 subject
+    teacher_id: string;       // 对应 ResourceRequest 的 teacher_id
+    resource_content: string; // 对应 ResourceRequest 的 resource_content (文件在服务器上的完整路径)
+    class_id?: string | null; // 对应 ResourceRequest 的 class_id，可能为空或 null
+    name: string;             // 对应 ResourceRequest 的 name
+    upload_time: string;      // 对应 ResourceRequest 的 upload_time (LocalDateTime 对应前端的 ISO string)
+    description: string | null; // 对应 ResourceRequest 的 description，可能为空或 null
+}
+
+// 资料信息提交响应接口（与后端 /create 接口的返回结构一致）
+interface MaterialSubmitResponse {
+    code: number;
+    message: string;
+    data?: any; // 后端 ApiResponse 的 data 字段
+}
+
 /**
  * 上传文件到后端服务器
  * @param file 要上传的文件对象
@@ -70,9 +89,18 @@ export async function uploadFile(file: File, fileId: string, toPath: string, pat
     } catch (error: any) {
         let errorMessage = '文件上传失败，请检查网络或后端服务。';
         if (axios.isAxiosError(error)) {
-            errorMessage = error.response?.data?.message || `文件上传失败：HTTP 错误 ${error.response?.status}`;
+            const status = error.response?.status;
+            const responseMessage = error.response?.data?.message;
+            
+            if (status === 500) {
+                errorMessage = '服务器内部错误，请稍后重试';
+            } else {
+                errorMessage = responseMessage || `文件上传失败：HTTP 错误 ${status}`;
+            }
+            
             console.error('HTTP 错误响应数据:', error.response?.data);
-            console.error('HTTP 错误状态码:', error.response?.status);
+            console.error('HTTP 错误状态码:', status);
+            console.error('完整错误信息:', error);
         } else if (error.request) {
             errorMessage = '文件上传请求未收到响应，请检查后端服务是否运行。';
         }
