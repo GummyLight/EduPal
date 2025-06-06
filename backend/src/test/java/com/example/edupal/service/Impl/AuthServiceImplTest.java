@@ -1,4 +1,4 @@
-package com.example.edupal.service.impl;
+package com.example.edupal.service.Impl;
 
 import com.example.edupal.common.Result;
 import com.example.edupal.dto.response.ListStudentResponse;
@@ -13,15 +13,12 @@ import com.example.edupal.repository.TeacherRepository;
 import com.example.edupal.repository.UserRepository;
 import com.example.edupal.repository.ValidationRepository;
 import com.example.edupal.service.EmailService;
-import com.example.edupal.service.AuthService;
-import com.example.edupal.service.Impl.AuthServiceImpl;
 import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

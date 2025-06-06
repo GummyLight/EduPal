@@ -26,4 +26,14 @@ public class Student {
     @Column(name="student_class",length = 4)
     private String studentClass;
 
+    public Student(String s1, String class1) {
+        this.studentId = s1;
+        this.studentName = "";
+        this.studentGender = 0; // 默认值
+        this.studentClass = class1;
+
+    }
+    public Student() {
+        // 默认构造函数
+    }
 }

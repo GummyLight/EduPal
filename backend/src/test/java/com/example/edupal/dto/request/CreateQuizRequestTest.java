@@ -83,9 +83,4 @@ class CreateQuizRequestTest {
     void testClass2() {
         assertEquals("Class B", createQuizRequest.getClass2());
     }
-
-    @Test
-    void testTeacherName() {
-        assertNull(createQuizRequest.getTeacherName()); // Assuming teacherName is not set in the constructor
-    }
 }

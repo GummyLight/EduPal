@@ -59,14 +59,14 @@ public class Quiz {
     @Column(name = "teacher_name", length = 255)
     private String teacherName;
 
-    public Quiz(String quiz1, String math, String content, String easy, String points, String description, String t1, Date date, Date date1) {
+    public Quiz(String quiz1, String math, String content, String easy, String points, String description, String teacherId, Date date, Date date1) {
         this.title = quiz1;
         this.subject = math;
         this.contentType = content;
         this.difficulty = easy;
         this.knowledgePoints = points;
         this.description = description;
-        this.teacherId = t1;
+        this.teacherId = teacherId;
         this.createTime = date;
         this.updatedTime = date1;
     }
