@@ -56,6 +56,18 @@
         <i class="el-icon-user"></i>
         <span>用户管理</span>
       </el-menu-item>
+      <el-menu-item v-if="props.usertype === 0" index="/home/admin-materials">
+        <i class="el-icon-folder"></i>
+        <span>资料管理</span>
+      </el-menu-item>
+      <el-menu-item v-if="props.usertype === 0" index="/home/admin-course">
+        <i class="el-icon-reading"></i>
+        <span>教学内容管理</span>
+      </el-menu-item>
+      <el-menu-item v-if="props.usertype === 0" index="/home/admin-community">
+        <i class="el-icon-chat-line-square"></i>
+        <span>社区管理</span>
+      </el-menu-item>
     </el-menu>
 
     <div class="logout-button-container">
