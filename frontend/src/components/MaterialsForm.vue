@@ -4,7 +4,7 @@
       <div class="title">智慧教学系统</div>
       <div class="user-info">
         <span>您好，{{ username }} {{ userType === 2 ? '教师' : '同学' }}</span>
-        <el-button type="danger" @click="logout">退出登录</el-button>
+<!--        <el-button type="danger" @click="logout">退出登录</el-button>-->
       </div>
     </el-header>
 
