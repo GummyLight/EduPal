@@ -4,7 +4,7 @@
       <div class="title">智慧教学系统</div>
       <div class="user-info">
         <span>您好，{{ username }} {{ userType === 2 ? '老师' : '同学' }} </span>
-        <el-button type="danger" @click="logout">退出登录</el-button>
+<!--        <el-button type="danger" @click="logout">退出登录</el-button>-->
       </div>
     </el-header>
 
@@ -49,9 +49,8 @@
       <div class="actions">
         <template v-if="userType === 2">
           <el-button type="success" icon="el-icon-plus" @click="handleAdd">添加练习</el-button>
-          <el-button type="primary" icon="el-icon-pie-chart" @click="handleViewAnalytics">查看学情分析</el-button>
         </template>
-        <template v-if="userType === 1">
+        <template v-if="userType === 3">
           <el-button type="primary" icon="el-icon-data-analysis" @click="handleViewProgress">查看学习进度</el-button>
         </template>
       </div>

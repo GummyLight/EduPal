@@ -7,7 +7,7 @@
           <el-option v-for="option in classOptions" :key="option.value" :label="option.label" :value="option.value" />
         </el-select>
         <span>您好，{{ username }} {{ userType === 2 ? '教师' : '同学' }}</span>
-        <el-button type="danger" size="small" @click="logout">退出登录</el-button>
+<!--        <el-button type="danger" size="small" @click="logout">退出登录</el-button>-->
       </div>
     </el-header>
 
