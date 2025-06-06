@@ -1,6 +1,7 @@
 package com.example.edupal.dto.response;
 
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 

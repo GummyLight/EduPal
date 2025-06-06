@@ -11,7 +11,6 @@ import java.util.Date;
 @Entity
 @Table(name = "teacher_answer")
 @NoArgsConstructor
-@AllArgsConstructor
 public class TeacherAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

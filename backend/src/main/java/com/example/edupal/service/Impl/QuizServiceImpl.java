@@ -6,10 +6,7 @@ import com.example.edupal.dto.request.ModifyQuizRequest;
 import com.example.edupal.dto.response.GetMyQuizResponse;
 import com.example.edupal.dto.response.GetQuizStudentResponse;
 import com.example.edupal.dto.response.GetTeacherQuizResponse;
-import com.example.edupal.model.Quiz;
-import com.example.edupal.model.QuizAnswer;
-import com.example.edupal.model.Student;
-import com.example.edupal.model.User;
+import com.example.edupal.model.*;
 import com.example.edupal.repository.*;
 import com.example.edupal.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +38,7 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public GetStudentQuizResponse getStudentQuiz(String userId) throws Exception {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new Exception("User not found with id: " + userId));
+        User user = userRepository.findByUserId(userId);
 
         if(user == null) {
             return new GetStudentQuizResponse("error","User not found", userId, 0, null);
@@ -134,6 +130,7 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public Result createQuiz(CreateQuizRequest quizRequest) {
+        Teacher teacher = teacherRepository.findByTeacherId(quizRequest.getTeacherId());
         // 创建测验逻辑
         Quiz quiz = new Quiz();
         quiz.setTitle(quizRequest.getTitle());
@@ -143,7 +140,7 @@ public class QuizServiceImpl implements QuizService {
         quiz.setKnowledgePoints(quizRequest.getKnowledgePoints());
         quiz.setDescription(quizRequest.getDescription());
         quiz.setTeacherId(quizRequest.getTeacherId());
-        quiz.setTeacherName(quizRequest.getTeacherName());
+        quiz.setTeacherName(teacher != null ? teacher.getTeacherName() : "Unknown Teacher");
         quiz.setClass1(quizRequest.getClass1());
         quiz.setClass2(quizRequest.getClass2());
         quiz.setCreateTime(new Date());

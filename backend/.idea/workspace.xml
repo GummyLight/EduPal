@@ -4,29 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="style(dto):统一dto命名">
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/AnswerResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/GetHistoryResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/GetMyQuizResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/GetMyTeacherResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/GetQuizStudentResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/GetStudentQuizResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/GetTeacherQuizResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/HistoryResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/HomeAdminResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/HomeStudentResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/HomeTeacherResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/ListStudentResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/ListTeacherResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/ListUserResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/LoginResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/PostResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/ReplyResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/ResourceResponseTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/ViewQuestionResponse.java" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="test(response):对于Response进行基于状态的单元测试，均通过，注意时间的断言应该设置一个范围，否则会因为纳秒级的变化而不通过测试">
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/controller/AdminControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/service/Impl/HomeServiceImplTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/service/Impl/QuizServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/PostResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/PostResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/ReplyResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/ReplyResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/CreateQuizRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/request/CreateQuizRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/HomeStudentResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/HomeStudentResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/ListUserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/dto/response/ListUserResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/Quiz.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/Quiz.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/TeacherAnswer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/TeacherAnswer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/TeachingContent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/TeachingContent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/Validation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/Validation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/edupal/config/SecurityConfigTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/request/CreateQuizRequestTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/request/CreateQuizRequestTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/response/GetHistoryResponseTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/edupal/service/AuthServiceImplIntegrationTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/edupal/service/impl/AuthServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/service/Impl/AuthServiceImplTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,11 +74,12 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "JUnit.AdminControllerTest.executor": "Run",
     "JUnit.AnswerTest.executor": "Run",
     "JUnit.AuthControllerTest.executor": "Run",
     "JUnit.AuthControllerTest.testRegisterUser_Success.executor": "Run",
     "JUnit.AuthServiceImplIntegrationTest.executor": "Run",
-    "JUnit.AuthServiceImplTest.executor": "Run",
+    "JUnit.AuthServiceImplTest.executor": "Coverage",
     "JUnit.AuthServiceImplTest.loginUserByEmailSuccess.executor": "Run",
     "JUnit.AuthServiceImplTest.loginUserByEmail_ReturnsError_WhenEmailIsNull.executor": "Run",
     "JUnit.AuthServiceImplTest.testLoginUserByUserId_Success.executor": "Run",
@@ -92,6 +92,7 @@
     "JUnit.GetStudentQuizResponseTest.executor": "Run",
     "JUnit.HistoryResponseTest.executor": "Run",
     "JUnit.HomeAdminResponseTest.executor": "Run",
+    "JUnit.HomeServiceImplTest.executor": "Run",
     "JUnit.HomeTeacherResponseTest.executor": "Run",
     "JUnit.ListStudentResponseTest.executor": "Run",
     "JUnit.ListTeacherResponseTest.executor": "Run",
@@ -105,12 +106,18 @@
     "JUnit.QuestionRequestTest.executor": "Run",
     "JUnit.QuestionTest.executor": "Run",
     "JUnit.QuizAnswerTest.executor": "Run",
+    "JUnit.QuizServiceImplTest.executor": "Run",
+    "JUnit.QuizServiceImplTest.testCreateQuiz.executor": "Debug",
+    "JUnit.QuizServiceImplTest.testGetStudentQuiz_NoQuizzes.executor": "Debug",
+    "JUnit.QuizServiceImplTest.testGetStudentQuiz_StudentNotFound.executor": "Run",
     "JUnit.QuizTest.executor": "Run",
     "JUnit.RegisterRequestTest.executor": "Run",
     "JUnit.ReplyRequestTest.executor": "Run",
+    "JUnit.ReplyResponseTest.executor": "Run",
     "JUnit.ReplyTest.executor": "Run",
     "JUnit.ResetPasswordRequestTest.executor": "Run",
     "JUnit.ResourceRequestTest.executor": "Run",
+    "JUnit.ResourceResponseTest.executor": "Run",
     "JUnit.SecurityConfigTest.executor": "Run",
     "JUnit.StudentTest.executor": "Run",
     "JUnit.SubmitAnswerRequestTest.executor": "Run",
@@ -121,6 +128,9 @@
     "JUnit.UserServiceImplTest.executor": "Run",
     "JUnit.UserTest.executor": "Run",
     "JUnit.ValidationTest.executor": "Run",
+    "JUnit.ViewQuestionResponseTest.executor": "Run",
+    "JUnit.java in backend.executor": "Coverage",
+    "JUnit.request in backend.executor": "Coverage",
     "Maven.backend [clean].executor": "Run",
     "Maven.backend [install].executor": "Run",
     "Maven.backend [package].executor": "Run",
@@ -143,7 +153,7 @@
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "vcs.Git",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "ts.external.directory.path": "D:\\Program Files\\JetBrains\\IntelliJ IDEA 2023.3.5\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
   },
@@ -158,8 +168,8 @@
       <recent name="com.example.edupal.service" />
     </key>
   </component>
-  <component name="RunManager">
-    <configuration name="AuthServiceImplTest.loginUserByEmailSuccess" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Spring Boot.EduPalApplication">
+    <configuration name="AuthServiceImplTest" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
         <pattern>
@@ -167,15 +177,15 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="com.example.edupal.service" />
-      <option name="MAIN_CLASS_NAME" value="com.example.edupal.service.AuthServiceImplTest" />
-      <option name="METHOD_NAME" value="loginUserByEmailSuccess" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="PACKAGE_NAME" value="com.example.edupal.service.impl" />
+      <option name="MAIN_CLASS_NAME" value="com.example.edupal.service.Impl.AuthServiceImplTest" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="AuthServiceImplTest.loginUserByEmail_ReturnsError_WhenEmailIsNull" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="QuizServiceImplTest.testGetStudentQuiz_NoQuizzes" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
         <pattern>
@@ -183,58 +193,64 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="com.example.edupal.service" />
-      <option name="MAIN_CLASS_NAME" value="com.example.edupal.service.AuthServiceImplTest" />
-      <option name="METHOD_NAME" value="loginUserByEmail_ReturnsError_WhenEmailIsNull" />
+      <option name="PACKAGE_NAME" value="com.example.edupal.service.Impl" />
+      <option name="MAIN_CLASS_NAME" value="com.example.edupal.service.Impl.QuizServiceImplTest" />
+      <option name="METHOD_NAME" value="testGetStudentQuiz_NoQuizzes" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="AuthServiceImplTest.testLoginUserByUserId_Success" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="QuizServiceImplTest.testGetStudentQuiz_StudentNotFound" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.example.edupal.service.impl.*" />
+          <option name="PATTERN" value="com.example.edupal.service.Impl.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="com.example.edupal.service.impl" />
-      <option name="MAIN_CLASS_NAME" value="com.example.edupal.service.impl.AuthServiceImplTest" />
-      <option name="METHOD_NAME" value="testLoginUserByUserId_Success" />
+      <option name="PACKAGE_NAME" value="com.example.edupal.service.Impl" />
+      <option name="MAIN_CLASS_NAME" value="com.example.edupal.service.Impl.QuizServiceImplTest" />
+      <option name="METHOD_NAME" value="testGetStudentQuiz_StudentNotFound" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="Unnamed" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
       <module name="backend" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.example.edupal.service.impl.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.example.edupal.service.impl" />
-      <option name="MAIN_CLASS_NAME" value="com.example.edupal.service.impl.AuthServiceImplTest" />
-      <option name="METHOD_NAME" value="testSendVerificationCode_CodeExistsNotExpired" />
-      <option name="TEST_OBJECT" value="method" />
+      <extension name="coverage" sample_coverage="false" />
+      <option name="MAIN_CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="AuthServiceImplTest.testUpdateStudentClass_Success" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration default="true" type="JUnit" factoryName="JUnit">
       <module name="backend" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.example.edupal.service.impl.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.example.edupal.service.impl" />
-      <option name="MAIN_CLASS_NAME" value="com.example.edupal.service.impl.AuthServiceImplTest" />
-      <option name="METHOD_NAME" value="testUpdateStudentClass_Success" />
-      <option name="TEST_OBJECT" value="method" />
+      <option name="MAIN_CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="java in backend" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="backend" />
+      <extension name="coverage" track_test_folders="true" />
+      <option name="MAIN_CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="directory" />
+      <dir value="$PROJECT_DIR$/src/test/java" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="request in backend" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="backend" />
+      <option name="TEST_OBJECT" value="directory" />
+      <dir value="$PROJECT_DIR$/src/test/java/com/example/edupal/dto/request" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -246,13 +262,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="JUnit.AuthServiceImplTest" />
+      <item itemvalue="JUnit.java in backend" />
+      <item itemvalue="JUnit.Unnamed" />
+      <item itemvalue="JUnit.QuizServiceImplTest.testGetStudentQuiz_NoQuizzes" />
+      <item itemvalue="JUnit.QuizServiceImplTest.testGetStudentQuiz_StudentNotFound" />
+      <item itemvalue="JUnit.request in backend" />
+      <item itemvalue="Spring Boot.EduPalApplication" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.AuthServiceImplTest.testLoginUserByUserId_Success" />
-        <item itemvalue="JUnit.AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired" />
-        <item itemvalue="JUnit.AuthServiceImplTest.testUpdateStudentClass_Success" />
-        <item itemvalue="JUnit.AuthServiceImplTest.loginUserByEmailSuccess" />
-        <item itemvalue="JUnit.AuthServiceImplTest.loginUserByEmail_ReturnsError_WhenEmailIsNull" />
+        <item itemvalue="JUnit.QuizServiceImplTest.testGetStudentQuiz_NoQuizzes" />
+        <item itemvalue="JUnit.QuizServiceImplTest.testGetStudentQuiz_StudentNotFound" />
+        <item itemvalue="JUnit.request in backend" />
       </list>
     </recent_temporary>
   </component>
@@ -306,15 +329,8 @@
       <workItem from="1748912407224" duration="5164000" />
       <workItem from="1748996265826" duration="7578000" />
       <workItem from="1749122271298" duration="914000" />
-      <workItem from="1749129153024" duration="8110000" />
-    </task>
-    <task id="LOCAL-00039" summary="fix(ai/teacherView):修改请求类型为GET">
-      <option name="closed" value="true" />
-      <created>1748762437969</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1748762437969</updated>
+      <workItem from="1749129153024" duration="11313000" />
+      <workItem from="1749168142878" duration="5399000" />
     </task>
     <task id="LOCAL-00040" summary="fix(ai/teacherView):补充了返回questionid">
       <option name="closed" value="true" />
@@ -700,7 +716,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749136424674</updated>
     </task>
-    <option name="localTasksCounter" value="88" />
+    <task id="LOCAL-00088" summary="test(response):对于Response进行基于状态的单元测试，均通过，注意时间的断言应该设置一个范围，否则会因为纳秒级的变化而不通过测试">
+      <option name="closed" value="true" />
+      <created>1749139620152</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1749139620152</updated>
+    </task>
+    <option name="localTasksCounter" value="89" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -733,7 +757,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="feat(home/admin):新增管理员看板功能" />
     <MESSAGE value="feat(home/teacher):更新教师看板的一些统计函数" />
     <MESSAGE value="feat(?):commit一下这里突然出现的很多东西" />
     <MESSAGE value="fix(quiz):将学生上传作业的接口改成了POST类型" />
@@ -758,7 +781,8 @@
     <MESSAGE value="test(Request):对于Request进行基于状态的单元测试，均通过" />
     <MESSAGE value="test(Request):对于剩余Request进行基于状态的单元测试，均通过" />
     <MESSAGE value="style(dto):统一dto命名" />
-    <option name="LAST_COMMIT_MESSAGE" value="style(dto):统一dto命名" />
+    <MESSAGE value="test(response):对于Response进行基于状态的单元测试，均通过，注意时间的断言应该设置一个范围，否则会因为纳秒级的变化而不通过测试" />
+    <option name="LAST_COMMIT_MESSAGE" value="test(response):对于Response进行基于状态的单元测试，均通过，注意时间的断言应该设置一个范围，否则会因为纳秒级的变化而不通过测试" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1355,12 +1379,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
-          <line>161</line>
+          <line>158</line>
           <option name="timeStamp" value="333" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
-          <line>179</line>
+          <line>176</line>
           <option name="timeStamp" value="334" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -1375,12 +1399,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
-          <line>57</line>
+          <line>53</line>
           <option name="timeStamp" value="343" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
-          <line>59</line>
+          <line>55</line>
           <option name="timeStamp" value="344" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -1390,27 +1414,27 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
-          <line>92</line>
+          <line>88</line>
           <option name="timeStamp" value="347" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
-          <line>100</line>
+          <line>96</line>
           <option name="timeStamp" value="348" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
-          <line>103</line>
+          <line>99</line>
           <option name="timeStamp" value="349" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
-          <line>131</line>
+          <line>127</line>
           <option name="timeStamp" value="355" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
-          <line>106</line>
+          <line>102</line>
           <option name="timeStamp" value="356" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -1418,9 +1442,34 @@
           <line>15</line>
           <option name="timeStamp" value="358" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
+          <line>150</line>
+          <option name="timeStamp" value="359" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
+          <line>49</line>
+          <option name="timeStamp" value="360" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/QuizServiceImpl.java</url>
+          <line>43</line>
+          <option name="timeStamp" value="361" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/example/edupal/service/Impl/QuizServiceImplTest.java</url>
+          <line>64</line>
+          <option name="timeStamp" value="362" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/example/edupal/service/Impl/QuizServiceImplTest.java</url>
+          <line>65</line>
+          <option name="timeStamp" value="363" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java</url>
-          <line>11</line>
+          <line>13</line>
           <properties class="com.example.edupal.service.AIService" method="askQuestion">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1438,7 +1487,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java</url>
-          <line>13</line>
+          <line>15</line>
           <properties class="com.example.edupal.service.AIService" method="getHistory">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1446,9 +1495,9 @@
           <option name="timeStamp" value="276" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/test/java/com/example/edupal/service/impl/AuthServiceImplTest.java</url>
+          <url>file://$PROJECT_DIR$/src/test/java/com/example/edupal/service/Impl/AuthServiceImplTest.java</url>
           <line>319</line>
-          <properties class="com.example.edupal.service.impl.AuthServiceImplTest" method="testUpdateStudentClass_Success">
+          <properties class="com.example.edupal.service.Impl.AuthServiceImplTest">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
@@ -1456,7 +1505,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/service/AIService.java</url>
-          <line>19</line>
+          <line>21</line>
           <properties class="com.example.edupal.service.AIService" method="viewQuestion">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
@@ -1492,5 +1541,16 @@
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/backend$request_in_backend.ic" NAME="request in backend Coverage Results" MODIFIED="1749167722226" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/backend$java_in_backend.ic" NAME="java in backend Coverage Results" MODIFIED="1749172051722" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/backend$AuthServiceImplTest.ic" NAME="AuthServiceImplTest Coverage Results" MODIFIED="1749167681709" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.example.edupal.service.impl.*</FILTER>
+    </SUITE>
   </component>
 </project>

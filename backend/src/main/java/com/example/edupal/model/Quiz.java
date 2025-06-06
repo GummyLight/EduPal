@@ -58,4 +58,32 @@ public class Quiz {
 
     @Column(name = "teacher_name", length = 255)
     private String teacherName;
+
+    public Quiz(String quiz1, String math, String content, String easy, String points, String description, String t1, Date date, Date date1) {
+        this.title = quiz1;
+        this.subject = math;
+        this.contentType = content;
+        this.difficulty = easy;
+        this.knowledgePoints = points;
+        this.description = description;
+        this.teacherId = t1;
+        this.createTime = date;
+        this.updatedTime = date1;
+    }
+
+    public Quiz() {
+        this.title = "";
+        this.subject = "";
+        this.contentType = "";
+        this.difficulty = "";
+        this.knowledgePoints = "";
+        this.description = "";
+        this.teacherId = "";
+        this.class1 = "";
+        this.class2 = "";
+        this.createTime = new Date();
+        this.updatedTime = new Date();
+        this.deadline = new Date();
+        this.teacherName = "";
+    }
 }

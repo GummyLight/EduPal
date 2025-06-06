@@ -13,16 +13,13 @@ public class CreateQuizRequest {
     private String knowledgePoints; // 知识点
     private String description; // 描述
     private String teacherId; // 教师ID
-
-    private String teacherName; // 教师姓名
-
-    private Date createTime; // 创建时间
+        private Date createTime; // 创建时间
     private Date deadline; // 截止时间
     private String class1; // 班级1
     private String class2; // 班级2
 
     public CreateQuizRequest(String title, String subject, String contentType, String difficulty,
-                             String knowledgePoints, String description, String teacherId, Date createTime,Date deadline,String class1,String class2) {
+                             String knowledgePoints, String description, String teacherId,Date createTime,Date deadline,String class1,String class2) {
         this.title = title;
         this.subject = subject;
         this.contentType = contentType;

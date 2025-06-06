@@ -19,6 +19,7 @@ public class ListUserResponse {
         this.users = users;
     }
 
+
     @Data
     public static class UserDetail {
         private String userId;         // 用户ID

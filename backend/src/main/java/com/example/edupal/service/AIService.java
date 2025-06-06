@@ -7,7 +7,9 @@ import com.example.edupal.dto.response.AnswerResponse;
 import com.example.edupal.dto.response.GetMyTeacherResponse;
 import com.example.edupal.dto.response.HistoryResponse;
 import com.example.edupal.dto.response.ViewQuestionResponse;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface AIService {
     AnswerResponse askQuestion(QuestionRequest questionRequest);
 

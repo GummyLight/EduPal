@@ -5,7 +5,9 @@ import com.example.edupal.dto.response.ListStudentResponse;
 import com.example.edupal.dto.response.ListTeacherResponse;
 import com.example.edupal.dto.response.ListUserResponse;
 import jakarta.mail.MessagingException;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface AuthService {
     Result registerUser(String userId, String userName, String password, String phoneNum, Integer userType);
     Result registerStudent(String userId, String userName, String password, String email, Integer userType,

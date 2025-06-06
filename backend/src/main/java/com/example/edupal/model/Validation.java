@@ -9,8 +9,6 @@ import java.util.Date;
 @Getter
 @Entity
 @Table(name = "validation")
-@NoArgsConstructor
-@AllArgsConstructor
 public class Validation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
