@@ -14,12 +14,12 @@ public interface ResourceRepository extends JpaRepository<Resource, Integer> {
     List<Resource> findByNameContaining(String name);
 
     // 查找 resource_id 的最大值
-    @Query("SELECT MAX(r.resourceId)+1 FROM Resource r")
+    @Query("SELECT MAX(r.resource_id)+1 FROM Resource r")
     Integer findMaxResourceId();
 
     @Query("SELECT COUNT(r) FROM Resource r")
     int countResource();
 
-    @Query("SELECT COUNT(r) FROM Resource r WHERE r.teacherId = :userId")
+    @Query("SELECT COUNT(r) FROM Resource r WHERE r.teacher_id = :userId")
     int countByTeacherId(String userId);
 }

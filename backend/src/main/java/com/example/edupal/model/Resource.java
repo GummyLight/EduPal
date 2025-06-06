@@ -13,25 +13,25 @@ public class Resource {
     // Getters and Setters
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 可选，表示自动增长
-    private int resourceId;
+    private int resource_id;
 
 
     @Column(length = 8, nullable = false)
     private String subject;
 
     @Column(length = 10)
-    private String teacherId;
+    private String teacher_id;
 
     @Lob
-    private String resourceContent;
+    private String resource_content;
 
     @Column(length = 4)
-    private String classId;
+    private String class_id;
 
     @Column(length = 50)
     private String name;
 
-    private LocalDateTime uploadTime;
+    private LocalDateTime upload_time;
 
     @Column(length = 255)
     private String description;
