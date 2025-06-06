@@ -300,7 +300,7 @@ import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import axios from 'axios';
 import { createQuiz, modifyQuiz, type CreateQuizRequest, type ModifyQuizRequest } from '../api/quiz';
-import { uploadFile, type MaterialSubmitData, submitMaterialInfo, getMaxResourceId } from '../api/materialUploadApi';
+import { uploadFile } from '../api/materialUploadApi';
 
 // API 基地址（根据实际环境配置）
 const API_BASE = 'http://localhost:8080';
@@ -622,37 +622,6 @@ const confirmAddQuiz = async () => {
     loadingMessage.close();
     
     if (response.code === 200) {
-      // Quiz创建成功后，创建对应的resource记录
-      try {
-        // 获取最大resource_id用于生成新的resource_id
-        const maxResourceId = await getMaxResourceId();
-        const newResourceId = (maxResourceId + 1).toString();
-        
-        const resourceData: MaterialSubmitData = {
-          resource_id: newResourceId,
-          subject: addQuizForm.value.subject,
-          teacher_id: userId.value,
-          resource_content: fileUrl || `quiz/${response.data?.quizId || 'default'}`, // 使用文件URL或默认路径
-          class_id: addQuizForm.value.class1.trim() || null,
-          name: addQuizForm.value.title.trim(),
-          upload_time: new Date().toISOString(),
-          description: addQuizForm.value.description.trim() || `练习：${addQuizForm.value.title}`,
-        };
-
-        console.log('创建资源记录数据:', resourceData);
-        
-        const resourceResponse = await submitMaterialInfo(resourceData);
-        if (resourceResponse.code === 200) {
-          console.log('资源记录创建成功');
-        } else {
-          console.warn('资源记录创建失败:', resourceResponse.message);
-          // 不影响主流程，只记录警告
-        }
-      } catch (resourceError) {
-        console.warn('创建资源记录时出错:', resourceError);
-        // 不影响主流程，只记录警告
-      }
-      
       ElMessage.success('练习创建成功！');
       showAddDialog.value = false;
       
@@ -797,37 +766,6 @@ const confirmEditQuiz = async () => {
     loadingMessage.close();
     
     if (response.code === 200) {
-      // Quiz修改成功后，更新对应的resource记录
-      try {
-        // 获取最大resource_id用于生成新的resource_id（如果需要）
-        const maxResourceId = await getMaxResourceId();
-        const newResourceId = (maxResourceId + 1).toString();
-        
-        const resourceData: MaterialSubmitData = {
-          resource_id: newResourceId, // 注意：这里可能需要根据实际业务逻辑调整
-          subject: editQuizForm.value.subject,
-          teacher_id: userId.value,
-          resource_content: fileUrl || `quiz/${currentEditQuizId.value}`, // 使用新文件URL或默认路径
-          class_id: editQuizForm.value.class1.trim() || null,
-          name: editQuizForm.value.title.trim(),
-          upload_time: new Date().toISOString(),
-          description: editQuizForm.value.description.trim() || `练习：${editQuizForm.value.title}`,
-        };
-
-        console.log('更新资源记录数据:', resourceData);
-        
-        const resourceResponse = await submitMaterialInfo(resourceData);
-        if (resourceResponse.code === 200) {
-          console.log('资源记录更新成功');
-        } else {
-          console.warn('资源记录更新失败:', resourceResponse.message);
-          // 不影响主流程，只记录警告
-        }
-      } catch (resourceError) {
-        console.warn('更新资源记录时出错:', resourceError);
-        // 不影响主流程，只记录警告
-      }
-      
       ElMessage.success('练习修改成功！');
       showEditDialog.value = false;
       
