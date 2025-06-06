@@ -14,19 +14,19 @@ class ResourceTest {
     void setUp() {
         // 初始化 Resource 对象
         resource = new Resource();
-        resource.setResourceId(1);
+        resource.setResource_id(1);
         resource.setSubject("Mathematics");
-        resource.setTeacherId("T001");
-        resource.setResourceContent("Content of the resource.");
-        resource.setClassId("Class A");
+        resource.setTeacher_id("T001");
+        resource.setResource_content("Content of the resource.");
+        resource.setClass_id("Class A");
         resource.setName("Resource Name");
-        resource.setUploadTime(LocalDateTime.now());
+        resource.setUpload_time(LocalDateTime.now());
         resource.setDescription("This is a description of the resource.");
     }
 
     @Test
     void testGetResourceId() {
-        assertEquals(1, resource.getResourceId());
+        assertEquals(1, resource.getResource_id());
     }
 
     @Test
@@ -36,17 +36,17 @@ class ResourceTest {
 
     @Test
     void testGetTeacherId() {
-        assertEquals("T001", resource.getTeacherId());
+        assertEquals("T001", resource.getTeacher_id());
     }
 
     @Test
     void testGetResourceContent() {
-        assertEquals("Content of the resource.", resource.getResourceContent());
+        assertEquals("Content of the resource.", resource.getResource_content());
     }
 
     @Test
     void testGetClassId() {
-        assertEquals("Class A", resource.getClassId());
+        assertEquals("Class A", resource.getClass_id());
     }
 
     @Test
@@ -56,7 +56,7 @@ class ResourceTest {
 
     @Test
     void testGetUploadTime() {
-        assertNotNull(resource.getUploadTime());
+        assertNotNull(resource.getUpload_time());
     }
 
     @Test
@@ -66,8 +66,8 @@ class ResourceTest {
 
     @Test
     void testSetResourceId() {
-        resource.setResourceId(2);
-        assertEquals(2, resource.getResourceId());
+        resource.setResource_id(2);
+        assertEquals(2, resource.getResource_id());
     }
 
     @Test
@@ -78,20 +78,20 @@ class ResourceTest {
 
     @Test
     void testSetTeacherId() {
-        resource.setTeacherId("T002");
-        assertEquals("T002", resource.getTeacherId());
+        resource.setTeacher_id("T002");
+        assertEquals("T002", resource.getTeacher_id());
     }
 
     @Test
     void testSetResourceContent() {
-        resource.setResourceContent("New content of the resource.");
-        assertEquals("New content of the resource.", resource.getResourceContent());
+        resource.setResource_content("New content of the resource.");
+        assertEquals("New content of the resource.", resource.getResource_content());
     }
 
     @Test
     void testSetClassId() {
-        resource.setClassId("Class B");
-        assertEquals("Class B", resource.getClassId());
+        resource.setClass_id("Class B");
+        assertEquals("Class B", resource.getClass_id());
     }
 
     @Test
@@ -103,8 +103,8 @@ class ResourceTest {
     @Test
     void testSetUploadTime() {
         LocalDateTime newUploadTime = LocalDateTime.now().plusHours(1);
-        resource.setUploadTime(newUploadTime);
-        assertEquals(newUploadTime, resource.getUploadTime());
+        resource.setUpload_time(newUploadTime);
+        assertEquals(newUploadTime, resource.getUpload_time());
     }
 
     @Test
