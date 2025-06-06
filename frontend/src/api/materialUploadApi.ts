@@ -101,9 +101,16 @@ export async function submitMaterialInfo(data: MaterialSubmitData): Promise<Mate
 
 }
 
+// 定义通用的 API 响应结构
+interface ApiResponse<T = any> {
+    code: number;
+    message: string;
+    data: T;
+}
+
 export const getMaxResourceId = async (): Promise<number> => {
     try {
-        const response = await axios.get<ApiResponse<number>>('/resource/max-id');
+        const response = await service.get<ApiResponse<number>>('/resource/max-id');
         if (response.data.code === 200) {
             return response.data.data; // 返回最大 resource_id
         } else {
