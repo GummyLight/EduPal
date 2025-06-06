@@ -1,6 +1,5 @@
-// 因为xyy这个b写的代码实在太史山了，自己写不明白所以叫我过来，但我作为一个极具高素质审美的程序员，是必定会规范代码书写格式的，所以在这里创建quiz.ts，特意用来写createQuiz和modifyQuiz的路由，并和xyy运用对比的手法
+// Quiz API 接口定义
 import request from './request';
-import axios from 'axios';
 
 // 老师创建quiz请求
 interface CreateQuizRequest {
@@ -8,7 +7,7 @@ interface CreateQuizRequest {
     subject: string
     contentType: string
     difficulty: string
-    knowledgePoints: string[]
+    knowledgePoints: string  // 字符串类型，与后端匹配
     description: string
     teacherId: string
     teacherName: string
@@ -32,7 +31,7 @@ interface ModifyQuizRequest {
     subject: string
     contentType: string
     difficulty: string
-    knowledgePoints: string[]
+    knowledgePoints: string  // 字符串类型，与后端匹配
     description: string
     teacherId: string
     teacherName: string

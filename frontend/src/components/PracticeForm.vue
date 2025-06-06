@@ -515,6 +515,12 @@ const showAddDialog = ref(false);
 const handleAdd = () => {
   console.log('教师操作: 添加练习');
   // 重置表单
+  resetAddForm();
+  showAddDialog.value = true;
+};
+
+// 重置添加表单
+const resetAddForm = () => {
   addQuizForm.value = {
     title: '',
     subject: '',
@@ -526,84 +532,112 @@ const handleAdd = () => {
     class1: '',
     class2: ''
   };
-  // 重置文件列表
   addFileList.value = [];
   currentAddFile.value = null;
-  showAddDialog.value = true;
+};
+
+// 重置编辑表单
+const resetEditForm = () => {
+  editFileList.value = [];
+  currentEditFile.value = null;
 };
 
 // 确认添加练习
 const confirmAddQuiz = async () => {
   try {
     // 验证必填字段
-    if (!addQuizForm.value.title || !addQuizForm.value.subject || 
-        !addQuizForm.value.contentType || !addQuizForm.value.difficulty || 
-        !addQuizForm.value.deadline) {
-      ElMessage.error('请填写所有必填字段');
+    if (!addQuizForm.value.title.trim()) {
+      ElMessage.error('请输入练习标题');
       return;
     }
+    if (!addQuizForm.value.subject) {
+      ElMessage.error('请选择所属学科');
+      return;
+    }
+    if (!addQuizForm.value.contentType) {
+      ElMessage.error('请选择题目类型');
+      return;
+    }
+    if (!addQuizForm.value.difficulty) {
+      ElMessage.error('请选择难度等级');
+      return;
+    }
+    if (!addQuizForm.value.deadline) {
+      ElMessage.error('请选择截止时间');
+      return;
+    }
+
+    // 验证截止时间不能早于当前时间
+    const deadlineTime = new Date(addQuizForm.value.deadline).getTime();
+    const currentTime = new Date().getTime();
+    if (deadlineTime <= currentTime) {
+      ElMessage.error('截止时间必须晚于当前时间');
+      return;
+    }
+
+    // 显示上传进度提示
+    const loadingMessage = ElMessage({
+      message: '正在创建练习，请稍候...',
+      type: 'info',
+      duration: 0,
+      showClose: false,
+    });
 
     let fileUrl = '';
     
     // 如果有文件，先上传文件
     if (currentAddFile.value) {
       try {
+        ElMessage.info('正在上传练习文件...');
         fileUrl = await uploadFileToServer(currentAddFile.value);
-        ElMessage.success('文件上传成功！');
+        console.log('文件上传成功，文件路径:', fileUrl);
       } catch (error) {
+        loadingMessage.close();
         ElMessage.error('文件上传失败，请重试');
+        console.error('文件上传错误:', error);
         return;
       }
     }
 
     // 构造创建quiz的请求数据
     const createQuizData: CreateQuizRequest = {
-      title: addQuizForm.value.title,
+      title: addQuizForm.value.title.trim(),
       subject: addQuizForm.value.subject,
       contentType: addQuizForm.value.contentType,
       difficulty: addQuizForm.value.difficulty,
-      knowledgePoints: addQuizForm.value.knowledgePoints ? 
-        addQuizForm.value.knowledgePoints.split(',').map(k => k.trim()) : [],
-      description: addQuizForm.value.description,
+      knowledgePoints: addQuizForm.value.knowledgePoints.trim() || '',
+      description: addQuizForm.value.description.trim() || `练习：${addQuizForm.value.title}`,
       teacherId: userId.value,
       teacherName: username.value,
-      createTime: new Date().toISOString(),
-      deadline: addQuizForm.value.deadline,
-      class1: addQuizForm.value.class1,
-      class2: addQuizForm.value.class2
+      createTime: new Date().toISOString().split('T')[0], // 只发送日期部分
+      deadline: addQuizForm.value.deadline.split(' ')[0], // 只发送日期部分
+      class1: addQuizForm.value.class1.trim() || '',
+      class2: addQuizForm.value.class2.trim() || ''
     };
+
+    console.log('创建练习请求数据:', createQuizData);
 
     // 调用创建quiz API
     const response = await createQuiz(createQuizData);
+    
+    loadingMessage.close();
     
     if (response.code === 200) {
       ElMessage.success('练习创建成功！');
       showAddDialog.value = false;
       
       // 重置表单和文件
-      addQuizForm.value = {
-        title: '',
-        subject: '',
-        contentType: '',
-        difficulty: '',
-        knowledgePoints: '',
-        description: '',
-        deadline: '',
-        class1: '',
-        class2: ''
-      };
-      addFileList.value = [];
-      currentAddFile.value = null;
+      resetAddForm();
       
       // 重新加载数据
       if (userType.value === 2) {
         await fetchTeacherQuizzes(userId.value);
       }
     } else {
-      ElMessage.error('创建失败：' + response.message);
+      ElMessage.error('创建失败：' + (response.message || '未知错误'));
     }
-  } catch (error) {
-    ElMessage.error('创建失败，请稍后重试');
+  } catch (error: any) {
+    ElMessage.error('创建失败：' + (error.message || '请稍后重试'));
     console.error('创建练习失败:', error);
   }
 };
@@ -638,15 +672,14 @@ const handleEdit = (row: TableDataItem) => {
     contentType: row.类型,
     difficulty: row.难度,
     knowledgePoints: row.知识点,
-    description: `练习：${row.内容}`,
+    description: row.知识点 ? `练习：${row.内容}` : '',
     deadline: row.截止时间,
-    class1: "class1",
-    class2: "class2"
+    class1: '', // 这些信息在当前数据结构中没有，保持空
+    class2: ''
   };
   
   // 重置文件列表
-  editFileList.value = [];
-  currentEditFile.value = null;
+  resetEditForm();
   
   currentEditQuizId.value = Number(row.习题号);
   showEditDialog.value = true;
@@ -656,22 +689,55 @@ const handleEdit = (row: TableDataItem) => {
 const confirmEditQuiz = async () => {
   try {
     // 验证必填字段
-    if (!editQuizForm.value.title || !editQuizForm.value.subject || 
-        !editQuizForm.value.contentType || !editQuizForm.value.difficulty || 
-        !editQuizForm.value.deadline) {
-      ElMessage.error('请填写所有必填字段');
+    if (!editQuizForm.value.title.trim()) {
+      ElMessage.error('请输入练习标题');
       return;
     }
+    if (!editQuizForm.value.subject) {
+      ElMessage.error('请选择所属学科');
+      return;
+    }
+    if (!editQuizForm.value.contentType) {
+      ElMessage.error('请选择题目类型');
+      return;
+    }
+    if (!editQuizForm.value.difficulty) {
+      ElMessage.error('请选择难度等级');
+      return;
+    }
+    if (!editQuizForm.value.deadline) {
+      ElMessage.error('请选择截止时间');
+      return;
+    }
+
+    // 验证截止时间不能早于当前时间
+    const deadlineTime = new Date(editQuizForm.value.deadline).getTime();
+    const currentTime = new Date().getTime();
+    if (deadlineTime <= currentTime) {
+      ElMessage.error('截止时间必须晚于当前时间');
+      return;
+    }
+
+    // 显示更新进度提示
+    const loadingMessage = ElMessage({
+      message: '正在更新练习，请稍候...',
+      type: 'info',
+      duration: 0,
+      showClose: false,
+    });
 
     let fileUrl = '';
     
     // 如果有新文件，先上传文件
     if (currentEditFile.value) {
       try {
+        ElMessage.info('正在上传新的练习文件...');
         fileUrl = await uploadFileToServer(currentEditFile.value);
-        ElMessage.success('文件上传成功！');
+        console.log('新文件上传成功，文件路径:', fileUrl);
       } catch (error) {
+        loadingMessage.close();
         ElMessage.error('文件上传失败，请重试');
+        console.error('文件上传错误:', error);
         return;
       }
     }
@@ -679,41 +745,43 @@ const confirmEditQuiz = async () => {
     // 构造修改quiz的请求数据
     const modifyQuizData: ModifyQuizRequest = {
       quizId: currentEditQuizId.value,
-      title: editQuizForm.value.title,
+      title: editQuizForm.value.title.trim(),
       subject: editQuizForm.value.subject,
       contentType: editQuizForm.value.contentType,
       difficulty: editQuizForm.value.difficulty,
-      knowledgePoints: editQuizForm.value.knowledgePoints ? 
-        editQuizForm.value.knowledgePoints.split(',').map(k => k.trim()) : [],
-      description: editQuizForm.value.description,
+      knowledgePoints: editQuizForm.value.knowledgePoints.trim() || '',
+      description: editQuizForm.value.description.trim() || `练习：${editQuizForm.value.title}`,
       teacherId: userId.value,
       teacherName: username.value,
-      createTime: new Date().toISOString(), // 这里应该使用原来的创建时间，但暂时用当前时间
-      deadline: editQuizForm.value.deadline,
-      class1: editQuizForm.value.class1,
-      class2: editQuizForm.value.class2
+      createTime: new Date().toISOString().split('T')[0], // 只发送日期部分
+      deadline: editQuizForm.value.deadline.split(' ')[0], // 只发送日期部分
+      class1: editQuizForm.value.class1.trim() || '',
+      class2: editQuizForm.value.class2.trim() || ''
     };
+
+    console.log('编辑练习请求数据:', modifyQuizData);
 
     // 调用修改quiz API
     const response = await modifyQuiz(modifyQuizData);
+    
+    loadingMessage.close();
     
     if (response.code === 200) {
       ElMessage.success('练习修改成功！');
       showEditDialog.value = false;
       
       // 重置文件列表
-      editFileList.value = [];
-      currentEditFile.value = null;
+      resetEditForm();
       
       // 重新加载数据
       if (userType.value === 2) {
         await fetchTeacherQuizzes(userId.value);
       }
     } else {
-      ElMessage.error('修改失败：' + response.message);
+      ElMessage.error('修改失败：' + (response.message || '未知错误'));
     }
-  } catch (error) {
-    ElMessage.error('修改失败，请稍后重试');
+  } catch (error: any) {
+    ElMessage.error('修改失败：' + (error.message || '请稍后重试'));
     console.error('编辑练习失败:', error);
   }
 };
@@ -797,34 +865,48 @@ const currentEditFile = ref<File | null>(null);
 
 // 文件上传前的验证
 const beforeUpload = (file: File) => {
-  const isValidType = [
+  console.log('验证上传文件:', file.name, file.type, file.size);
+  
+  // 检查文件类型
+  const validTypes = [
     'application/pdf',
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/vnd.ms-powerpoint',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
     'text/plain'
-  ].includes(file.type);
+  ];
   
+  const isValidType = validTypes.includes(file.type);
   if (!isValidType) {
-    ElMessage.error('只支持 PDF、Word、PPT、TXT 格式的文件！');
+    ElMessage.error(`不支持的文件格式: ${file.type}。只支持 PDF、Word、PPT、TXT 格式！`);
     return false;
   }
   
-  const isValidSize = file.size / 1024 / 1024 < 10; // 限制10MB
-  if (!isValidSize) {
-    ElMessage.error('文件大小不能超过 10MB！');
+  // 检查文件大小 (限制为50MB)
+  const maxSize = 50 * 1024 * 1024; // 50MB
+  if (file.size > maxSize) {
+    ElMessage.error(`文件大小超出限制！文件大小: ${Math.round(file.size / 1024 / 1024)}MB，最大允许: 50MB`);
     return false;
   }
   
-  return false; // 阻止自动上传
+  // 检查文件名长度
+  if (file.name.length > 100) {
+    ElMessage.error('文件名过长，请重命名后再上传（最长100个字符）');
+    return false;
+  }
+  
+  console.log('文件验证通过:', file.name);
+  return false; // 阻止自动上传，我们手动控制上传
 };
 
 // 添加练习时文件变化处理
 const handleFileChange = (file: any, fileList: any[]) => {
+  console.log('添加练习 - 文件变化:', file, fileList.length);
   if (fileList.length > 0) {
     currentAddFile.value = file.raw;
     addFileList.value = [file];
+    ElMessage.success(`已选择文件: ${file.name}`);
   } else {
     currentAddFile.value = null;
     addFileList.value = [];
@@ -833,9 +915,11 @@ const handleFileChange = (file: any, fileList: any[]) => {
 
 // 编辑练习时文件变化处理
 const handleEditFileChange = (file: any, fileList: any[]) => {
+  console.log('编辑练习 - 文件变化:', file, fileList.length);
   if (fileList.length > 0) {
     currentEditFile.value = file.raw;
     editFileList.value = [file];
+    ElMessage.success(`已选择新文件: ${file.name}，将替换原文件`);
   } else {
     currentEditFile.value = null;
     editFileList.value = [];
@@ -844,7 +928,7 @@ const handleEditFileChange = (file: any, fileList: any[]) => {
 
 // 文件超出限制处理
 const handleExceed = () => {
-  ElMessage.warning('最多只能上传1个文件！');
+  ElMessage.warning('每个练习最多只能上传1个文件！如需上传新文件，请先移除当前文件。');
 };
 
 // 生成唯一文件ID - 使用简单的时间戳
@@ -853,15 +937,15 @@ const generateFileId = () => {
 };
 
 // 上传文件到服务器
-const uploadFileToServer = async (file: File) => {
+const uploadFileToServer = async (file: File): Promise<string> => {
   try {
     const fileId = generateFileId();
     const toPath = 'quiz/'; 
-    const path = 'E:/Postman/files'; 
+    const path = '/tmp'; // 使用有权限的临时目录
     
-    console.log('准备上传文件:', {
+    console.log('准备上传练习文件:', {
       fileName: file.name,
-      fileSize: file.size,
+      fileSize: Math.round(file.size / 1024) + ' KB',
       fileType: file.type,
       fileId,
       toPath,
@@ -869,20 +953,32 @@ const uploadFileToServer = async (file: File) => {
     });
     
     const uploadResponse = await uploadFile(file, fileId, toPath, path);
-    console.log('文件上传响应:', uploadResponse);
+    console.log('练习文件上传响应:', uploadResponse);
     
     if (uploadResponse.code === 200) {
-      const fileExtension = file.name.split('.').pop();
-      const fullPath = `${toPath}${fileId}.${fileExtension}`;
-      console.log('文件上传成功，路径:', fullPath);
+      const fileExtension = file.name.substring(file.name.lastIndexOf('.'));
+      const fullPath = `${toPath}${fileId}${fileExtension}`;
+      console.log('练习文件上传成功，服务器路径:', fullPath);
       return fullPath;
     } else {
       throw new Error(uploadResponse.message || '文件上传失败');
     }
-  } catch (error) {
-    console.error('文件上传失败详情:', error);
-    ElMessage.error('文件上传失败: ' + (error as Error).message);
-    throw error;
+  } catch (error: any) {
+    console.error('练习文件上传失败详情:', error);
+    
+    // 根据错误类型提供更具体的错误信息
+    let errorMessage = '文件上传失败';
+    if (error.message) {
+      errorMessage = error.message;
+    } else if (error.response?.status === 500) {
+      errorMessage = '服务器内部错误，请检查文件格式或稍后重试';
+    } else if (error.response?.status === 413) {
+      errorMessage = '文件太大，请选择较小的文件';
+    } else if (!navigator.onLine) {
+      errorMessage = '网络连接失败，请检查网络后重试';
+    }
+    
+    throw new Error(errorMessage);
   }
 };
 

@@ -81,7 +81,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { ElMessage, ElNotification, FormInstance, UploadFile, UploadFiles, ElUpload } from 'element-plus';
+import { ElMessage, ElNotification, ElMessageBox, FormInstance, UploadFile, UploadFiles, ElUpload } from 'element-plus';
 import { UploadFilled } from '@element-plus/icons-vue';
 // 从 materialUploadApi.ts 导入上传和提交资料信息的函数
 import { uploadFile, submitMaterialInfo, MaterialSubmitData ,getMaxResourceId } from '../api/materialUploadApi';
@@ -166,7 +166,7 @@ const handleFileChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
   fileList.value = [uploadFile]; // 确保只保留一个文件
 
   if (uploadForm.file) {
-    uploadForm.fileId = maxResourceId.value;
+    uploadForm.fileId = maxResourceId.value?.toString() || '';
     uploadForm.originalFileName = uploadFile.name; // 保存原始文件名，包含扩展名
 
     // 尝试根据文件名填充资料名称
@@ -258,8 +258,68 @@ const uploadFileToServer = async (options: any) => {
   } catch (error: any) {
     fileUploadNotification.close(); // 关闭通知
     console.error('文件上传请求失败:', error);
-    // 错误信息已经在 materialUploadApi.ts 中通过 ElMessage 统一处理了
-    options.onError(error, file);
+    
+    // 检查是否是500错误（服务器内部错误）
+    if (error.response?.status === 500) {
+      ElMessage.error('服务器内部错误，可能是FTP服务未启动或路径配置问题。请联系管理员或稍后重试。');
+      
+      // 提供重试选项
+      ElMessageBox.confirm(
+        '上传失败，可能是服务器配置问题。是否尝试使用备用路径重新上传？',
+        '上传失败',
+        {
+          confirmButtonText: '重试',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(() => {
+        // 使用备用路径重试
+        retryUploadWithBackupPath(file, options);
+      }).catch(() => {
+        options.onError(error, file);
+      });
+    } else {
+      // 其他错误正常处理
+      options.onError(error, file);
+    }
+  }
+};
+
+// 使用备用路径重试上传
+const retryUploadWithBackupPath = async (file: File, options: any) => {
+  const backupNotification = ElNotification({
+    title: '正在重试上传',
+    message: `使用备用路径重新上传文件：${file.name}`,
+    type: 'info',
+    duration: 0,
+    showClose: false,
+  });
+
+  try {
+    // 尝试使用备用路径
+    const backupPath = '/tmp/uploads'; // 备用路径
+    const uploadResponse = await uploadFile(
+      file,
+      uploadForm.fileId,
+      uploadForm.toPath,
+      backupPath
+    );
+
+    backupNotification.close();
+
+    if (uploadResponse.code === 200) {
+      ElMessage.success(`文件 ${file.name} 重试上传成功！`);
+      options.onSuccess(uploadResponse, file);
+      await submitMaterialMetadata();
+    } else {
+      ElMessage.error('重试上传失败：' + uploadResponse.message);
+      options.onError(new Error(uploadResponse.message || '重试上传失败'), file);
+    }
+  } catch (retryError: any) {
+    backupNotification.close();
+    console.error('重试上传也失败了:', retryError);
+    ElMessage.error('重试上传也失败了，请检查网络连接或联系管理员');
+    options.onError(retryError, file);
   }
 };
 
