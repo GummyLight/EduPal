@@ -48,10 +48,10 @@
 
       <div class="actions">
         <template v-if="userType === 2">
-          <el-button type="success" icon="el-icon-plus" @click="handleAdd">添加练习</el-button>
+          <el-button type="success" :icon="Plus" @click="handleAdd">添加练习</el-button>
         </template>
-        <template v-if="userType === 3">
-          <el-button type="primary" icon="el-icon-data-analysis" @click="handleViewProgress">查看学习进度</el-button>
+        <template v-if="userType === 1">
+          <el-button type="primary" :icon="TrendCharts" @click="handleViewProgress">查看学习进度</el-button>
         </template>
       </div>
 
@@ -298,6 +298,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { Plus, TrendCharts } from '@element-plus/icons-vue';
 import axios from 'axios';
 import { createQuiz, modifyQuiz, type CreateQuizRequest, type ModifyQuizRequest } from '../api/quiz';
 import { uploadFile } from '../api/materialUploadApi';
@@ -819,11 +820,7 @@ const logout = () => {
   ElMessage.info('您已退出登录。');
 };
 
-// 查看学情分析
-const handleViewAnalytics = () => {
-  console.log('教师操作: 查看学情分析');
-  ElMessage.info('正在查看学情分析...');
-};
+
 
 // 选择班级
 const handleSelectClass = () => {
