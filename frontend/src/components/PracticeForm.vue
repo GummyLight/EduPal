@@ -14,7 +14,6 @@
           <el-form-item label="关键词">
             <el-input v-model="filters.keyword" placeholder="请输入关键词" />
           </el-form-item>
-
           <el-form-item label="难易级别">
             <el-select v-model="filters.difficulty" placeholder="请选择难度" clearable>
               <el-option label="简单" value="easy" />
@@ -206,7 +205,7 @@ const fetchTeacherQuizzes = async (userId: string) => {
       tableData.value = response.data.quizzes.map((quiz: any) => ({
         习题号: quiz.quizId,
         内容: quiz.title,
-        科目: quiz.subject,
+        subjects: quiz.subject,
         类型: quiz.contentType,
         难度: quiz.difficulty,
         知识点: quiz.knowledgePoints,
@@ -218,7 +217,7 @@ const fetchTeacherQuizzes = async (userId: string) => {
         已批改人数: quiz.gradedNum,
         我的状态: '', // 教师端无需显示
         我的分数: null, // 教师端无需显示
-        classId: quiz.classId || '', // 假设后端可能返回
+        classId: quiz.classId || '', // 后端没有返回
       }));
       ElMessage.success('测验列表加载成功');
     } else {
@@ -281,7 +280,11 @@ const handleAdd = () => {
 // 编辑练习
 const handleEdit = (row: any) => {
   console.log('教师操作: 编辑练习内容:', row);
-  router.push({ name: 'PracticeEdit', params: { exerciseId: row.习题号 } });
+  router.push({
+    name: 'PracticeEdit',
+    params: { exerciseId: row.习题号 },
+    state: { exercise: { ...row } }, // 通过 state 传递完整 row 数据
+  });
 };
 
 // 删除练习
@@ -346,7 +349,6 @@ const handleViewSubmissions = (row: any) => {
 };
 
 // 进入练习详情
-// 在 Practice.vue 的 <script setup> 中修改
 const handleGoToPracticeDetail = (row: any) => {
   console.log('学生操作: 进入练习详情，练习ID:', row.习题号, '行数据:', row);
   router.push({
