@@ -13,7 +13,8 @@ public class CreateQuizRequest {
     private String knowledgePoints; // 知识点
     private String description; // 描述
     private String teacherId; // 教师ID
-        private Date createTime; // 创建时间
+    private String teacherName; // 教师姓名
+    private Date createTime; // 创建时间
     private Date deadline; // 截止时间
     private String class1; // 班级1
     private String class2; // 班级2

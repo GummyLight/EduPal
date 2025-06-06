@@ -96,6 +96,202 @@
         </el-table>
       </el-card>
     </el-main>
+
+    <!-- 添加练习对话框 -->
+    <el-dialog v-model="showAddDialog" title="添加练习" width="600px">
+      <el-form :model="addQuizForm" label-width="100px">
+        <el-form-item label="练习标题" required>
+          <el-input v-model="addQuizForm.title" placeholder="请输入练习标题" />
+        </el-form-item>
+        
+        <el-form-item label="所属学科" required>
+          <el-select v-model="addQuizForm.subject" placeholder="请选择学科" style="width: 100%">
+            <el-option label="数学" value="数学" />
+            <el-option label="物理" value="物理" />
+            <el-option label="化学" value="化学" />
+            <el-option label="语文" value="语文" />
+            <el-option label="英语" value="英语" />
+            <el-option label="生物" value="生物" />
+            <el-option label="历史" value="历史" />
+            <el-option label="地理" value="地理" />
+            <el-option label="政治" value="政治" />
+          </el-select>
+        </el-form-item>
+        
+        <el-form-item label="题目类型" required>
+          <el-select v-model="addQuizForm.contentType" placeholder="请选择题目类型" style="width: 100%">
+            <el-option label="选择题" value="选择题" />
+            <el-option label="填空题" value="填空题" />
+            <el-option label="判断题" value="判断题" />
+            <el-option label="简答题" value="简答题" />
+            <el-option label="计算题" value="计算题" />
+            <el-option label="综合题" value="综合题" />
+          </el-select>
+        </el-form-item>
+        
+        <el-form-item label="难度等级" required>
+          <el-select v-model="addQuizForm.difficulty" placeholder="请选择难度" style="width: 100%">
+            <el-option label="简单" value="easy" />
+            <el-option label="中等" value="medium" />
+            <el-option label="困难" value="hard" />
+          </el-select>
+        </el-form-item>
+        
+        <el-form-item label="知识点">
+          <el-input v-model="addQuizForm.knowledgePoints" 
+                    placeholder="请输入知识点，多个知识点用逗号分隔" />
+        </el-form-item>
+        
+        <el-form-item label="练习描述">
+          <el-input v-model="addQuizForm.description" 
+                    type="textarea" 
+                    rows="3"
+                    placeholder="请输入练习描述" />
+        </el-form-item>
+        
+        <el-form-item label="截止时间" required>
+          <el-date-picker
+            v-model="addQuizForm.deadline"
+            type="datetime"
+            placeholder="请选择截止时间"
+            format="YYYY-MM-DD HH:mm:ss"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            style="width: 100%"
+          />
+        </el-form-item>
+        
+        <el-form-item label="班级1">
+          <el-input v-model="addQuizForm.class1" placeholder="请输入班级1" />
+        </el-form-item>
+        
+        <el-form-item label="班级2">
+          <el-input v-model="addQuizForm.class2" placeholder="请输入班级2" />
+        </el-form-item>
+        
+        <el-form-item label="练习文件">
+          <el-upload
+            class="upload-demo"
+            :before-upload="beforeUpload"
+            :on-change="handleFileChange"
+            :file-list="addFileList"
+            :auto-upload="false"
+            accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
+            :limit="1"
+            :on-exceed="handleExceed"
+          >
+            <el-button type="primary">选择文件</el-button>
+            <template #tip>
+              <div class="el-upload__tip">
+                支持 PDF、Word、PPT、TXT 格式文件，最多上传1个文件
+              </div>
+            </template>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      
+      <template #footer>
+        <el-button @click="showAddDialog = false">取消</el-button>
+        <el-button type="primary" @click="confirmAddQuiz">确定</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 编辑练习对话框 -->
+    <el-dialog v-model="showEditDialog" title="编辑练习" width="600px">
+      <el-form :model="editQuizForm" label-width="100px">
+        <el-form-item label="练习标题" required>
+          <el-input v-model="editQuizForm.title" placeholder="请输入练习标题" />
+        </el-form-item>
+        
+        <el-form-item label="所属学科" required>
+          <el-select v-model="editQuizForm.subject" placeholder="请选择学科" style="width: 100%">
+            <el-option label="数学" value="数学" />
+            <el-option label="物理" value="物理" />
+            <el-option label="化学" value="化学" />
+            <el-option label="语文" value="语文" />
+            <el-option label="英语" value="英语" />
+            <el-option label="生物" value="生物" />
+            <el-option label="历史" value="历史" />
+            <el-option label="地理" value="地理" />
+            <el-option label="政治" value="政治" />
+          </el-select>
+        </el-form-item>
+        
+        <el-form-item label="题目类型" required>
+          <el-select v-model="editQuizForm.contentType" placeholder="请选择题目类型" style="width: 100%">
+            <el-option label="选择题" value="选择题" />
+            <el-option label="填空题" value="填空题" />
+            <el-option label="判断题" value="判断题" />
+            <el-option label="简答题" value="简答题" />
+            <el-option label="计算题" value="计算题" />
+            <el-option label="综合题" value="综合题" />
+          </el-select>
+        </el-form-item>
+        
+        <el-form-item label="难度等级" required>
+          <el-select v-model="editQuizForm.difficulty" placeholder="请选择难度" style="width: 100%">
+            <el-option label="简单" value="easy" />
+            <el-option label="中等" value="medium" />
+            <el-option label="困难" value="hard" />
+          </el-select>
+        </el-form-item>
+        
+        <el-form-item label="知识点">
+          <el-input v-model="editQuizForm.knowledgePoints" 
+                    placeholder="请输入知识点，多个知识点用逗号分隔" />
+        </el-form-item>
+        
+        <el-form-item label="练习描述">
+          <el-input v-model="editQuizForm.description" 
+                    type="textarea" 
+                    rows="3"
+                    placeholder="请输入练习描述" />
+        </el-form-item>
+        
+        <el-form-item label="截止时间" required>
+          <el-date-picker
+            v-model="editQuizForm.deadline"
+            type="datetime"
+            placeholder="请选择截止时间"
+            format="YYYY-MM-DD HH:mm:ss"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            style="width: 100%"
+          />
+        </el-form-item>
+        
+        <el-form-item label="班级1">
+          <el-input v-model="editQuizForm.class1" placeholder="请输入班级1" />
+        </el-form-item>
+        
+        <el-form-item label="班级2">
+          <el-input v-model="editQuizForm.class2" placeholder="请输入班级2" />
+        </el-form-item>
+        
+        <el-form-item label="练习文件">
+          <el-upload
+            class="upload-demo"
+            :before-upload="beforeUpload"
+            :on-change="handleEditFileChange"
+            :file-list="editFileList"
+            :auto-upload="false"
+            accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
+            :limit="1"
+            :on-exceed="handleExceed"
+          >
+            <el-button type="primary">选择文件</el-button>
+            <template #tip>
+              <div class="el-upload__tip">
+                支持 PDF、Word、PPT、TXT 格式文件，最多上传1个文件。选择新文件将替换原文件。
+              </div>
+            </template>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      
+      <template #footer>
+        <el-button @click="showEditDialog = false">取消</el-button>
+        <el-button type="primary" @click="confirmEditQuiz">确定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -104,9 +300,37 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import axios from 'axios';
+import { createQuiz, modifyQuiz, type CreateQuizRequest, type ModifyQuizRequest } from '../api/quiz';
+import { uploadFile, type MaterialSubmitData } from '../api/materialUploadApi';
 
 // API 基地址（根据实际环境配置）
 const API_BASE = 'http://localhost:8080';
+
+// 定义类型接口
+interface ClassItem {
+  classId: string;
+  className: string;
+}
+
+interface TableDataItem {
+  习题号: string | number;
+  内容: string;
+  科目: string;
+  类型: string;
+  难度: string;
+  知识点: string;
+  发布时间: string;
+  截止时间: string;
+  发布人: string;
+  我的状态: string;
+  我的分数: number | null;
+  习题文件路径: string;
+  chapter: string;
+  已提交人数: number;
+  未提交人数: number;
+  已批改人数: number;
+  classId: string;
+}
 
 // 定义 props
 const props = defineProps({
@@ -139,10 +363,10 @@ const filters = ref({
 });
 
 // 班级列表（教师用）
-const classList = ref([]);
+const classList = ref<ClassItem[]>([]);
 
 // 表格数据
-const tableData = ref([]);
+const tableData = ref<TableDataItem[]>([]);
 
 // 状态映射函数（学生端使用）
 const mapQuizStatus = (status: number | null) => {
@@ -271,20 +495,227 @@ const handleSearch = () => {
   ElMessage.success('正在搜索...');
 };
 
+// 添加练习表单数据
+const addQuizForm = ref({
+  title: '',
+  subject: '',
+  contentType: '',
+  difficulty: '',
+  knowledgePoints: '',
+  description: '',
+  deadline: '',
+  class1: '',
+  class2: ''
+});
+
+// 添加练习对话框可见性
+const showAddDialog = ref(false);
+
 // 添加练习
 const handleAdd = () => {
   console.log('教师操作: 添加练习');
-  router.push({ name: 'PracticeEdit' });
+  // 重置表单
+  addQuizForm.value = {
+    title: '',
+    subject: '',
+    contentType: '',
+    difficulty: '',
+    knowledgePoints: '',
+    description: '',
+    deadline: '',
+    class1: '',
+    class2: ''
+  };
+  // 重置文件列表
+  addFileList.value = [];
+  currentAddFile.value = null;
+  showAddDialog.value = true;
 };
 
+// 确认添加练习
+const confirmAddQuiz = async () => {
+  try {
+    // 验证必填字段
+    if (!addQuizForm.value.title || !addQuizForm.value.subject || 
+        !addQuizForm.value.contentType || !addQuizForm.value.difficulty || 
+        !addQuizForm.value.deadline) {
+      ElMessage.error('请填写所有必填字段');
+      return;
+    }
+
+    let fileUrl = '';
+    
+    // 如果有文件，先上传文件
+    if (currentAddFile.value) {
+      try {
+        fileUrl = await uploadFileToServer(currentAddFile.value);
+        ElMessage.success('文件上传成功！');
+      } catch (error) {
+        ElMessage.error('文件上传失败，请重试');
+        return;
+      }
+    }
+
+    // 构造创建quiz的请求数据
+    const createQuizData: CreateQuizRequest = {
+      title: addQuizForm.value.title,
+      subject: addQuizForm.value.subject,
+      contentType: addQuizForm.value.contentType,
+      difficulty: addQuizForm.value.difficulty,
+      knowledgePoints: addQuizForm.value.knowledgePoints ? 
+        addQuizForm.value.knowledgePoints.split(',').map(k => k.trim()) : [],
+      description: addQuizForm.value.description,
+      teacherId: userId.value,
+      teacherName: username.value,
+      createTime: new Date().toISOString(),
+      deadline: addQuizForm.value.deadline,
+      class1: addQuizForm.value.class1,
+      class2: addQuizForm.value.class2
+    };
+
+    // 调用创建quiz API
+    const response = await createQuiz(createQuizData);
+    
+    if (response.code === 200) {
+      ElMessage.success('练习创建成功！');
+      showAddDialog.value = false;
+      
+      // 重置表单和文件
+      addQuizForm.value = {
+        title: '',
+        subject: '',
+        contentType: '',
+        difficulty: '',
+        knowledgePoints: '',
+        description: '',
+        deadline: '',
+        class1: '',
+        class2: ''
+      };
+      addFileList.value = [];
+      currentAddFile.value = null;
+      
+      // 重新加载数据
+      if (userType.value === 2) {
+        await fetchTeacherQuizzes(userId.value);
+      }
+    } else {
+      ElMessage.error('创建失败：' + response.message);
+    }
+  } catch (error) {
+    ElMessage.error('创建失败，请稍后重试');
+    console.error('创建练习失败:', error);
+  }
+};
+
+// 编辑练习表单数据
+const editQuizForm = ref({
+  title: '',
+  subject: '',
+  contentType: '',
+  difficulty: '',
+  knowledgePoints: '',
+  description: '',
+  deadline: '',
+  class1: '',
+  class2: ''
+});
+
+// 编辑练习对话框可见性
+const showEditDialog = ref(false);
+
+// 当前编辑的练习ID
+const currentEditQuizId = ref<number>(0);
+
 // 编辑练习
-const handleEdit = (row: any) => {
+const handleEdit = (row: TableDataItem) => {
   console.log('教师操作: 编辑练习内容:', row);
-  router.push({
-    name: 'PracticeEdit',
-    params: { exerciseId: row.习题号 },
-    state: { exercise: { ...row } }, // 通过 state 传递完整 row 数据
-  });
+  
+  // 填充表单数据
+  editQuizForm.value = {
+    title: row.内容,
+    subject: row.科目,
+    contentType: row.类型,
+    difficulty: row.难度,
+    knowledgePoints: row.知识点,
+    description: `练习：${row.内容}`,
+    deadline: row.截止时间,
+    class1: "class1",
+    class2: "class2"
+  };
+  
+  // 重置文件列表
+  editFileList.value = [];
+  currentEditFile.value = null;
+  
+  currentEditQuizId.value = Number(row.习题号);
+  showEditDialog.value = true;
+};
+
+// 确认编辑练习
+const confirmEditQuiz = async () => {
+  try {
+    // 验证必填字段
+    if (!editQuizForm.value.title || !editQuizForm.value.subject || 
+        !editQuizForm.value.contentType || !editQuizForm.value.difficulty || 
+        !editQuizForm.value.deadline) {
+      ElMessage.error('请填写所有必填字段');
+      return;
+    }
+
+    let fileUrl = '';
+    
+    // 如果有新文件，先上传文件
+    if (currentEditFile.value) {
+      try {
+        fileUrl = await uploadFileToServer(currentEditFile.value);
+        ElMessage.success('文件上传成功！');
+      } catch (error) {
+        ElMessage.error('文件上传失败，请重试');
+        return;
+      }
+    }
+
+    // 构造修改quiz的请求数据
+    const modifyQuizData: ModifyQuizRequest = {
+      quizId: currentEditQuizId.value,
+      title: editQuizForm.value.title,
+      subject: editQuizForm.value.subject,
+      contentType: editQuizForm.value.contentType,
+      difficulty: editQuizForm.value.difficulty,
+      knowledgePoints: editQuizForm.value.knowledgePoints ? 
+        editQuizForm.value.knowledgePoints.split(',').map(k => k.trim()) : [],
+      description: editQuizForm.value.description,
+      teacherId: userId.value,
+      teacherName: username.value,
+      createTime: new Date().toISOString(), // 这里应该使用原来的创建时间，但暂时用当前时间
+      deadline: editQuizForm.value.deadline,
+      class1: editQuizForm.value.class1,
+      class2: editQuizForm.value.class2
+    };
+
+    // 调用修改quiz API
+    const response = await modifyQuiz(modifyQuizData);
+    
+    if (response.code === 200) {
+      ElMessage.success('练习修改成功！');
+      showEditDialog.value = false;
+      
+      // 重置文件列表
+      editFileList.value = [];
+      currentEditFile.value = null;
+      
+      // 重新加载数据
+      if (userType.value === 2) {
+        await fetchTeacherQuizzes(userId.value);
+      }
+    } else {
+      ElMessage.error('修改失败：' + response.message);
+    }
+  } catch (error) {
+    ElMessage.error('修改失败，请稍后重试');
+    console.error('编辑练习失败:', error);
+  }
 };
 
 // 删除练习
@@ -356,6 +787,103 @@ const handleGoToPracticeDetail = (row: any) => {
     params: { exerciseId: row.习题号 },
     state: { exercise: { ...row } }, // 深拷贝确保数据完整传递
   });
+};
+
+// 文件上传相关变量
+const addFileList = ref<any[]>([]);
+const editFileList = ref<any[]>([]);
+const currentAddFile = ref<File | null>(null);
+const currentEditFile = ref<File | null>(null);
+
+// 文件上传前的验证
+const beforeUpload = (file: File) => {
+  const isValidType = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'text/plain'
+  ].includes(file.type);
+  
+  if (!isValidType) {
+    ElMessage.error('只支持 PDF、Word、PPT、TXT 格式的文件！');
+    return false;
+  }
+  
+  const isValidSize = file.size / 1024 / 1024 < 10; // 限制10MB
+  if (!isValidSize) {
+    ElMessage.error('文件大小不能超过 10MB！');
+    return false;
+  }
+  
+  return false; // 阻止自动上传
+};
+
+// 添加练习时文件变化处理
+const handleFileChange = (file: any, fileList: any[]) => {
+  if (fileList.length > 0) {
+    currentAddFile.value = file.raw;
+    addFileList.value = [file];
+  } else {
+    currentAddFile.value = null;
+    addFileList.value = [];
+  }
+};
+
+// 编辑练习时文件变化处理
+const handleEditFileChange = (file: any, fileList: any[]) => {
+  if (fileList.length > 0) {
+    currentEditFile.value = file.raw;
+    editFileList.value = [file];
+  } else {
+    currentEditFile.value = null;
+    editFileList.value = [];
+  }
+};
+
+// 文件超出限制处理
+const handleExceed = () => {
+  ElMessage.warning('最多只能上传1个文件！');
+};
+
+// 生成唯一文件ID - 使用简单的时间戳
+const generateFileId = () => {
+  return Date.now().toString();
+};
+
+// 上传文件到服务器
+const uploadFileToServer = async (file: File) => {
+  try {
+    const fileId = generateFileId();
+    const toPath = 'quiz/'; 
+    const path = 'E:/Postman/files'; 
+    
+    console.log('准备上传文件:', {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type,
+      fileId,
+      toPath,
+      path
+    });
+    
+    const uploadResponse = await uploadFile(file, fileId, toPath, path);
+    console.log('文件上传响应:', uploadResponse);
+    
+    if (uploadResponse.code === 200) {
+      const fileExtension = file.name.split('.').pop();
+      const fullPath = `${toPath}${fileId}.${fileExtension}`;
+      console.log('文件上传成功，路径:', fullPath);
+      return fullPath;
+    } else {
+      throw new Error(uploadResponse.message || '文件上传失败');
+    }
+  } catch (error) {
+    console.error('文件上传失败详情:', error);
+    ElMessage.error('文件上传失败: ' + (error as Error).message);
+    throw error;
+  }
 };
 
 // 组件挂载时加载数据
