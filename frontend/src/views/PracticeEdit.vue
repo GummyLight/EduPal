@@ -1,64 +1,81 @@
 <template>
   <div class="practice-edit-page">
     <el-header class="navbar">
-      <div class="title">{{ isNew ? '添加练习' : '编辑练习' }} - {{ practiceForm.内容 }}</div>
+      <div class="title">{{ isNew ? '添加练习' : '编辑练习' }} - {{ practiceForm.content }}</div>
       <el-button type="info" @click="router.back()">返回练习列表</el-button>
     </el-header>
 
     <el-main>
       <el-card class="edit-card">
-        <el-form :model="practiceForm" label-width="120px" class="edit-form">
-          <el-form-item label="练习主题">
-            <el-input v-model="practiceForm.内容" placeholder="请输入练习主题" />
+        <el-form :model="practiceForm" :rules="rules" ref="practiceFormRef" label-width="120px" class="edit-form">
+          <el-form-item label="练习主题" prop="content">
+            <el-input v-model="practiceForm.content" placeholder="请输入练习主题" />
           </el-form-item>
-          <el-form-item label="习题编号">
-            <el-input v-model="practiceForm.习题号" :disabled="!isNew" placeholder="请输入习题编号" />
+          <el-form-item label="习题编号" prop="quiz_id">
+            <el-input v-model="practiceForm.quiz_id" :disabled="!isNew" placeholder="请输入习题编号" />
           </el-form-item>
-          <el-form-item label="所属科目">
-            <el-select v-model="practiceForm.科目" placeholder="请选择科目">
+          <el-form-item label="所属科目" prop="subject">
+            <el-select v-model="practiceForm.subject" placeholder="请选择科目">
               <el-option label="数学" value="math" />
               <el-option label="物理" value="physics" />
               <el-option label="化学" value="chemistry" />
             </el-select>
           </el-form-item>
-          <el-form-item label="题目类型">
-            <el-input v-model="practiceForm.类型" placeholder="例如：选择题、填空题" />
+          <el-form-item label="题目类型" prop="type">
+            <el-input v-model="practiceForm.type" placeholder="例如：选择题、填空题" />
           </el-form-item>
-          <el-form-item label="难度等级">
-            <el-select v-model="practiceForm.难度" placeholder="请选择难度">
+          <el-form-item label="难度等级" prop="difficulty">
+            <el-select v-model="practiceForm.difficulty" placeholder="请选择难度">
               <el-option label="简单" value="easy" />
               <el-option label="中等" value="medium" />
               <el-option label="困难" value="hard" />
             </el-select>
           </el-form-item>
-          <el-form-item label="关联知识点">
-            <el-input v-model="practiceForm.知识点" placeholder="请输入关联知识点" />
+          <el-form-item label="关联知识点" prop="knowledge_point">
+            <el-input v-model="practiceForm.knowledge_point" placeholder="请输入关联知识点" />
           </el-form-item>
-          <el-form-item label="发布日期">
+          <el-form-item label="发布日期" prop="publish_time">
             <el-date-picker
-                v-model="practiceForm.发布时间"
+                v-model="practiceForm.publish_time"
                 type="datetime"
                 placeholder="选择发布日期时间"
                 value-format="YYYY-MM-DD HH:mm:ss"
             />
           </el-form-item>
-          <el-form-item label="截止日期">
+          <el-form-item label="截止日期" prop="deadline">
             <el-date-picker
-                v-model="practiceForm.截止时间"
+                v-model="practiceForm.deadline"
                 type="datetime"
                 placeholder="选择截止日期时间"
                 value-format="YYYY-MM-DD HH:mm:ss"
             />
           </el-form-item>
-
-          <el-form-item label="习题文件">
-            <el-input v-model="practiceForm.习题文件路径" placeholder="请输入文件路径或点击上传" />
-            <el-button type="primary" size="small" style="margin-left: 10px;">上传文件</el-button>
-            <div v-if="practiceForm.习题文件路径" style="margin-top: 5px;">
-              当前文件: <a :href="practiceForm.习题文件路径" target="_blank">{{ practiceForm.习题文件路径.split('/').pop() }}</a>
+          <el-form-item label="习题文件" prop="file">
+            <el-upload
+                class="upload-demo"
+                drag
+                action="#"
+                :auto-upload="false"
+                :on-change="handleFileChange"
+                :on-remove="handleFileRemove"
+                :http-request="uploadFileToServer"
+                :file-list="fileList"
+                :limit="1"
+                :on-exceed="handleExceed"
+                ref="elUploadRef"
+            >
+              <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+              <div class="el-upload__text">将文件拖到此处，或 <em>点击上传</em></div>
+              <template #tip>
+                <div class="el-upload__tip">
+                  支持常见文档和媒体格式，文件大小不超过 500MB
+                </div>
+              </template>
+            </el-upload>
+            <div v-if="practiceForm.resource_content" style="margin-top: 5px;">
+              当前文件: <a :href="getPreviewUrl(practiceForm.resource_content)" target="_blank">{{ practiceForm.resource_content.split('/').pop() }}</a>
             </div>
           </el-form-item>
-
           <el-form-item>
             <el-button type="primary" @click="handleSubmit">保存练习</el-button>
             <el-button @click="router.back()">取消</el-button>
@@ -72,150 +89,280 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElNotification, FormInstance, UploadFile, UploadFiles, ElUpload } from 'element-plus';
+import { UploadFilled } from '@element-plus/icons-vue';
+import axios from 'axios';
+import { uploadFile, submitMaterialInfo, getMaxResourceId } from '../api/materialUploadApi';
+import { getPreviewFileUrl } from '../api/materialsApi';
+
+const API_BASE = 'http://localhost:8080';
+const SERVER_FILE_ROOT_PATH = 'quiz/';
+const SERVER_UPLOAD_ROOT_PATH = 'E:/Postman/files/';
 
 const route = useRoute();
 const router = useRouter();
+const exerciseId = route.params.exerciseId as string | undefined;
+const exerciseData = route.state?.exercise; // 获取 state 中的 exercise 数据
+const isNew = computed(() => !exerciseId);
 
-const exerciseId = route.params.exerciseId as string | undefined; // 如果是添加，则 exerciseId 为 undefined
-const isNew = computed(() => !exerciseId); // 判断是新增还是编辑
+const practiceFormRef = ref<FormInstance>();
+const elUploadRef = ref<InstanceType<typeof ElUpload> | null>(null);
+const fileList = ref<UploadFile[]>([]);
+const maxResourceId = ref<number | null>(null);
 
-const practiceForm = ref<any>({
-  习题号: '',
-  科目: '',
-  内容: '',
-  发布时间: '',
-  截止时间: '',
-  发布人: '当前教师', // 模拟当前教师
-  习题文件路径: '',
-  类型: '',
-  难度: '',
-  知识点: '',
-  已提交人数: 0,
-  未提交人数: 0,
-  已批改人数: 0,
-  我的状态: '未提交',
-  我的分数: null,
+const practiceForm = ref({
+  quiz_id: '',
+  subject: '',
+  content: '',
+  publish_time: '',
+  deadline: '',
+  publisher: '',
+  resource_content: '',
+  type: '',
+  difficulty: '',
+  knowledge_point: '',
+  file: null as File | null,
+  fileId: '',
+  originalFileName: '',
 });
 
-// 模拟的练习数据源 (与 PracticeForm.vue 中的 tableData 保持一致)
-const mockPracticeData = ref([
-  {
-    习题号: 'EX20250501',
-    科目: 'math',
-    内容: '函数与图像基础练习',
-    发布时间: '2025-05-20 10:00:00',
-    截止时间: '2025-06-01 23:59:59',
-    发布人: '张老师',
-    习题文件路径: '/mock-files/exercise_EX20250501.pdf',
-    类型: '选择题',
-    难度: '中等',
-    知识点: '函数图像',
-    已提交人数: 15,
-    未提交人数: 10,
-    已批改人数: 10,
-    我的状态: '未提交',
-    我的分数: null,
-  },
-  {
-    习题号: 'EX20250502',
-    科目: 'physics',
-    内容: '牛顿运动定律训练',
-    发布时间: '2025-05-15 09:30:00',
-    截止时间: '2025-05-30 23:59:59',
-    发布人: '李老师',
-    习题文件路径: '/mock-files/exercise_EX20250502.docx',
-    类型: '填空题',
-    难度: '困难',
-    知识点: '牛顿力学',
-    已提交人数: 20,
-    未提交人数: 5,
-    已批改人数: 15,
-    我的状态: '已提交',
-    我的分数: null,
-  },
-  {
-    习题号: 'EX20250503',
-    科目: 'chemistry',
-    内容: '元素周期表复习',
-    发布时间: '2025-05-25 14:00:00',
-    截止时间: '2025-06-05 23:59:59',
-    发布人: '王老师',
-    习题文件路径: '/mock-files/exercise_EX20250503.zip',
-    类型: '判断题',
-    难度: '简单',
-    知识点: '元素性质',
-    已提交人数: 25,
-    未提交人数: 0,
-    已批改人数: 25,
-    我的状态: '已批改',
-    我的分数: 95,
-  },
-]);
+const rules = ref({
+  quiz_id: [{ required: true, message: '请输入习题编号', trigger: 'blur' }],
+  subject: [{ required: true, message: '请选择科目', trigger: 'change' }],
+  content: [{ required: true, message: '请输入练习主题', trigger: 'blur' }],
+  publish_time: [{ required: true, message: '请选择发布日期', trigger: 'change' }],
+  deadline: [{ required: true, message: '请选择截止日期', trigger: 'change' }],
+  type: [{ required: true, message: '请输入题目类型', trigger: 'blur' }],
+  difficulty: [{ required: true, message: '请选择难度等级', trigger: 'change' }],
+  knowledge_point: [{ required: true, message: '请输入关联知识点', trigger: 'blur' }],
+  file: [{ required: true, message: '请选择上传文件', trigger: 'change' }],
+});
 
-onMounted(() => {
-  if (!isNew.value && exerciseId) {
-    loadPracticeDetail(exerciseId);
-  } else {
-    // 如果是新增，初始化一个空白表单
-    practiceForm.value.习题号 = 'EX' + Date.now().toString().slice(-8); // 简单生成一个模拟ID
-    practiceForm.value.发布人 = '当前教师'; // 默认发布人
-    practiceForm.value.发布时间 = new Date().toISOString().slice(0, 19).replace('T', ' '); // 当前时间
+onMounted(async () => {
+  try {
+    if (isNew.value) {
+      // 新增练习：获取 quiz_id
+      const userId = localStorage.getItem('user_id') || 'unknown';
+      practiceForm.value.quiz_id = quizId;
+      practiceForm.value.publisher = localStorage.getItem('username') || '当前教师';
+      practiceForm.value.publish_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    } else if (exerciseId && exerciseData) {
+      // 编辑练习：使用 state 数据初始化
+      practiceForm.value = {
+        quiz_id: exerciseData.习题号 || '',
+        subject: exerciseData.科目 || '',
+        content: exerciseData.内容 || '',
+        publish_time: exerciseData.发布时间 || '',
+        deadline: exerciseData.截止时间 || '',
+        publisher: exerciseData.发布人 || localStorage.getItem('username') || '当前教师',
+        resource_content: exerciseData.resource_content || '', // 确保 row 包含此字段
+        type: exerciseData.类型 || '',
+        difficulty: exerciseData.难度 || '',
+        knowledge_point: exerciseData.知识点 || '',
+        file: null,
+        fileId: exerciseData.习题号 || '',
+        originalFileName: exerciseData.resource_content?.split('/').pop() || '',
+      };
+      fileList.value = exerciseData.resource_content
+          ? [{ name: exerciseData.resource_content.split('/').pop() || '' }]
+          : [];
+      ElMessage.success('练习数据加载成功（来自 state）');
+    } else {
+      // 边缘情况：缺少 state 数据
+      ElMessage.error('无法加载练习数据，请从练习列表重新进入');
+      router.push({ name: 'PracticeForm' }); // 返回练习列表
+    }
+  } catch (error) {
+    ElMessage.error('初始化失败，请检查网络或后端服务');
+    console.error('Initialization error:', error);
+    router.push({ name: 'PracticeForm' });
   }
 });
 
-async function loadPracticeDetail(id: string) {
-  console.log('[Mock] Loading practice detail for ID:', id);
-  // 模拟异步获取数据
-  setTimeout(() => {
-    const found = mockPracticeData.value.find(item => item.习题号 === id);
-    if (found) {
-      // 深度拷贝以避免直接修改原始模拟数据
-      practiceForm.value = JSON.parse(JSON.stringify(found));
-      ElMessage.success('练习详情加载成功！');
-    } else {
-      ElMessage.error('模拟数据：未找到该练习！');
-      router.back(); // 如果没找到，返回列表
+async function fetchQuizId(userId: string): Promise<string> {
+  try {
+    const response = await axios.get(`${API_BASE}/quiz/getTeacherClass`, {
+      params: { userId },
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    if (response.data.code === 200 && response.data.data) {
+      const classes = response.data.data as any[];
+      if (classes.length > 0 && classes[0].quiz_id) {
+        return classes[0].quiz_id;
+      }
     }
-  }, 500);
+    const maxId = await getMaxResourceId();
+    maxResourceId.value = maxId;
+    return `EX${(maxId + 1).toString().padStart(8, '0')}`;
+  } catch (error) {
+    ElMessage.error('获取习题编号失败，使用默认编号');
+    console.error('Fetch quiz_id error:', error);
+    const maxId = await getMaxResourceId();
+    maxResourceId.value = maxId;
+    return `EX${(maxId + 1).toString().padStart(8, '0')}`;
+  }
 }
 
-async function handleSubmit() {
-  console.log('[Mock] Submitting practice form:', practiceForm.value);
+const handleFileChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+  practiceForm.value.file = uploadFile.raw || null;
+  fileList.value = [uploadFile];
+  if (practiceForm.value.file) {
+    practiceForm.value.fileId = isNew.value ? practiceForm.value.quiz_id : practiceForm.value.quiz_id;
+    practiceForm.value.originalFileName = uploadFile.name;
+    if (!practiceForm.value.content) {
+      practiceForm.value.content = uploadFile.name.substring(0, uploadFile.name.lastIndexOf('.')) || uploadFile.name;
+    }
+  } else {
+    practiceForm.value.fileId = '';
+    practiceForm.value.originalFileName = '';
+  }
+  practiceFormRef.value?.validateField('file');
+};
 
-  // 简单的前端验证
-  if (!practiceForm.value.内容 || !practiceForm.value.习题号 || !practiceForm.value.科目) {
-    ElMessage.error('请填写完整练习主题、习题编号和科目！');
+const handleFileRemove = () => {
+  practiceForm.value.file = null;
+  practiceForm.value.fileId = isNew.value ? practiceForm.value.quiz_id : practiceForm.value.quiz_id;
+  practiceForm.value.originalFileName = '';
+  practiceForm.value.resource_content = '';
+  fileList.value = [];
+  practiceFormRef.value?.validateField('file');
+};
+
+const handleExceed = () => {
+  ElMessage.warning('只能上传一个文件，请先移除当前文件再上传。');
+};
+
+const uploadFileToServer = async (options: any) => {
+  const file = options.file;
+  if (!file || !practiceForm.value.fileId || !SERVER_FILE_ROOT_PATH || !SERVER_UPLOAD_ROOT_PATH) {
+    ElMessage.error('文件上传参数缺失！');
+    options.onError(new Error('Missing parameters'));
     return;
   }
 
-  // 模拟异步提交数据
-  setTimeout(() => {
-    if (isNew.value) {
-      // 模拟添加新练习
-      mockPracticeData.value.push(JSON.parse(JSON.stringify(practiceForm.value)));
-      ElMessage.success('练习添加成功！');
+  const fileUploadNotification = ElNotification({
+    title: '文件上传中',
+    message: `正在上传文件：${file.name}`,
+    type: 'info',
+    duration: 0,
+    showClose: false,
+  });
+
+  try {
+    const uploadResponse = await uploadFile(
+        file,
+        practiceForm.value.fileId,
+        SERVER_FILE_ROOT_PATH,
+        SERVER_UPLOAD_ROOT_PATH
+    );
+    fileUploadNotification.close();
+
+    if (uploadResponse.code === 200) {
+      ElMessage.success(`文件 ${file.name} 上传成功！`);
+      options.onSuccess(uploadResponse, file);
+      const fileExtension = getFileExtension(file.name);
+      practiceForm.value.resource_content = `${SERVER_FILE_ROOT_PATH}${practiceForm.value.fileId}${fileExtension}`;
+      await submitMaterialMetadata();
     } else {
-      // 模拟更新现有练习
-      const index = mockPracticeData.value.findIndex(item => item.习题号 === exerciseId);
-      if (index !== -1) {
-        // 确保不会覆盖只存在于列表页的统计数据
-        const originalStats = {
-          已提交人数: mockPracticeData.value[index].已提交人数,
-          未提交人数: mockPracticeData.value[index].未提交人数,
-          已批改人数: mockPracticeData.value[index].已批改人数,
-          我的状态: mockPracticeData.value[index].我的状态,
-          我的分数: mockPracticeData.value[index].我的分数,
-        };
-        practiceForm.value = { ...practiceForm.value, ...originalStats }; // 合并回统计数据
-        mockPracticeData.value[index] = JSON.parse(JSON.stringify(practiceForm.value));
-        ElMessage.success('练习更新成功！');
-      } else {
-        ElMessage.error('模拟更新失败：未找到该练习。');
-      }
+      ElMessage.error(uploadResponse.message || `文件 ${file.name} 上传失败！`);
+      options.onError(new Error(uploadResponse.message || 'Upload failed'));
     }
-    router.back(); // 保存后返回列表页
-  }, 800);
+  } catch (error: any) {
+    fileUploadNotification.close();
+    ElMessage.error('文件上传失败，请检查网络或后端服务');
+    console.error('File upload error:', error);
+    options.onError(error);
+  }
+};
+
+const submitMaterialMetadata = async () => {
+  const materialData = {
+    resource_id: practiceForm.value.fileId,
+    subject: practiceForm.value.subject,
+    teacher_id: localStorage.getItem('userid') || 'unknown',
+    resource_content: practiceForm.value.resource_content,
+    class_id: null,
+    name: practiceForm.value.content,
+    upload_time: new Date().toISOString(),
+    description: practiceForm.value.type,
+  };
+
+  try {
+    const submitResponse = await submitMaterialInfo(materialData);
+    if (submitResponse.code === 200) {
+      ElMessage.success('资料信息提交成功！');
+    } else {
+      ElMessage.error(submitResponse.message || '资料信息提交失败！');
+    }
+  } catch (error) {
+    ElMessage.error('提交资料信息失败，请检查网络或后端服务');
+    console.error('Submit material info error:', error);
+  }
+};
+
+async function handleSubmit() {
+  if (!practiceFormRef.value) return;
+
+  await practiceFormRef.value.validate(async (valid) => {
+    if (!valid) {
+      ElMessage.error('请检查表单填写，确保所有必填项已填写！');
+      return;
+    }
+
+    if (practiceForm.value.file) {
+      await elUploadRef.value?.submit();
+    } else if (!practiceForm.value.resource_content) {
+      ElMessage.error('请上传习题文件！');
+      return;
+    }
+
+    const quizData = {
+      quiz_id: practiceForm.value.quiz_id,
+      subject: practiceForm.value.subject,
+      content: practiceForm.value.content,
+      publish_time: practiceForm.value.publish_time,
+      deadline: practiceForm.value.deadline,
+      publisher: practiceForm.value.publisher,
+      resource_content: practiceForm.value.resource_content,
+      type: practiceForm.value.type,
+      difficulty: practiceForm.value.difficulty,
+      knowledge_point: practiceForm.value.knowledge_point,
+    };
+
+    try {
+      const url = isNew.value ? `${API_BASE}/quiz/createQuiz` : `${API_BASE}/quiz/modifyQuiz`;
+      const response = await axios.post(url, quizData, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+
+      if (response.data.code === 200) {
+        ElMessage.success(isNew.value ? '练习添加成功！' : '练习更新成功！');
+        router.push({ name: 'PracticeForm' }); // 返回练习列表
+      } else {
+        ElMessage.error(response.data.message || '保存练习失败！');
+      }
+    } catch (error: any) {
+      ElMessage.error(`保存失败：${error.response?.data?.message || '请检查网络或后端服务'}`);
+      console.error('Save quiz error:', error);
+    }
+  });
+}
+
+function getPreviewUrl(resourceContent: string): string {
+  if (!resourceContent) return '';
+  const fileId = resourceContent.split('/').pop()?.split('.')[0] || '';
+  return getPreviewFileUrl({ fileId, path: SERVER_FILE_ROOT_PATH });
+}
+
+function getFileExtension(filename: string): string {
+  if (!filename || typeof filename !== 'string') {
+    return '.pdf';
+  }
+  const lastDotIndex = filename.lastIndexOf('.');
+  if (lastDotIndex === -1 || lastDotIndex === 0) {
+    return '.pdf';
+  }
+  return filename.substring(lastDotIndex);
 }
 </script>
 
@@ -253,5 +400,25 @@ async function handleSubmit() {
 }
 .edit-form .el-form-item {
   margin-bottom: 20px;
+}
+.upload-demo {
+  width: 100%;
+}
+.upload-demo .el-upload-dragger {
+  width: 100%;
+  padding: 20px 0;
+}
+.el-upload__text {
+  font-size: 15px;
+  color: #606266;
+}
+.el-upload__text em {
+  color: #409EFF;
+  font-style: normal;
+}
+.el-upload__tip {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #909399;
 }
 </style>
