@@ -153,17 +153,29 @@ async function fetchStudentSubmissions() {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
     if (response.data.status === 'success') {
-      studentSubmissions.value = response.data.answers.map((item: any) => ({
-        submissionId: item.answerId,
-        studentId: item.studentId,
-        studentName: item.userName,
-        submissionTime: item.answerTime || null,
-        submissionFilePath: item.answerContent || null,
-        score: item.score || null,
-        comment: item.feedback || '',
-        isScoring: false,
-      }));
-      ElMessage.success('学生提交列表加载成功');
+      // 防御性检查：确保 answers 存在且是数组
+      const answers = response.data.answers || [];
+      if (Array.isArray(answers)) {
+        studentSubmissions.value = answers.map((item: any) => ({
+          submissionId: item.answerId,
+          studentId: item.studentId,
+          studentName: item.userName,
+          submissionTime: item.answerTime || null,
+          submissionFilePath: item.answerContent || null,
+          score: item.score || null,
+          comment: item.feedback || '',
+          isScoring: false,
+        }));
+        if (answers.length === 0) {
+          ElMessage.info('该测验暂无学生提交');
+        } else {
+          ElMessage.success(`学生提交列表加载成功，共 ${answers.length} 条提交`);
+        }
+      } else {
+        studentSubmissions.value = [];
+        ElMessage.warning('返回的数据格式异常，请联系管理员');
+        console.warn('Expected array but got:', typeof answers, answers);
+      }
     } else {
       ElMessage.error(`获取学生提交列表失败：${response.data.message}`);
     }
