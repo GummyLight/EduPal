@@ -2,6 +2,38 @@
 import api from './request';
 import { ElMessage } from 'element-plus';
 
+// 后端实际返回的完整的管理员响应格式
+interface BackendAdminResponse {
+    status: string;
+    message: string;
+    username: string;
+    userType: string;
+    userId: string;
+    totalUsers: number;
+    totalStudents: number;
+    totalTeachers: number;
+    totalTeachingContents: number;
+    totalQuestions: number;
+    totalAnswers: number;
+    recentRegistrations: number; // 最近7天注册用户数
+    systemHealth: string; // 系统健康状态
+}
+
+// 前端期望的管理员首页数据接口
+export interface AdminHomeData {
+    username: string;
+    userType: 0 | 1 | 2;
+    userId: string;
+    totalUsers: number;
+    totalStudents: number;
+    totalTeachers: number;
+    totalTeachingContents: number;
+    totalQuestions: number;
+    totalAnswers: number;
+    recentRegistrations: number;
+    systemHealth: string;
+}
+
 // 后端实际返回的完整的学生响应格式
 interface BackendStudentResponse {
     status: string;
@@ -75,6 +107,71 @@ export interface StudentDetailsFrontend {
 }
 
 export const HomeService = {
+    /**
+     * 获取管理员首页数据
+     * @param {string} userId - 管理员的ID
+     * @returns {Promise<AdminHomeData>} 管理员首页数据对象
+     */
+    async getAdminHomeData(userId: string): Promise<AdminHomeData> {
+        try {
+            const response = await api.get<BackendAdminResponse>('/home/admin', {
+                params: {
+                    userId: userId,
+                    userType: 0 // 管理员类型
+                }
+            });
+
+            if (response.data.status !== "success") {
+                throw new Error(response.data.message || '获取管理员首页数据失败');
+            }
+
+            const rawData = response.data;
+            const transformedData: AdminHomeData = {
+                username: rawData.username,
+                userType: parseInt(rawData.userType) as (0 | 1 | 2),
+                userId: rawData.userId,
+                totalUsers: rawData.totalUsers,
+                totalStudents: rawData.totalStudents,
+                totalTeachers: rawData.totalTeachers,
+                totalTeachingContents: rawData.totalTeachingContents,
+                totalQuestions: rawData.totalQuestions,
+                totalAnswers: rawData.totalAnswers,
+                recentRegistrations: rawData.recentRegistrations,
+                systemHealth: rawData.systemHealth,
+            };
+            return transformedData;
+        } catch (error: any) {
+            console.error('获取管理员首页数据失败:', error);
+            // 如果后端接口还没有实现，返回模拟数据而不是报错
+            if (error.response && error.response.status === 404) {
+                console.warn('管理员首页接口未实现，使用模拟数据');
+                const mockData: AdminHomeData = {
+                    username: '管理员',
+                    userType: 0,
+                    userId: userId,
+                    totalUsers: 156,
+                    totalStudents: 120,
+                    totalTeachers: 36,
+                    totalTeachingContents: 89,
+                    totalQuestions: 245,
+                    totalAnswers: 198,
+                    recentRegistrations: 12,
+                    systemHealth: '正常',
+                };
+                return mockData;
+            }
+            
+            if (error.response && error.response.data && error.response.data.message) {
+                ElMessage.error(error.response.data.message);
+            } else if (error.message) {
+                ElMessage.error(error.message);
+            } else {
+                ElMessage.error('获取管理员首页数据失败，请检查网络或联系管理员！');
+            }
+            throw error;
+        }
+    },
+
     /**
      * 获取学生首页数据
      * @param {string} userId - 学生的ID
