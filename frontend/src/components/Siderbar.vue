@@ -12,10 +12,6 @@
         <i class="el-icon-house"></i>
         <span>首页</span>
       </el-menu-item>
-      <el-menu-item v-if="props.usertype === 1" index="/home/course">
-        <i class="el-icon-reading"></i>
-        <span>教学内容</span>
-      </el-menu-item>
       <el-menu-item v-if="props.usertype === 1" index="/home/materials">
         <i class="el-icon-folder"></i>
         <span>资料管理</span>
