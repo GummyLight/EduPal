@@ -55,21 +55,18 @@
       >
         <el-table-column prop="name" label="名称" min-width="150" />
         <el-table-column prop="subject" label="学科" width="100" />
-        <el-table-column prop="teacherId" label="教师ID" width="120" />
-        <el-table-column prop="classId" label="班级ID" width="120" />
-        <el-table-column prop="uploadTime" label="上传时间" width="180">
+        <el-table-column prop="teacher_id" label="教师ID" width="120" />
+        <el-table-column prop="class_id" label="班级ID" width="120" />
+        <el-table-column prop="upload_time" label="上传时间" width="180">
           <template #default="{ row }">
-            {{ formatDate(row.uploadTime) }}
+            {{ formatDate(row.upload_time) }}
           </template>
         </el-table-column>
         <el-table-column prop="description" label="描述" min-width="200" show-overflow-tooltip />
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column label="操作" width="150" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="handleView(row)">
               查看
-            </el-button>
-            <el-button type="warning" size="small" @click="handleEdit(row)">
-              编辑
             </el-button>
             <el-button type="danger" size="small" @click="handleDelete(row)">
               删除
@@ -79,10 +76,10 @@
       </el-table>
     </div>
 
-    <!-- 编辑/添加对话框 -->
+    <!-- 添加对话框 -->
     <el-dialog
       v-model="dialogVisible"
-      :title="dialogTitle"
+      title="添加教学内容"
       width="60%"
       :before-close="handleDialogClose"
     >
@@ -96,7 +93,6 @@
           <el-input
             v-model="formData.teaching_content_id"
             placeholder="请输入教学内容ID"
-            :disabled="isEdit"
           />
         </el-form-item>
         
@@ -159,7 +155,7 @@
         <span class="dialog-footer">
           <el-button @click="handleDialogClose">取消</el-button>
           <el-button type="primary" @click="handleSubmit" :loading="submitting">
-            {{ isEdit ? '更新' : '创建' }}
+            创建
           </el-button>
         </span>
       </template>
@@ -174,7 +170,7 @@
       <div v-if="viewData">
         <el-descriptions :column="2" border>
           <el-descriptions-item label="教学内容ID">
-            {{ viewData.teachingContentId }}
+            {{ viewData.teaching_content_id }}
           </el-descriptions-item>
           <el-descriptions-item label="名称">
             {{ viewData.name }}
@@ -183,13 +179,13 @@
             {{ viewData.subject }}
           </el-descriptions-item>
           <el-descriptions-item label="教师ID">
-            {{ viewData.teacherId }}
+            {{ viewData.teacher_id }}
           </el-descriptions-item>
           <el-descriptions-item label="班级ID">
-            {{ viewData.classId || '无' }}
+            {{ viewData.class_id || '无' }}
           </el-descriptions-item>
           <el-descriptions-item label="上传时间">
-            {{ formatDate(viewData.uploadTime) }}
+            {{ formatDate(viewData.upload_time) }}
           </el-descriptions-item>
           <el-descriptions-item label="描述" :span="2">
             {{ viewData.description || '无' }}
@@ -198,7 +194,7 @@
         
         <el-divider content-position="left">教学内容</el-divider>
         <div class="content-preview">
-          <pre>{{ viewData.teachingContentContent }}</pre>
+          <pre>{{ viewData.teaching_content_content }}</pre>
         </div>
       </div>
     </el-dialog>
@@ -214,7 +210,6 @@ import {
   fetchAllTeachingContent,
   searchTeachingContentByName,
   createTeachingContent,
-  updateTeachingContent,
   deleteTeachingContent,
   type TeachingContentResponse,
   type TeachingContentRequest
@@ -231,8 +226,6 @@ const filteredList = ref<TeachingContentResponse[]>([])
 // 对话框相关
 const dialogVisible = ref(false)
 const viewDialogVisible = ref(false)
-const isEdit = ref(false)
-const dialogTitle = computed(() => isEdit.value ? '编辑教学内容' : '添加教学内容')
 
 // 表单相关
 const formRef = ref<FormInstance>()
@@ -243,7 +236,8 @@ const formData = reactive<TeachingContentRequest>({
   teacher_id: '',
   teaching_content_content: '',
   class_id: '',
-  description: ''
+  description: '',
+  upload_time: null
 })
 
 const viewData = ref<TeachingContentResponse | null>(null)
@@ -288,11 +282,20 @@ const displayedContent = computed(() => {
 const loadTeachingContent = async () => {
   loading.value = true
   try {
+    console.log('开始加载教学内容列表...');
     const data = await fetchAllTeachingContent()
+    console.log('加载到的数据:', data);
     teachingContentList.value = data
     filteredList.value = data
+    
+    if (data.length === 0) {
+      console.log('暂无教学内容数据');
+    } else {
+      console.log(`成功加载 ${data.length} 条教学内容`);
+    }
   } catch (error) {
     console.error('加载教学内容失败:', error)
+    ElMessage.error('加载教学内容失败');
   } finally {
     loading.value = false
   }
@@ -320,25 +323,7 @@ const handleSubjectFilter = () => {
 }
 
 const handleAdd = () => {
-  isEdit.value = false
   resetForm()
-  dialogVisible.value = true
-}
-
-const handleEdit = (row: TeachingContentResponse) => {
-  isEdit.value = true
-  
-  // 将响应数据映射到表单数据
-  Object.assign(formData, {
-    teaching_content_id: row.teachingContentId,
-    name: row.name,
-    subject: row.subject,
-    teacher_id: row.teacherId,
-    teaching_content_content: row.teachingContentContent,
-    class_id: row.classId || '',
-    description: row.description || ''
-  })
-  
   dialogVisible.value = true
 }
 
@@ -349,8 +334,15 @@ const handleView = (row: TeachingContentResponse) => {
 
 const handleDelete = async (row: TeachingContentResponse) => {
   try {
+    // 验证行数据和ID
+    if (!row || !row.teaching_content_id) {
+      ElMessage.error('无效的教学内容数据，无法删除');
+      console.error('删除失败：无效的行数据', row);
+      return;
+    }
+    
     await ElMessageBox.confirm(
-      `确定要删除教学内容"${row.name}"吗？`,
+      `确定要删除教学内容"${row.name}"吗？\nID: ${row.teaching_content_id}`,
       '确认删除',
       {
         confirmButtonText: '确定',
@@ -359,14 +351,24 @@ const handleDelete = async (row: TeachingContentResponse) => {
       }
     )
     
-    const success = await deleteTeachingContent(row.teachingContentId)
+    console.log('准备删除教学内容:', row);
+    console.log('删除ID:', row.teaching_content_id);
+    loading.value = true;
+    
+    const success = await deleteTeachingContent(row.teaching_content_id)
     if (success) {
       await loadTeachingContent()
+      ElMessage.success('删除成功');
+    } else {
+      ElMessage.error('删除失败，请重试');
     }
   } catch (error) {
     if (error !== 'cancel') {
-      console.error('删除失败:', error)
+      console.error('删除操作失败:', error)
+      ElMessage.error('删除操作失败');
     }
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -377,12 +379,7 @@ const handleSubmit = async () => {
     await formRef.value.validate()
     submitting.value = true
     
-    let success = false
-    if (isEdit.value) {
-      success = await updateTeachingContent(formData.teaching_content_id, formData)
-    } else {
-      success = await createTeachingContent(formData)
-    }
+    const success = await createTeachingContent(formData)
     
     if (success) {
       dialogVisible.value = false
@@ -408,7 +405,8 @@ const resetForm = () => {
     teacher_id: '',
     teaching_content_content: '',
     class_id: '',
-    description: ''
+    description: '',
+    upload_time: null
   })
   
   if (formRef.value) {
