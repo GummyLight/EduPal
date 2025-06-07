@@ -5,13 +5,13 @@
       <el-divider />
     </div>
 
-    <!-- 搜索栏 -->
+    <!-- 搜索和操作栏 -->
     <div class="search-section">
       <el-row :gutter="20">
         <el-col :span="8">
           <el-input
-            v-model="searchTitle"
-            placeholder="按标题搜索"
+            v-model="searchName"
+            placeholder="按名称搜索"
             clearable
             @clear="handleSearch"
             @keyup.enter="handleSearch"
@@ -38,196 +38,167 @@
           </el-select>
         </el-col>
         <el-col :span="6">
-          <el-select
-            v-model="selectedStatus"
-            placeholder="选择状态"
-            clearable
-            @change="handleStatusFilter"
-          >
-            <el-option label="全部" value="" />
-            <el-option label="草稿" :value="0" />
-            <el-option label="已发布" :value="1" />
-            <el-option label="已归档" :value="2" />
-          </el-select>
-        </el-col>
-        <el-col :span="4">
-          <el-button @click="refreshData" :icon="Refresh">刷新</el-button>
+          <el-button type="primary" @click="handleAdd" :icon="Plus">
+            添加教学内容
+          </el-button>
         </el-col>
       </el-row>
     </div>
 
-    <!-- 统计信息 -->
-    <div class="stats-section">
-      <el-row :gutter="20">
-        <el-col :span="6">
-          <el-card class="stats-card">
-            <div class="stats-item">
-              <span class="stats-label">总内容数</span>
-              <span class="stats-value">{{ totalCount }}</span>
-            </div>
-          </el-card>
-        </el-col>
-        <el-col :span="6">
-          <el-card class="stats-card">
-            <div class="stats-item">
-              <span class="stats-label">当前显示</span>
-              <span class="stats-value">{{ filteredData.length }}</span>
-            </div>
-          </el-card>
-        </el-col>
-        <el-col :span="6">
-          <el-card class="stats-card">
-            <div class="stats-item">
-              <span class="stats-label">已发布</span>
-              <span class="stats-value">{{ publishedCount }}</span>
-            </div>
-          </el-card>
-        </el-col>
-        <el-col :span="6">
-          <el-card class="stats-card">
-            <div class="stats-item">
-              <span class="stats-label">草稿</span>
-              <span class="stats-value">{{ draftCount }}</span>
-            </div>
-          </el-card>
-        </el-col>
-      </el-row>
-    </div>
-
-    <!-- 教学内容列表表格 -->
-    <div class="table-section">
+    <!-- 教学内容列表 -->
+    <div class="content-section">
       <el-table
-        :data="paginatedData"
-        v-loading="loading"
+        :data="displayedContent"
         style="width: 100%"
-        stripe
-        border
-        height="500"
+        v-loading="loading"
+        element-loading-text="加载中..."
       >
-        <el-table-column prop="id" label="内容ID" width="120" />
-        <el-table-column prop="title" label="标题" min-width="200">
-          <template #default="{ row }">
-            <span :title="row.title">{{ row.title }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column prop="name" label="名称" min-width="150" />
         <el-table-column prop="subject" label="学科" width="100" />
-        <el-table-column prop="teacher_id" label="教师ID" width="120" />
-        <el-table-column prop="class_id" label="班级ID" width="120">
+        <el-table-column prop="teacherId" label="教师ID" width="120" />
+        <el-table-column prop="classId" label="班级ID" width="120" />
+        <el-table-column prop="uploadTime" label="上传时间" width="180">
           <template #default="{ row }">
-            <span>{{ row.class_id || '无' }}</span>
+            {{ formatDate(row.uploadTime) }}
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="{ row }">
-            <el-tag
-              :type="getStatusType(row.status)"
-              size="small"
-            >
-              {{ getStatusText(row.status) }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="create_time" label="创建时间" width="180">
-          <template #default="{ row }">
-            <span>{{ formatTime(row.create_time) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="update_time" label="更新时间" width="180">
-          <template #default="{ row }">
-            <span>{{ formatTime(row.update_time) }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column prop="description" label="描述" min-width="200" show-overflow-tooltip />
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button
-              type="primary"
-              size="small"
-              @click="viewContent(row)"
-              :icon="View"
-            >
+            <el-button type="primary" size="small" @click="handleView(row)">
               查看
             </el-button>
-            <el-button
-              type="danger"
-              size="small"
-              @click="handleDelete(row)"
-              :icon="Delete"
-            >
+            <el-button type="warning" size="small" @click="handleEdit(row)">
+              编辑
+            </el-button>
+            <el-button type="danger" size="small" @click="handleDelete(row)">
               删除
             </el-button>
           </template>
         </el-table-column>
       </el-table>
-
-      <!-- 分页 -->
-      <div class="pagination-section">
-        <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
-          :total="filteredData.length"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
     </div>
 
-    <!-- 查看教学内容对话框 -->
+    <!-- 编辑/添加对话框 -->
+    <el-dialog
+      v-model="dialogVisible"
+      :title="dialogTitle"
+      width="60%"
+      :before-close="handleDialogClose"
+    >
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="formRules"
+        label-width="120px"
+      >
+        <el-form-item label="教学内容ID" prop="teaching_content_id">
+          <el-input
+            v-model="formData.teaching_content_id"
+            placeholder="请输入教学内容ID"
+            :disabled="isEdit"
+          />
+        </el-form-item>
+        
+        <el-form-item label="名称" prop="name">
+          <el-input
+            v-model="formData.name"
+            placeholder="请输入教学内容名称"
+          />
+        </el-form-item>
+        
+        <el-form-item label="学科" prop="subject">
+          <el-select
+            v-model="formData.subject"
+            placeholder="请选择学科"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="subject in subjects"
+              :key="subject"
+              :label="subject"
+              :value="subject"
+            />
+          </el-select>
+        </el-form-item>
+        
+        <el-form-item label="教师ID" prop="teacher_id">
+          <el-input
+            v-model="formData.teacher_id"
+            placeholder="请输入教师ID"
+          />
+        </el-form-item>
+        
+        <el-form-item label="班级ID" prop="class_id">
+          <el-input
+            v-model="formData.class_id"
+            placeholder="请输入班级ID（可选）"
+          />
+        </el-form-item>
+        
+        <el-form-item label="教学内容" prop="teaching_content_content">
+          <el-input
+            v-model="formData.teaching_content_content"
+            type="textarea"
+            :rows="6"
+            placeholder="请输入教学内容"
+          />
+        </el-form-item>
+        
+        <el-form-item label="描述" prop="description">
+          <el-input
+            v-model="formData.description"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入描述（可选）"
+          />
+        </el-form-item>
+      </el-form>
+      
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="handleDialogClose">取消</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="submitting">
+            {{ isEdit ? '更新' : '创建' }}
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- 查看对话框 -->
     <el-dialog
       v-model="viewDialogVisible"
-      :title="`查看教学内容: ${selectedContent?.title}`"
-      width="70%"
-      top="5vh"
+      title="查看教学内容"
+      width="60%"
     >
-      <div v-if="selectedContent" class="content-dialog">
+      <div v-if="viewData">
         <el-descriptions :column="2" border>
-          <el-descriptions-item label="内容ID">
-            {{ selectedContent.id }}
+          <el-descriptions-item label="教学内容ID">
+            {{ viewData.teachingContentId }}
           </el-descriptions-item>
-          <el-descriptions-item label="标题">
-            {{ selectedContent.title }}
+          <el-descriptions-item label="名称">
+            {{ viewData.name }}
           </el-descriptions-item>
           <el-descriptions-item label="学科">
-            {{ selectedContent.subject }}
+            {{ viewData.subject }}
           </el-descriptions-item>
           <el-descriptions-item label="教师ID">
-            {{ selectedContent.teacher_id }}
+            {{ viewData.teacherId }}
           </el-descriptions-item>
           <el-descriptions-item label="班级ID">
-            {{ selectedContent.class_id || '无' }}
+            {{ viewData.classId || '无' }}
           </el-descriptions-item>
-          <el-descriptions-item label="状态">
-            <el-tag :type="getStatusType(selectedContent.status)">
-              {{ getStatusText(selectedContent.status) }}
-            </el-tag>
+          <el-descriptions-item label="上传时间">
+            {{ formatDate(viewData.uploadTime) }}
           </el-descriptions-item>
-          <el-descriptions-item label="创建时间">
-            {{ formatTime(selectedContent.create_time) }}
-          </el-descriptions-item>
-          <el-descriptions-item label="更新时间">
-            {{ formatTime(selectedContent.update_time) }}
+          <el-descriptions-item label="描述" :span="2">
+            {{ viewData.description || '无' }}
           </el-descriptions-item>
         </el-descriptions>
         
         <el-divider content-position="left">教学内容</el-divider>
-        <div class="content-display">
-          <pre v-if="selectedContent.content">{{ selectedContent.content }}</pre>
-          <span v-else class="no-content">无内容</span>
-        </div>
-        
-        <el-divider content-position="left">描述信息</el-divider>
-        <div class="description-display">
-          <p v-if="selectedContent.description">{{ selectedContent.description }}</p>
-          <span v-else class="no-description">无描述</span>
-        </div>
-
-        <el-divider content-position="left" v-if="selectedContent.file_path">附件信息</el-divider>
-        <div v-if="selectedContent.file_path" class="file-display">
-          <el-link :href="selectedContent.file_path" target="_blank" type="primary">
-            <el-icon><Document /></el-icon>
-            查看附件
-          </el-link>
+        <div class="content-preview">
+          <pre>{{ viewData.teachingContentContent }}</pre>
         </div>
       </div>
     </el-dialog>
@@ -235,188 +206,225 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Refresh, View, Delete, Document } from '@element-plus/icons-vue'
-import { 
-  fetchAllTeachingContent, 
-  searchTeachingContentByTitle, 
-  deleteTeachingContentById,
-  type TeachingContentResponse 
+import { Search, Plus } from '@element-plus/icons-vue'
+import type { FormInstance, FormRules } from 'element-plus'
+import {
+  fetchAllTeachingContent,
+  searchTeachingContentByName,
+  createTeachingContent,
+  updateTeachingContent,
+  deleteTeachingContent,
+  type TeachingContentResponse,
+  type TeachingContentRequest
 } from '../api/teachingContent'
 
 // 响应式数据
 const loading = ref(false)
-const allData = ref<TeachingContentResponse[]>([])
-const filteredData = ref<TeachingContentResponse[]>([])
-const searchTitle = ref('')
+const submitting = ref(false)
+const searchName = ref('')
 const selectedSubject = ref('')
-const selectedStatus = ref<number | ''>('')
-const currentPage = ref(1)
-const pageSize = ref(20)
+const teachingContentList = ref<TeachingContentResponse[]>([])
+const filteredList = ref<TeachingContentResponse[]>([])
+
+// 对话框相关
+const dialogVisible = ref(false)
 const viewDialogVisible = ref(false)
-const selectedContent = ref<TeachingContentResponse | null>(null)
+const isEdit = ref(false)
+const dialogTitle = computed(() => isEdit.value ? '编辑教学内容' : '添加教学内容')
+
+// 表单相关
+const formRef = ref<FormInstance>()
+const formData = reactive<TeachingContentRequest>({
+  teaching_content_id: '',
+  name: '',
+  subject: '',
+  teacher_id: '',
+  teaching_content_content: '',
+  class_id: '',
+  description: ''
+})
+
+const viewData = ref<TeachingContentResponse | null>(null)
+
+// 学科选项
+const subjects = ref([
+  '语文', '数学', '英语', '物理', '化学', '生物', '历史', '地理', '政治', '音乐', '美术', '体育', '信息技术'
+])
+
+// 表单验证规则
+const formRules: FormRules = {
+  teaching_content_id: [
+    { required: true, message: '请输入教学内容ID', trigger: 'blur' }
+  ],
+  name: [
+    { required: true, message: '请输入名称', trigger: 'blur' },
+    { min: 1, max: 100, message: '名称长度在1到100个字符之间', trigger: 'blur' }
+  ],
+  subject: [
+    { required: true, message: '请选择学科', trigger: 'change' }
+  ],
+  teacher_id: [
+    { required: true, message: '请输入教师ID', trigger: 'blur' }
+  ],
+  teaching_content_content: [
+    { required: true, message: '请输入教学内容', trigger: 'blur' }
+  ]
+}
 
 // 计算属性
-const totalCount = computed(() => allData.value.length)
-const publishedCount = computed(() => allData.value.filter(item => item.status === 1).length)
-const draftCount = computed(() => allData.value.filter(item => item.status === 0).length)
-
-const subjects = computed(() => {
-  const subjectSet = new Set(allData.value.map(item => item.subject))
-  return Array.from(subjectSet).filter(Boolean)
-})
-
-const paginatedData = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return filteredData.value.slice(start, end)
-})
-
-// 生命周期
-onMounted(() => {
-  loadData()
+const displayedContent = computed(() => {
+  let result = filteredList.value
+  
+  if (selectedSubject.value) {
+    result = result.filter(item => item.subject === selectedSubject.value)
+  }
+  
+  return result
 })
 
 // 方法
-const loadData = async () => {
+const loadTeachingContent = async () => {
   loading.value = true
   try {
     const data = await fetchAllTeachingContent()
-    allData.value = data
-    filteredData.value = data
+    teachingContentList.value = data
+    filteredList.value = data
   } catch (error) {
-    ElMessage.error('加载教学内容数据失败')
-    console.error('Error loading teaching content:', error)
+    console.error('加载教学内容失败:', error)
   } finally {
     loading.value = false
   }
 }
 
 const handleSearch = async () => {
-  if (!searchTitle.value.trim()) {
-    applyFilters()
+  if (!searchName.value.trim()) {
+    filteredList.value = teachingContentList.value
     return
   }
   
   loading.value = true
   try {
-    const data = await searchTeachingContentByTitle(searchTitle.value.trim())
-    filteredData.value = data
-    currentPage.value = 1
+    const data = await searchTeachingContentByName(searchName.value.trim())
+    filteredList.value = data
   } catch (error) {
-    ElMessage.error('搜索失败')
-    console.error('Error searching teaching content:', error)
+    console.error('搜索失败:', error)
   } finally {
     loading.value = false
   }
 }
 
 const handleSubjectFilter = () => {
-  applyFilters()
+  // 计算属性会自动处理过滤
 }
 
-const handleStatusFilter = () => {
-  applyFilters()
+const handleAdd = () => {
+  isEdit.value = false
+  resetForm()
+  dialogVisible.value = true
 }
 
-const applyFilters = () => {
-  let data = allData.value
+const handleEdit = (row: TeachingContentResponse) => {
+  isEdit.value = true
   
-  if (selectedSubject.value) {
-    data = data.filter(item => item.subject === selectedSubject.value)
-  }
+  // 将响应数据映射到表单数据
+  Object.assign(formData, {
+    teaching_content_id: row.teachingContentId,
+    name: row.name,
+    subject: row.subject,
+    teacher_id: row.teacherId,
+    teaching_content_content: row.teachingContentContent,
+    class_id: row.classId || '',
+    description: row.description || ''
+  })
   
-  if (selectedStatus.value !== '') {
-    data = data.filter(item => item.status === selectedStatus.value)
-  }
-  
-  if (searchTitle.value.trim()) {
-    data = data.filter(item => 
-      item.title.toLowerCase().includes(searchTitle.value.toLowerCase()) ||
-      item.content?.toLowerCase().includes(searchTitle.value.toLowerCase()) ||
-      item.description?.toLowerCase().includes(searchTitle.value.toLowerCase())
-    )
-  }
-  
-  filteredData.value = data
-  currentPage.value = 1
+  dialogVisible.value = true
 }
 
-const refreshData = () => {
-  searchTitle.value = ''
-  selectedSubject.value = ''
-  selectedStatus.value = ''
-  loadData()
-}
-
-const viewContent = (content: TeachingContentResponse) => {
-  selectedContent.value = content
+const handleView = (row: TeachingContentResponse) => {
+  viewData.value = row
   viewDialogVisible.value = true
 }
 
-const handleDelete = async (content: TeachingContentResponse) => {
+const handleDelete = async (row: TeachingContentResponse) => {
   try {
     await ElMessageBox.confirm(
-      `确定要删除教学内容 "${content.title}" 吗？此操作不可恢复。`,
+      `确定要删除教学内容"${row.name}"吗？`,
       '确认删除',
       {
-        confirmButtonText: '删除',
+        confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning',
+        type: 'warning'
       }
     )
     
-    loading.value = true
-    const response = await deleteTeachingContentById(content.id)
-    
-    if (response.code === 200) {
-      ElMessage.success('删除成功')
-      loadData() // 重新加载数据
-    } else {
-      ElMessage.error(response.message || '删除失败')
+    const success = await deleteTeachingContent(row.teachingContentId)
+    if (success) {
+      await loadTeachingContent()
     }
   } catch (error) {
     if (error !== 'cancel') {
-      ElMessage.error('删除操作失败')
-      console.error('Error deleting teaching content:', error)
+      console.error('删除失败:', error)
     }
+  }
+}
+
+const handleSubmit = async () => {
+  if (!formRef.value) return
+  
+  try {
+    await formRef.value.validate()
+    submitting.value = true
+    
+    let success = false
+    if (isEdit.value) {
+      success = await updateTeachingContent(formData.teaching_content_id, formData)
+    } else {
+      success = await createTeachingContent(formData)
+    }
+    
+    if (success) {
+      dialogVisible.value = false
+      await loadTeachingContent()
+    }
+  } catch (error) {
+    console.error('提交失败:', error)
   } finally {
-    loading.value = false
+    submitting.value = false
   }
 }
 
-const handleSizeChange = (val: number) => {
-  pageSize.value = val
-  currentPage.value = 1
+const handleDialogClose = () => {
+  dialogVisible.value = false
+  resetForm()
 }
 
-const handleCurrentChange = (val: number) => {
-  currentPage.value = val
-}
-
-const formatTime = (timeStr: string | null | undefined): string => {
-  if (!timeStr) return '未知'
-  return new Date(timeStr).toLocaleString('zh-CN')
-}
-
-const getStatusText = (status: number | undefined): string => {
-  switch (status) {
-    case 0: return '草稿'
-    case 1: return '已发布'
-    case 2: return '已归档'
-    default: return '未知'
+const resetForm = () => {
+  Object.assign(formData, {
+    teaching_content_id: '',
+    name: '',
+    subject: '',
+    teacher_id: '',
+    teaching_content_content: '',
+    class_id: '',
+    description: ''
+  })
+  
+  if (formRef.value) {
+    formRef.value.clearValidate()
   }
 }
 
-const getStatusType = (status: number | undefined): string => {
-  switch (status) {
-    case 0: return 'info'
-    case 1: return 'success'
-    case 2: return 'warning'
-    default: return ''
-  }
+const formatDate = (dateString: string) => {
+  if (!dateString) return ''
+  return new Date(dateString).toLocaleString('zh-CN')
 }
+
+// 生命周期
+onMounted(() => {
+  loadTeachingContent()
+})
 </script>
 
 <style scoped>
@@ -426,77 +434,68 @@ const getStatusType = (status: number | undefined): string => {
   min-height: 100vh;
 }
 
-.header h2 {
-  margin: 0;
-  color: #303133;
-  font-weight: 600;
+.header {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.search-section,
-.stats-section,
-.table-section {
+.header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 24px;
+}
+
+.search-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.content-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.content-preview {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.content-preview pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.el-table {
+  font-size: 14px;
+}
+
+.el-form-item {
   margin-bottom: 20px;
 }
 
-.stats-card {
-  text-align: center;
-}
-
-.stats-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.stats-label {
-  font-size: 14px;
-  color: #606266;
-}
-
-.stats-value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #409eff;
-}
-
-.pagination-section {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.no-description,
-.no-content {
-  color: #909399;
-  font-style: italic;
-}
-
-.content-dialog {
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
-.content-display {
-  max-height: 200px;
-  overflow-y: auto;
-  background-color: #f5f5f5;
-  padding: 10px;
-  border-radius: 4px;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.description-display {
-  background-color: #f5f5f5;
-  padding: 10px;
-  border-radius: 4px;
-  min-height: 50px;
-}
-
-.file-display {
-  background-color: #f5f5f5;
-  padding: 10px;
-  border-radius: 4px;
-  text-align: center;
+.el-textarea {
+  font-family: inherit;
 }
 </style>
