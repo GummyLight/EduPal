@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(learningProgress):LearningProgress gone了">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(home):修改鉴权">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" afterDir="false" />
     </list>
@@ -354,15 +353,7 @@
       <workItem from="1749180223886" duration="131000" />
       <workItem from="1749180686415" duration="8059000" />
       <workItem from="1749307911702" duration="1694000" />
-      <workItem from="1749340325148" duration="8891000" />
-    </task>
-    <task id="LOCAL-00045" summary="fix(file):修复了download失败但有创建文件的问题">
-      <option name="closed" value="true" />
-      <created>1748787753067</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1748787753067</updated>
+      <workItem from="1749340325148" duration="9741000" />
     </task>
     <task id="LOCAL-00046" summary="test(AuthServiceImpl):新增AuthServiceImpl单元测试用例，2个自动测试错误，但手动测试可以通过">
       <option name="closed" value="true" />
@@ -748,7 +739,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749340824433</updated>
     </task>
-    <option name="localTasksCounter" value="94" />
+    <task id="LOCAL-00094" summary="fix(home):修改鉴权">
+      <option name="closed" value="true" />
+      <created>1749385219128</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1749385219128</updated>
+    </task>
+    <option name="localTasksCounter" value="95" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -781,7 +780,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="test(user):对于User类进行基于状态的单元测试，均通过" />
     <MESSAGE value="fix(quiz):修改了quiz_id为驼峰命名法" />
     <MESSAGE value="test(Quiz):对于Quiz类进行基于状态的单元测试，均通过" />
     <MESSAGE value="test(QuizAnswer):对于QuizAnswer类进行基于状态的单元测试，均通过" />
@@ -806,7 +804,8 @@
     <MESSAGE value="fix:纠正了之前的错误，将Resource相关改回了蛇形命名法" />
     <MESSAGE value="fix(resourceTest)" />
     <MESSAGE value="fix(learningProgress):LearningProgress gone了" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(learningProgress):LearningProgress gone了" />
+    <MESSAGE value="fix(home):修改鉴权" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(home):修改鉴权" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

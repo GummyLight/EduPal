@@ -136,7 +136,7 @@ public class HomeServiceImpl implements HomeService {
                             new HomeTeacherResponse.StudentDetails("s20250117", "陈晓枫", 92.0, 1.7)
                     ), // Example top students
                     Arrays.asList(
-                            new HomeTeacherResponse.StudentDetails("s20250223", "马子涵", 60.0, 5.0),
+                            new HomeTeacherResponse.StudentDetails("s20250223", "马天天", 60.0, 5.0),
                             new HomeTeacherResponse.StudentDetails("s20250121", "张小东", 55.0, 4.5),
                             new HomeTeacherResponse.StudentDetails("s20250122", "李华", 50.0, 4.8),
                             new HomeTeacherResponse.StudentDetails("s20250123", "王芳", 45.0, 5.2),
