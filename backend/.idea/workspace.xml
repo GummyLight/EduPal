@@ -4,14 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(resourceTest)">
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(learningProgress):LearningProgress gone了">
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/01411370-482c-43da-9007-6280bb77c2b3.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2025-05-31_13_58_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_2025-05-31_13_58__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/LearningProgress.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/model/LearningProgress.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,98 +54,98 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;JUnit.AdminControllerTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AdminControllerTest.testRegisterUser.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AnswerTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AuthControllerTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AuthControllerTest.testRegisterUser_Success.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AuthServiceImplIntegrationTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AuthServiceImplTest.executor&quot;: &quot;Coverage&quot;,
-    &quot;JUnit.AuthServiceImplTest.loginUserByEmailSuccess.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AuthServiceImplTest.loginUserByEmail_ReturnsError_WhenEmailIsNull.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AuthServiceImplTest.testLoginUserByUserId_Success.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.AuthServiceImplTest.testUpdateStudentClass_Success.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CreateQuizRequestTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.GetMyQuizResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.GetMyTeacherResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.GetQuizStudentResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.GetStudentQuizResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.HistoryResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.HomeAdminResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.HomeServiceImplTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.HomeTeacherResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ListStudentResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ListTeacherResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ListUserResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.LoginRequestTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.LoginResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ModifyQuizRequestTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.PostRequestTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.PostResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.PostTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.QuestionRequestTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.QuestionTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.QuizAnswerTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.QuizServiceImplTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.QuizServiceImplTest.testCreateQuiz.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.QuizServiceImplTest.testGetStudentQuiz_NoQuizzes.executor&quot;: &quot;Debug&quot;,
-    &quot;JUnit.QuizServiceImplTest.testGetStudentQuiz_StudentNotFound.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.QuizTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.RegisterRequestTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ReplyRequestTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ReplyResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ReplyTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ResetPasswordRequestTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ResourceRequestTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ResourceResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.SecurityConfigTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.StudentTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.SubmitAnswerRequestTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.TeacherAnswerTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.TeacherTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.UserControllerTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.UserServiceImplIntegrationTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.UserServiceImplTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.UserTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ValidationTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ViewQuestionResponseTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.java in backend.executor&quot;: &quot;Coverage&quot;,
-    &quot;JUnit.request in backend.executor&quot;: &quot;Coverage&quot;,
-    &quot;Maven.backend [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.backend [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.backend [package].executor&quot;: &quot;Run&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Spring Boot.EduPalApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/01-08 大三春/01 软件工程 刘光迟/临时测试/EduPal-main (7)/EduPal-main/backend&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\Program Files\\JetBrains\\IntelliJ IDEA 2023.3.5\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "JUnit.AdminControllerTest.executor": "Run",
+    "JUnit.AdminControllerTest.testRegisterUser.executor": "Run",
+    "JUnit.AnswerTest.executor": "Run",
+    "JUnit.AuthControllerTest.executor": "Run",
+    "JUnit.AuthControllerTest.testRegisterUser_Success.executor": "Run",
+    "JUnit.AuthServiceImplIntegrationTest.executor": "Run",
+    "JUnit.AuthServiceImplTest.executor": "Coverage",
+    "JUnit.AuthServiceImplTest.loginUserByEmailSuccess.executor": "Run",
+    "JUnit.AuthServiceImplTest.loginUserByEmail_ReturnsError_WhenEmailIsNull.executor": "Run",
+    "JUnit.AuthServiceImplTest.testLoginUserByUserId_Success.executor": "Run",
+    "JUnit.AuthServiceImplTest.testSendVerificationCode_CodeExistsNotExpired.executor": "Run",
+    "JUnit.AuthServiceImplTest.testUpdateStudentClass_Success.executor": "Run",
+    "JUnit.CreateQuizRequestTest.executor": "Run",
+    "JUnit.GetMyQuizResponseTest.executor": "Run",
+    "JUnit.GetMyTeacherResponseTest.executor": "Run",
+    "JUnit.GetQuizStudentResponseTest.executor": "Run",
+    "JUnit.GetStudentQuizResponseTest.executor": "Run",
+    "JUnit.HistoryResponseTest.executor": "Run",
+    "JUnit.HomeAdminResponseTest.executor": "Run",
+    "JUnit.HomeServiceImplTest.executor": "Run",
+    "JUnit.HomeTeacherResponseTest.executor": "Run",
+    "JUnit.ListStudentResponseTest.executor": "Run",
+    "JUnit.ListTeacherResponseTest.executor": "Run",
+    "JUnit.ListUserResponseTest.executor": "Run",
+    "JUnit.LoginRequestTest.executor": "Run",
+    "JUnit.LoginResponseTest.executor": "Run",
+    "JUnit.ModifyQuizRequestTest.executor": "Run",
+    "JUnit.PostRequestTest.executor": "Run",
+    "JUnit.PostResponseTest.executor": "Run",
+    "JUnit.PostTest.executor": "Run",
+    "JUnit.QuestionRequestTest.executor": "Run",
+    "JUnit.QuestionTest.executor": "Run",
+    "JUnit.QuizAnswerTest.executor": "Run",
+    "JUnit.QuizServiceImplTest.executor": "Run",
+    "JUnit.QuizServiceImplTest.testCreateQuiz.executor": "Debug",
+    "JUnit.QuizServiceImplTest.testGetStudentQuiz_NoQuizzes.executor": "Debug",
+    "JUnit.QuizServiceImplTest.testGetStudentQuiz_StudentNotFound.executor": "Run",
+    "JUnit.QuizTest.executor": "Run",
+    "JUnit.RegisterRequestTest.executor": "Run",
+    "JUnit.ReplyRequestTest.executor": "Run",
+    "JUnit.ReplyResponseTest.executor": "Run",
+    "JUnit.ReplyTest.executor": "Run",
+    "JUnit.ResetPasswordRequestTest.executor": "Run",
+    "JUnit.ResourceRequestTest.executor": "Run",
+    "JUnit.ResourceResponseTest.executor": "Run",
+    "JUnit.SecurityConfigTest.executor": "Run",
+    "JUnit.StudentTest.executor": "Run",
+    "JUnit.SubmitAnswerRequestTest.executor": "Run",
+    "JUnit.TeacherAnswerTest.executor": "Run",
+    "JUnit.TeacherTest.executor": "Run",
+    "JUnit.UserControllerTest.executor": "Run",
+    "JUnit.UserServiceImplIntegrationTest.executor": "Run",
+    "JUnit.UserServiceImplTest.executor": "Run",
+    "JUnit.UserTest.executor": "Run",
+    "JUnit.ValidationTest.executor": "Run",
+    "JUnit.ViewQuestionResponseTest.executor": "Run",
+    "JUnit.java in backend.executor": "Coverage",
+    "JUnit.request in backend.executor": "Coverage",
+    "Maven.backend [clean].executor": "Run",
+    "Maven.backend [install].executor": "Run",
+    "Maven.backend [package].executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.EduPalApplication.executor": "Run",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "E:/01-08 大三春/01 软件工程 刘光迟/临时测试/EduPal-main (7)/EduPal-main/backend",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.uml",
+    "ts.external.directory.path": "D:\\Program Files\\JetBrains\\IntelliJ IDEA 2023.3.5\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;mysql_aurora_aws&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql_aurora_aws"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.example.edupal.service" />
@@ -358,14 +354,7 @@
       <workItem from="1749180223886" duration="131000" />
       <workItem from="1749180686415" duration="8059000" />
       <workItem from="1749307911702" duration="1694000" />
-    </task>
-    <task id="LOCAL-00044" summary="fix(file):修复了download404的问题">
-      <option name="closed" value="true" />
-      <created>1748785440172</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1748785440172</updated>
+      <workItem from="1749340325148" duration="8891000" />
     </task>
     <task id="LOCAL-00045" summary="fix(file):修复了download失败但有创建文件的问题">
       <option name="closed" value="true" />
@@ -751,7 +740,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749221564690</updated>
     </task>
-    <option name="localTasksCounter" value="93" />
+    <task id="LOCAL-00093" summary="fix(learningProgress):LearningProgress gone了">
+      <option name="closed" value="true" />
+      <created>1749340824431</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1749340824433</updated>
+    </task>
+    <option name="localTasksCounter" value="94" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -784,7 +781,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix(register):调整实体类创建顺序以适应外键约束" />
     <MESSAGE value="test(user):对于User类进行基于状态的单元测试，均通过" />
     <MESSAGE value="fix(quiz):修改了quiz_id为驼峰命名法" />
     <MESSAGE value="test(Quiz):对于Quiz类进行基于状态的单元测试，均通过" />
@@ -809,7 +805,8 @@
     <MESSAGE value="test(serviceImpl):测试了Auth、Home和Quiz的serviceImpl" />
     <MESSAGE value="fix:纠正了之前的错误，将Resource相关改回了蛇形命名法" />
     <MESSAGE value="fix(resourceTest)" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(resourceTest)" />
+    <MESSAGE value="fix(learningProgress):LearningProgress gone了" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(learningProgress):LearningProgress gone了" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
