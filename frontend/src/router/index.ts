@@ -103,6 +103,22 @@ const routes = [
       },
       { path: 'qa', component: QA },
       { path: 'user-management', component: () => import('../views/UserManagement.vue') },
+      // 管理员专用页面
+      { 
+        path: 'admin-materials', 
+        component: () => import('../views/AdminMaterials.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] }
+      },
+      { 
+        path: 'admin-course', 
+        component: () => import('../views/AdminCourse.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] }
+      },
+      { 
+        path: 'admin-community', 
+        component: () => import('../views/AdminCommunity.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] }
+      },
     ]
   }
 ];

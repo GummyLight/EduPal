@@ -153,17 +153,29 @@ async function fetchStudentSubmissions() {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
     if (response.data.status === 'success') {
-      studentSubmissions.value = response.data.answers.map((item: any) => ({
-        submissionId: item.answerId,
-        studentId: item.studentId,
-        studentName: item.userName,
-        submissionTime: item.answerTime || null,
-        submissionFilePath: item.answerContent || null,
-        score: item.score || null,
-        comment: item.feedback || '',
-        isScoring: false,
-      }));
-      ElMessage.success('学生提交列表加载成功');
+      // 防御性检查：确保 answers 存在且是数组
+      const answers = response.data.answers || [];
+      if (Array.isArray(answers)) {
+        studentSubmissions.value = answers.map((item: any) => ({
+          submissionId: item.answerId,
+          studentId: item.studentId,
+          studentName: item.userName,
+          submissionTime: item.answerTime || null,
+          submissionFilePath: item.answerContent || null,
+          score: item.score || null,
+          comment: item.feedback || '',
+          isScoring: false,
+        }));
+        if (answers.length === 0) {
+          ElMessage.info('该测验暂无学生提交');
+        } else {
+          ElMessage.success(`学生提交列表加载成功，共 ${answers.length} 条提交`);
+        }
+      } else {
+        studentSubmissions.value = [];
+        ElMessage.warning('返回的数据格式异常，请联系管理员');
+        console.warn('Expected array but got:', typeof answers, answers);
+      }
     } else {
       ElMessage.error(`获取学生提交列表失败：${response.data.message}`);
     }
@@ -246,16 +258,15 @@ async function handleDownload(submissionId: string, customFileName: string, cust
 import pLimit from 'p-limit'; // 使用 p-limit 限制并发
 
 async function handleDownloadAllSubmissions() {
-  ElNotification({
+  const progressNotification = ElNotification({
     title: '开始下载',
     message: '正在准备打包所有作业文件，请稍候...',
     type: 'info',
     duration: 0,
-    id: 'download-progress',
   });
 
   const zip = new JSZip();
-  const limit = pLimit(1); // 限制最大并发数为 5
+  const limit = pLimit(5); // 限制最大并发数为 1
   let downloadedCount = 0;
   const filesToDownload = studentSubmissions.value.filter((s) => s.submissionId);
 
@@ -277,14 +288,15 @@ async function handleDownloadAllSubmissions() {
           }
           zip.file(fileName, response.data);
           downloadedCount++;
-          ElNotification.close('download-progress');
-          ElNotification({
+          progressNotification.close();
+          const newProgressNotification = ElNotification({
             title: '下载进度',
             message: `正在打包: ${downloadedCount}/${filesToDownload.length} 个文件`,
             type: 'info',
             duration: 0,
-            id: 'download-progress',
           });
+          // 更新通知引用
+          Object.assign(progressNotification, newProgressNotification);
         } catch (error) {
           console.error(`Failed to add ${submission.studentName}.pdf to zip:`, error);
           ElMessage.warning(`文件 ${submission.studentName} 下载失败，跳过。`);
@@ -306,16 +318,16 @@ async function handleDownloadAllSubmissions() {
           link.click();
           document.body.removeChild(link);
           window.URL.revokeObjectURL(url);
-          ElNotification.close('download-progress');
+          progressNotification.close();
           ElMessage.success('所有作业已下载！');
         })
         .catch((error) => {
-          ElNotification.close('download-progress');
+          progressNotification.close();
           ElMessage.error('打包文件失败！');
           console.error('Error generating zip:', error);
         });
   } else {
-    ElNotification.close('download-progress');
+    progressNotification.close();
     ElMessage.info('没有可下载的作业文件。');
   }
 }

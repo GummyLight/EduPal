@@ -85,16 +85,12 @@
         </el-col>
       </el-row>
     </div>
-
-    <div v-else>
-      <el-empty description="当前用户类型无特定首页展示内容或加载中..."></el-empty>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, onMounted, watch, computed } from 'vue';
-import { HomeService, StudentHomeData, TeacherHomeData } from '../api/home'; // 导入 StudentHomeData 和 TeacherHomeData
+import { ref, defineProps, onMounted, watch } from 'vue';
+import { HomeService, StudentHomeData, TeacherHomeData } from '../api/home';
 
 const props = defineProps({
   username: {
@@ -102,7 +98,7 @@ const props = defineProps({
     required: true
   },
   usertype: {
-    type: Number as () => 0 | 1 | 2, // 确保这里也是 0 | 1 | 2
+    type: Number as () => 0 | 1 | 2,
     required: true
   },
   userid: {
@@ -143,17 +139,17 @@ const teacherData = ref<TeacherHomeData>({
   bottomStudents: [],
 });
 
-
-// **关键改动：根据 usertype 调用不同的服务方法**
+// 根据 usertype 调用不同的服务方法
 const loadHomeData = async (userId: string, userType: 0 | 1 | 2) => {
   try {
     if (userType === 1) { // 学生
-      const data: StudentHomeData = await HomeService.getStudentHomeData(userId); // 调用学生特有的接口
-      studentData.value = data; // 直接赋值
+      const data: StudentHomeData = await HomeService.getStudentHomeData(userId);
+      studentData.value = data;
     } else if (userType === 2) { // 教师
-      const data: TeacherHomeData = await HomeService.getTeacherHomeData(userId); // 调用教师特有的接口
-      teacherData.value = data; // 直接赋值
+      const data: TeacherHomeData = await HomeService.getTeacherHomeData(userId);
+      teacherData.value = data;
     }
+    // 管理员不需要加载额外数据
   } catch (error) {
     console.error('HomeForm.vue - 加载首页数据失败:', error);
     // 根据用户类型设置不同的默认值或错误提示
@@ -187,14 +183,14 @@ const loadHomeData = async (userId: string, userType: 0 | 1 | 2) => {
 
 // 监听 props.userid 和 props.usertype 的变化，确保两者都有值才加载数据
 watch(() => [props.userid, props.usertype], ([newUserId, newUsertype]) => {
-  if (newUserId && (newUsertype === 0 || newUsertype === 1 || newUsertype === 2)) {
+  if (newUserId && (newUsertype === 1 || newUsertype === 2)) {
     loadHomeData(newUserId as string, newUsertype);
   }
 }, { immediate: true });
 
 // 在组件挂载时也尝试加载一次
 onMounted(() => {
-  if (props.userid && (props.usertype === 0 || props.usertype === 1 || props.usertype === 2)) {
+  if (props.userid && (props.usertype === 1 || props.usertype === 2)) {
     loadHomeData(props.userid, props.usertype);
   }
 });
@@ -215,7 +211,7 @@ onMounted(() => {
 }
 .task-card ul,
 .notice-card ul,
-.student-performance-card ul { /* 添加教师部分的样式 */
+.student-performance-card ul {
   padding-left: 20px;
 }
 .task-card li,

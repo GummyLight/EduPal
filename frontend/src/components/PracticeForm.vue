@@ -4,7 +4,7 @@
       <div class="title">智慧教学系统</div>
       <div class="user-info">
         <span>您好，{{ username }} {{ userType === 2 ? '老师' : '同学' }} </span>
-        <el-button type="danger" @click="logout">退出登录</el-button>
+<!--        <el-button type="danger" @click="logout">退出登录</el-button>-->
       </div>
     </el-header>
 
@@ -48,11 +48,28 @@
 
       <div class="actions">
         <template v-if="userType === 2">
-          <el-button type="success" icon="el-icon-plus" @click="handleAdd">添加练习</el-button>
-          <el-button type="primary" icon="el-icon-pie-chart" @click="handleViewAnalytics">查看学情分析</el-button>
+          <el-button type="success" :icon="Plus" @click="handleAdd">添加练习</el-button>
         </template>
         <template v-if="userType === 1">
-          <el-button type="primary" icon="el-icon-data-analysis" @click="handleViewProgress">查看学习进度</el-button>
+          <!-- 学生端作业进度条 - 全屏适配版 -->
+          <div class="homework-progress-fullwidth">
+            <span class="progress-label">📊 作业完成进度</span>
+            <div class="progress-bar-container">
+              <el-progress 
+                :percentage="homeworkProgress.percentage" 
+                :stroke-width="12"
+                :color="getProgressColor(homeworkProgress.percentage)"
+                :show-text="false"
+                class="progress-bar-fullwidth"
+              />
+            </div>
+            <span class="progress-text">{{ homeworkProgress.completed }}/{{ homeworkProgress.total }} ({{ homeworkProgress.percentage }}%)</span>
+            <div class="progress-details">
+              <el-tag type="success" size="small" effect="plain">已批改: {{ homeworkProgress.graded }}</el-tag>
+              <el-tag type="info" size="small" effect="plain">已提交: {{ homeworkProgress.submitted }}</el-tag>
+              <el-tag type="warning" size="small" effect="plain">未提交: {{ homeworkProgress.unsubmitted }}</el-tag>
+            </div>
+          </div>
         </template>
       </div>
 
@@ -299,9 +316,10 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { Plus, TrendCharts } from '@element-plus/icons-vue';
 import axios from 'axios';
 import { createQuiz, modifyQuiz, type CreateQuizRequest, type ModifyQuizRequest } from '../api/quiz';
-import { uploadFile, type MaterialSubmitData } from '../api/materialUploadApi';
+import { uploadFile } from '../api/materialUploadApi';
 
 // API 基地址（根据实际环境配置）
 const API_BASE = 'http://localhost:8080';
@@ -368,6 +386,16 @@ const classList = ref<ClassItem[]>([]);
 // 表格数据
 const tableData = ref<TableDataItem[]>([]);
 
+// 作业进度数据（学生端使用）
+const homeworkProgress = ref({
+  total: 0,
+  completed: 0,
+  graded: 0,
+  submitted: 0,
+  unsubmitted: 0,
+  percentage: 0
+});
+
 // 状态映射函数（学生端使用）
 const mapQuizStatus = (status: number | null) => {
   if (status === null) return '';
@@ -409,6 +437,10 @@ const fetchStudentQuizzes = async (userId: string) => {
         已批改人数: 0,
         classId: quiz.classId || '', // 假设后端可能返回
       }));
+      
+      // 加载作业进度数据
+      await loadHomeworkProgress(userId);
+      
       ElMessage.success('测验列表加载成功');
     } else {
       ElMessage.error('获取测验列表失败');
@@ -417,6 +449,69 @@ const fetchStudentQuizzes = async (userId: string) => {
     ElMessage.error('请求失败，请稍后重试');
     console.error(error);
   }
+};
+
+// 加载作业进度数据（学生端）
+const loadHomeworkProgress = async (userId: string) => {
+  try {
+    const response = await axios.get(`${API_BASE}/quiz/getStudentQuiz`, {
+      params: { userId },
+    });
+    
+    if (response.data.status === 'success') {
+      const quizDetails = response.data.quizDetails;
+      const total = quizDetails.length;
+      let graded = 0;
+      let submitted = 0;
+      let unsubmitted = 0;
+      
+      quizDetails.forEach((quiz: any) => {
+        switch (quiz.quizStatus) {
+          case 2: // 已批改
+            graded++;
+            break;
+          case 1: // 已提交但未批改
+            submitted++;
+            break;
+          case 0: // 未提交
+          case null:
+          default:
+            unsubmitted++;
+            break;
+        }
+      });
+      
+      const completed = graded + submitted;
+      const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+      
+      homeworkProgress.value = {
+        total,
+        completed,
+        graded,
+        submitted,
+        unsubmitted,
+        percentage
+      };
+      
+      console.log('作业进度数据更新:', homeworkProgress.value);
+    }
+  } catch (error) {
+    console.error('加载作业进度失败:', error);
+    // 设置默认值，避免界面显示异常
+    homeworkProgress.value = {
+      total: 0,
+      completed: 0,
+      graded: 0,
+      submitted: 0,
+      unsubmitted: 0,
+      percentage: 0
+    };
+  }
+};
+
+// 获取进度条颜色
+const getProgressColor = (percentage: number) => {
+  return '#67c23a'; // 统一使用绿色
 };
 
 // 获取教师测验数据
@@ -820,22 +915,12 @@ const logout = () => {
   ElMessage.info('您已退出登录。');
 };
 
-// 查看学情分析
-const handleViewAnalytics = () => {
-  console.log('教师操作: 查看学情分析');
-  ElMessage.info('正在查看学情分析...');
-};
+
 
 // 选择班级
 const handleSelectClass = () => {
   console.log('教师操作: 选择了班级', filters.value.classId);
   handleSearch();
-};
-
-// 查看学习进度
-const handleViewProgress = () => {
-  console.log('学生操作: 查看学习进度');
-  ElMessage.info('正在查看学习进度...');
 };
 
 // 查看学生提交
@@ -1034,11 +1119,176 @@ onMounted(() => {
 .filter-form .el-form-item {
   margin-bottom: 10px;
 }
+
+/* 作业进度条样式 */
+.progress-card {
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.progress-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.progress-summary {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.progress-content {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.progress-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.progress-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+}
+
+.progress-percentage {
+  font-size: 24px;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.homework-progress-bar {
+  margin-bottom: 15px;
+}
+
+.progress-detail {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.progress-detail .el-tag {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  backdrop-filter: blur(5px);
+}
+
+.progress-detail .el-tag.el-tag--success {
+  background: rgba(103, 194, 58, 0.3);
+  border-color: rgba(103, 194, 58, 0.5);
+}
+
+.progress-detail .el-tag.el-tag--info {
+  background: rgba(144, 147, 153, 0.3);
+  border-color: rgba(144, 147, 153, 0.5);
+}
+
+.progress-detail .el-tag.el-tag--warning {
+  background: rgba(230, 162, 60, 0.3);
+  border-color: rgba(230, 162, 60, 0.5);
+}
+
 .actions {
   margin: 10px 0 15px;
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+/* 学生端操作区域 - 全屏适配版进度条 */
+.homework-progress-fullwidth {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 95vw;
+  flex-wrap: wrap;
+}
+
+.progress-label {
+  color: #495057;
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 120px;
+  font-size: 15px;
+}
+
+.progress-bar-container {
+  flex: 1;
+  min-width: 200px;
+  max-width: 60%;
+}
+
+.progress-bar-fullwidth {
+  width: 100%;
+}
+
+.progress-text {
+  color: #409EFF;
+  font-weight: 700;
+  white-space: nowrap;
+  min-width: 120px;
+  font-size: 15px;
+}
+
+.progress-details {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.progress-details .el-tag {
+  font-size: 12px;
+  padding: 3px 8px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .homework-progress-fullwidth {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    max-width: 100%;
+    padding: 16px;
+  }
+  
+  .progress-bar-container {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .progress-details {
+    width: 100%;
+    justify-content: flex-start;
+  }
 }
 .table-card {
   background-color: #fff;
