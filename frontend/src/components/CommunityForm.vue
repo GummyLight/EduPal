@@ -28,7 +28,7 @@
               <el-link :href="post.attachedFileUrl" target="_blank">查看附件</el-link>
             </el-button>
             <el-button
-                v-if="userType === 2 || post.authorId === userId"
+                v-if="userType === 0 || post.authorId === userId"
                 type="danger"
                 text
                 size="small"
