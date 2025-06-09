@@ -105,7 +105,7 @@
         <el-table-column prop="authorId" label="作者ID" width="120" />
         <el-table-column label="附件" width="80">
           <template #default="{ row }">
-            <el-tag v-if="row.attachedFile" type="success" size="small">
+            <el-tag v-if="row.attachedFileUrl" type="success" size="small">
               <el-icon><Paperclip /></el-icon>
             </el-tag>
             <span v-else>-</span>
@@ -201,11 +201,11 @@
           <span v-else class="no-content">无内容</span>
         </div>
 
-        <el-divider content-position="left" v-if="selectedPost.attachedFile">附件</el-divider>
-        <div v-if="selectedPost.attachedFile" class="attachment-display">
-          <el-link :href="selectedPost.attachedFile.url" target="_blank" type="primary">
+        <el-divider content-position="left" v-if="selectedPost.attachedFileUrl">附件</el-divider>
+        <div v-if="selectedPost.attachedFileUrl" class="attachment-display">
+          <el-link :href="selectedPost.attachedFileUrl" target="_blank" type="primary">
             <el-icon><Document /></el-icon>
-            {{ selectedPost.attachedFile.name }}
+            附件文件
           </el-link>
         </div>
 
@@ -228,10 +228,10 @@
               </el-button>
             </div>
             <div class="reply-content">{{ reply.content }}</div>
-            <div v-if="reply.attachedFile" class="reply-attachment">
-              <el-link :href="reply.attachedFile.url" target="_blank" type="primary" size="small">
+            <div v-if="reply.attachedFileUrl" class="reply-attachment">
+              <el-link :href="reply.attachedFileUrl" target="_blank" type="primary" size="small">
                 <el-icon><Document /></el-icon>
-                {{ reply.attachedFile.name }}
+                回复附件
               </el-link>
             </div>
           </div>
@@ -260,9 +260,9 @@ const selectedPost = ref<Post | null>(null)
 
 // 计算属性
 const totalCount = computed(() => allData.value.length)
-const attachmentCount = computed(() => allData.value.filter(item => item.attachedFile).length)
+const attachmentCount = computed(() => allData.value.filter((item: Post) => item.attachedFileUrl).length)
 const totalRepliesCount = computed(() => 
-  allData.value.reduce((total, post) => total + (post.replies?.length || 0), 0)
+  allData.value.reduce((total: number, post: Post) => total + (post.replies?.length || 0), 0)
 )
 
 const paginatedData = computed(() => {
@@ -303,14 +303,14 @@ const applyFilters = () => {
   let data = allData.value
   
   if (searchTitle.value.trim()) {
-    data = data.filter(item => 
+    data = data.filter((item: Post) => 
       item.title.toLowerCase().includes(searchTitle.value.toLowerCase()) ||
       item.content.toLowerCase().includes(searchTitle.value.toLowerCase())
     )
   }
   
   if (searchAuthor.value.trim()) {
-    data = data.filter(item => 
+    data = data.filter((item: Post) => 
       item.authorName.toLowerCase().includes(searchAuthor.value.toLowerCase()) ||
       item.authorId.includes(searchAuthor.value)
     )

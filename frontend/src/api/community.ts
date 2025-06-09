@@ -35,6 +35,10 @@ export interface PostResponse {
     replies: ReplyResponse[];
 }
 
+// 为了保持向后兼容性，添加类型别名
+export type Post = PostResponse;
+export type Reply = ReplyResponse;
+
 /**
  * 帖子请求接口 (对应后端 PostRequest)
  */
