@@ -34,35 +34,14 @@
         </div>
         <div class="form-group">
           <label for="password">密码：</label>
-          <div class="password-input-container">
-            <input 
-              v-model="form.password" 
-              :type="showPassword ? 'text' : 'password'" 
-              id="password"
-              class="form-input password-input"
-              placeholder="请输入密码"
-              required 
-            />
-            <span 
-              @click="togglePasswordVisibility" 
-              class="password-toggle-icon"
-              :title="showPassword ? '隐藏密码' : '显示密码'"
-            >
-              <!-- 显示密码图标 (眼睛睁开) -->
-              <svg v-if="!showPassword" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              
-              <!-- 隐藏密码图标 (眼睛带斜线) -->
-              <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="m9.88 9.88a3 3 0 1 0 4.24 4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 11 8 11 8a13.16 13.16 0 0 1-1 1.73" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M6.61 6.61A13.526 13.526 0 0 0 1 12s4 8 11 8a9.74 9.74 0 0 0 5-1.73" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <line x1="2" y1="2" x2="22" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </span>
-          </div>
+          <input 
+            v-model="form.password" 
+            type="password"
+            id="password"
+            class="form-input"
+            placeholder="请输入密码"
+            required 
+          />
         </div>
         <div class="form-group">
           <label for="verifyCode">验证码：</label>
@@ -144,9 +123,6 @@ const form = reactive({
 // 错误信息
 const userIdError = ref('');
 const verifyCodeError = ref('');
-
-// 密码显示状态
-const showPassword = ref(false);
 
 // Doro 模式音频播放器
 const doroAudioPlayer = ref<HTMLAudioElement | null>(null);
@@ -295,11 +271,6 @@ const validateVerifyCode = () => {
   } else {
     verifyCodeError.value = '';
   }
-};
-
-// 切换密码显示状态
-const togglePasswordVisibility = () => {
-  showPassword.value = !showPassword.value;
 };
 
 // 监听登录方式切换，清除输入和错误信息
@@ -655,48 +626,6 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 10px; /* 输入框和验证码图片之间的间距 */
-}
-
-/* 密码输入框容器样式 */
-.password-input-container {
-  position: relative;
-  width: 100%;
-}
-
-.password-input {
-  width: 100%;
-  padding-right: 45px; /* 为眼睛图标留出空间 */
-  box-sizing: border-box; /* 确保padding不会增加总宽度 */
-}
-
-.password-toggle-icon {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: #6b7280;
-  transition: all 0.3s ease;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  opacity: 0.7;
-  z-index: 10; /* 确保图标在输入框之上 */
-}
-
-.password-toggle-icon:hover {
-  color: #4f46e5;
-  background-color: rgba(79, 70, 229, 0.08);
-  opacity: 1;
-  transform: translateY(-50%) scale(1.05);
-}
-
-.password-toggle-icon svg {
-  transition: transform 0.2s ease;
 }
 
 /* 神秘触发区域样式 */
