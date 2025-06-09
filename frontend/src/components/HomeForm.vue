@@ -90,7 +90,7 @@
 
 <script setup lang="ts">
 import { ref, defineProps, onMounted, watch } from 'vue';
-import { HomeService, StudentHomeData, TeacherHomeData } from '../api/home';
+import { AdminHomeData, HomeService, StudentHomeData, TeacherHomeData } from '../api/home';
 
 const props = defineProps({
   username: {

@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix:纠正了之前的错误，将Resource相关改回了蛇形命名法">
+    <list default="true" id="039885ae-3f19-4858-b069-6cdccb726f4b" name="Changes" comment="fix(home):修改鉴权">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/edupal/controller/AdminControllerTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/edupal/model/ResourceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/example/edupal/model/ResourceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/edupal/service/Impl/HomeServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -136,7 +135,7 @@
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.uml",
     "ts.external.directory.path": "D:\\Program Files\\JetBrains\\IntelliJ IDEA 2023.3.5\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
   },
@@ -151,7 +150,7 @@
       <recent name="com.example.edupal.service" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Spring Boot.EduPalApplication">
     <configuration name="AdminControllerTest.testRegisterUser" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="backend" />
       <extension name="coverage">
@@ -352,31 +351,9 @@
       <workItem from="1749129153024" duration="11313000" />
       <workItem from="1749168142878" duration="11112000" />
       <workItem from="1749180223886" duration="131000" />
-      <workItem from="1749180686415" duration="4773000" />
-    </task>
-    <task id="LOCAL-00043" summary="fix(file):修复了upload404的问题">
-      <option name="closed" value="true" />
-      <created>1748781265852</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1748781265852</updated>
-    </task>
-    <task id="LOCAL-00044" summary="fix(file):修复了download404的问题">
-      <option name="closed" value="true" />
-      <created>1748785440172</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1748785440172</updated>
-    </task>
-    <task id="LOCAL-00045" summary="fix(file):修复了download失败但有创建文件的问题">
-      <option name="closed" value="true" />
-      <created>1748787753067</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1748787753067</updated>
+      <workItem from="1749180686415" duration="8059000" />
+      <workItem from="1749307911702" duration="1694000" />
+      <workItem from="1749340325148" duration="9741000" />
     </task>
     <task id="LOCAL-00046" summary="test(AuthServiceImpl):新增AuthServiceImpl单元测试用例，2个自动测试错误，但手动测试可以通过">
       <option name="closed" value="true" />
@@ -746,7 +723,31 @@
       <option name="project" value="LOCAL" />
       <updated>1749210179976</updated>
     </task>
-    <option name="localTasksCounter" value="92" />
+    <task id="LOCAL-00092" summary="fix(resourceTest)">
+      <option name="closed" value="true" />
+      <created>1749221564690</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1749221564690</updated>
+    </task>
+    <task id="LOCAL-00093" summary="fix(learningProgress):LearningProgress gone了">
+      <option name="closed" value="true" />
+      <created>1749340824431</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1749340824433</updated>
+    </task>
+    <task id="LOCAL-00094" summary="fix(home):修改鉴权">
+      <option name="closed" value="true" />
+      <created>1749385219128</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1749385219128</updated>
+    </task>
+    <option name="localTasksCounter" value="95" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -779,9 +780,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix(quiz):将学生上传作业的接口改回了GET类型" />
-    <MESSAGE value="fix(register):调整实体类创建顺序以适应外键约束" />
-    <MESSAGE value="test(user):对于User类进行基于状态的单元测试，均通过" />
     <MESSAGE value="fix(quiz):修改了quiz_id为驼峰命名法" />
     <MESSAGE value="test(Quiz):对于Quiz类进行基于状态的单元测试，均通过" />
     <MESSAGE value="test(QuizAnswer):对于QuizAnswer类进行基于状态的单元测试，均通过" />
@@ -804,7 +802,10 @@
     <MESSAGE value="fix:修复了一些小问题，例如老师createQuiz时获取不到teachername的问题" />
     <MESSAGE value="test(serviceImpl):测试了Auth、Home和Quiz的serviceImpl" />
     <MESSAGE value="fix:纠正了之前的错误，将Resource相关改回了蛇形命名法" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix:纠正了之前的错误，将Resource相关改回了蛇形命名法" />
+    <MESSAGE value="fix(resourceTest)" />
+    <MESSAGE value="fix(learningProgress):LearningProgress gone了" />
+    <MESSAGE value="fix(home):修改鉴权" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix(home):修改鉴权" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1381,7 +1382,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java</url>
-          <line>143</line>
+          <line>144</line>
           <option name="timeStamp" value="338" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -1501,7 +1502,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/main/java/com/example/edupal/controller/QuizController.java</url>
-          <line>140</line>
+          <line>141</line>
           <properties class="com.example.edupal.controller.QuizController" method="deleteQuiz">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />

@@ -76,8 +76,8 @@ public class HomeServiceImpl implements HomeService {
                     learningProgress.getFinishedQuiz(),
                     learningProgress.getGrade(),
                     questions.size(),
-                    Arrays.asList("Task 1", "Task 2"),
-                    Arrays.asList("Notification 1", "Notification 2")
+                    Arrays.asList("作业《中国人失掉自信力了吗》", "作业《离骚》"),
+                    Arrays.asList("回复：你好，我有点数学问题想问你", "未回复：什么是余弦定理")
             );
 
         }
@@ -129,12 +129,18 @@ public class HomeServiceImpl implements HomeService {
                     resourceRepository.countByTeacherId(userId), // Placeholder for uploadResources
                     teacherRepository.findClassesByTeacherId(userId), // Example class IDs
                     Arrays.asList(
-                            new HomeTeacherResponse.StudentDetails("S1", "Student 1", 85.5, 2.3),
-                            new HomeTeacherResponse.StudentDetails("S2", "Student 2", 90.0, 1.8)
+                            new HomeTeacherResponse.StudentDetails("s20250102", "李文", 90.0, 1.9),
+                            new HomeTeacherResponse.StudentDetails("s20250101", "钱多多", 90.0, 2.3),
+                            new HomeTeacherResponse.StudentDetails("s20250115", "王小明", 88.0, 2.0),
+                            new HomeTeacherResponse.StudentDetails("s20250116", "赵丽东", 85.0, 1.8),
+                            new HomeTeacherResponse.StudentDetails("s20250117", "陈晓枫", 92.0, 1.7)
                     ), // Example top students
                     Arrays.asList(
-                            new HomeTeacherResponse.StudentDetails("S3", "Student 3", 60.0, 5.0),
-                            new HomeTeacherResponse.StudentDetails("S4", "Student 4", 55.0, 4.5)
+                            new HomeTeacherResponse.StudentDetails("s20250223", "马天天", 60.0, 5.0),
+                            new HomeTeacherResponse.StudentDetails("s20250121", "张小东", 55.0, 4.5),
+                            new HomeTeacherResponse.StudentDetails("s20250122", "李华", 50.0, 4.8),
+                            new HomeTeacherResponse.StudentDetails("s20250123", "王芳", 45.0, 5.2),
+                            new HomeTeacherResponse.StudentDetails("s20250124", "刘强", 40.0, 5.5)
                     ) // Example bottom students
             );
         }

@@ -16,10 +16,8 @@ public class LearningProgress {
     @Column(name = "progress_id", length = 10)
     private String progressId;
 
-    @Column(name = "finished_lecture", nullable = false)
     private Integer finishedLecture;
-
-    @Column(name = "unfinished_lecture", nullable = false)
+    
     private Integer unfinishedLecture;
 
     @Column(name = "finished_quiz", nullable = false)

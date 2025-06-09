@@ -1,5 +1,6 @@
 <template>
   <div class="community-content-wrapper">
+    <!-- 帖子列表 -->
     <el-card class="post-list-card" shadow="never">
       <template #header>
         <div class="card-header">
@@ -13,29 +14,40 @@
           <div class="post-header">
             <span class="post-title" @click="viewPostDetail(post)">{{ post.title }}</span>
             <span class="post-author">发布人: {{ post.authorName }}</span>
-            <span class="post-time">{{ post.publishTime }}</span>
+            <span class="post-time">{{ formatTime(post.publishTime) }}</span>
           </div>
           <div class="post-content">{{ post.content.substring(0, 100) }}...</div>
           <div class="post-actions">
-            <el-button type="primary" text size="small" @click="viewPostDetail(post)">查看详情 ({{ post.replies ? post.replies.length : 0 }})</el-button>
+            <el-button type="primary" text size="small" @click="viewPostDetail(post)">
+              查看详情 ({{ post.replies ? post.replies.length : 0 }})
+            </el-button>
             <el-button type="info" text size="small" @click="toggleCollect(post)">
               {{ post.isCollected ? '取消收藏' : '收藏' }}
             </el-button>
-            <el-button v-if="post.attachedFile" type="success" text size="small">
-              <el-link :href="post.attachedFile.url" target="_blank">查看附件</el-link>
+            <el-button v-if="post.attachedFileUrl" type="success" text size="small">
+              <el-link :href="post.attachedFileUrl" target="_blank">查看附件</el-link>
             </el-button>
-            <el-button v-if="userType === 2 || post.authorId === userId" type="danger" text size="small" @click="deletePost(post)">删除</el-button>
+            <el-button
+                v-if="userType === 0 || post.authorId === userId"
+                type="danger"
+                text
+                size="small"
+                @click="deletePost(post)"
+            >
+              删除
+            </el-button>
           </div>
         </el-card>
         <el-empty v-if="posts.length === 0" description="暂无帖子"></el-empty>
       </div>
     </el-card>
 
+    <!-- 收藏夹 -->
     <el-card class="collection-card" shadow="never" style="margin-top: 15px;">
       <template #header>
         <div class="card-header">
           <span>我的收藏夹</span>
-          <el-button type="info" text size="small" @click="showCollectedPosts = !showCollectedPosts">
+          <el-button type="info" text size="small" @click="toggleCollectedView">
             {{ showCollectedPosts ? '隐藏' : '查看' }}
           </el-button>
         </div>
@@ -46,18 +58,21 @@
           <div class="post-header">
             <span class="post-title" @click="viewPostDetail(post)">{{ post.title }}</span>
             <span class="post-author">发布人: {{ post.authorName }}</span>
-            <span class="post-time">{{ post.publishTime }}</span>
+            <span class="post-time">{{ formatTime(post.publishTime) }}</span>
           </div>
           <div class="post-content">{{ post.content.substring(0, 50) }}...</div>
           <div class="post-actions">
-            <el-button type="primary" text size="small" @click="viewPostDetail(post)">查看详情 ({{ post.replies ? post.replies.length : 0 }})</el-button>
+            <el-button type="primary" text size="small" @click="viewPostDetail(post)">
+              查看详情 ({{ post.replies ? post.replies.length : 0 }})
+            </el-button>
             <el-button type="info" text size="small" @click="toggleCollect(post)">取消收藏</el-button>
           </div>
         </el-card>
       </div>
     </el-card>
 
-    <el-dialog v-model="showPostDialog" :title="currentPost ? '编辑帖子' : '发布新帖子'" width="600px">
+    <!-- 发布帖子对话框 -->
+    <el-dialog v-model="showPostDialog" title="发布新帖子" width="600px">
       <el-form :model="postForm" :rules="postRules" ref="postFormRef" label-width="80px">
         <el-form-item label="标题" prop="title">
           <el-input v-model="postForm.title" placeholder="请输入帖子标题"></el-input>
@@ -97,13 +112,14 @@
       </template>
     </el-dialog>
 
+    <!-- 帖子详情对话框 -->
     <el-dialog v-model="showPostDetailDialog" :title="detailPost.title" width="800px">
       <div class="detail-post-content">
         <div class="post-meta">
           <span>发布人: {{ detailPost.authorName }}</span>
-          <span>时间: {{ detailPost.publishTime }}</span>
-          <span v-if="detailPost.attachedFile" class="attached-file">
-            附件: <el-link type="primary" :href="detailPost.attachedFile.url" target="_blank">{{ detailPost.attachedFile.name }}</el-link>
+          <span>时间: {{ formatTime(detailPost.publishTime) }}</span>
+          <span v-if="detailPost.attachedFileUrl" class="attached-file">
+            附件: <el-link type="primary" :href="detailPost.attachedFileUrl" target="_blank">查看附件</el-link>
           </span>
         </div>
         <p class="post-body">{{ detailPost.content }}</p>
@@ -113,15 +129,23 @@
           <div v-for="reply in detailPost.replies" :key="reply.id" class="reply-item">
             <div class="reply-header">
               <span class="reply-author">{{ reply.authorName }}</span>
-              <span class="reply-time">{{ reply.publishTime }}</span>
+              <span class="reply-time">{{ formatTime(reply.publishTime) }}</span>
             </div>
             <p class="reply-content">{{ reply.content }}</p>
-            <div v-if="reply.attachedFile" class="attached-file">
-              附件: <el-link type="primary" :href="reply.attachedFile.url" target="_blank">{{ reply.attachedFile.name }}</el-link>
+            <div v-if="reply.attachedFileUrl" class="attached-file">
+              附件: <el-link type="primary" :href="reply.attachedFileUrl" target="_blank">查看附件</el-link>
             </div>
-            <el-button v-if="userType === 2 || reply.authorId === userId" type="danger" text size="small" @click="deleteReply(detailPost, reply)">删除</el-button>
+            <el-button
+                v-if="userType === 2 || reply.authorId === userId"
+                type="danger"
+                text
+                size="small"
+                @click="deleteReply(detailPost, reply)"
+            >
+              删除
+            </el-button>
           </div>
-          <el-empty v-if="detailPost.replies.length === 0" description="暂无回复"></el-empty>
+          <el-empty v-if="detailPost.replies && detailPost.replies.length === 0" description="暂无回复"></el-empty>
         </div>
 
         <el-form :model="replyForm" :rules="replyRules" ref="replyFormRef" class="reply-form">
@@ -157,21 +181,27 @@
         </el-form>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, defineProps} from 'vue';
+import { ref, reactive, computed, onMounted, defineProps } from 'vue';
 import { useRouter } from 'vue-router';
-import { ElMessage, ElNotification, ElMessageBox, FormInstance, UploadFile } from 'element-plus';
+import { ElMessage, ElMessageBox, FormInstance, UploadFile } from 'element-plus';
 import { UploadFilled } from '@element-plus/icons-vue';
 
-import { CommunityService, Post, Reply, PostForm, ReplyForm, AttachedFile } from '../api/community'; // 确保导入 AttachedFile
+import {
+  CommunityService,
+  PostResponse,
+  ReplyResponse,
+  PostForm,
+  ReplyForm
+} from '../api/community';
 
+// Props 定义
 const props = defineProps({
   usertype: {
-    type: Number ,
+    type: Number,
     required: true,
   },
   username: {
@@ -184,105 +214,161 @@ const props = defineProps({
   }
 });
 
+const router = useRouter();
 const userType = computed(() => props.usertype);
 const username = computed(() => props.username);
 const userId = computed(() => props.userid);
-//控制台输出userType,username,userId
+
 console.log('userType:', userType.value, 'username:', username.value, 'userId:', userId.value);
 
-
-const posts = ref<Post[]>([]);
-const collectedPosts = computed(() => posts.value.filter(post => post.isCollected));
+// 响应式数据
+const posts = ref<PostResponse[]>([]);
+const collectedPosts = ref<PostResponse[]>([]);
 const showCollectedPosts = ref(false);
 
-// 发布/编辑帖子相关
+// 发布帖子相关
 const showPostDialog = ref(false);
 const postFormRef = ref<FormInstance>();
-const postForm = reactive<PostForm>({ // PostForm 接口现在只包含 title, content, attachedFileUrl
+const postForm = reactive<PostForm>({
   title: '',
   content: '',
-  attachedFileUrl: undefined, // 初始化为 undefined
+  attachedFileUrl: undefined,
 });
-const newPostSelectedFile = ref<File | null>(null); // 存储新帖子待上传的文件对象
-const newPostFileList = ref<UploadFile[]>([]); // Element Plus 上传组件的文件列表
-const newPostUploadProgress = ref(0); // 新帖子文件上传进度
-const isPostSubmitting = ref(false); // 发布帖子按钮加载状态
-
-const currentPost = ref<Post | null>(null);
+const newPostSelectedFile = ref<File | null>(null);
+const newPostFileList = ref<UploadFile[]>([]);
+const newPostUploadProgress = ref(0);
+const isPostSubmitting = ref(false);
 
 const postRules = reactive({
   title: [{ required: true, message: '请输入帖子标题', trigger: 'blur' }],
   content: [{ required: true, message: '请输入帖子内容', trigger: 'blur' }],
 });
 
+// 帖子详情相关
+const showPostDetailDialog = ref(false);
+const detailPost = ref<PostResponse>({} as PostResponse);
+
+// 回复相关
+const replyFormRef = ref<FormInstance>();
+const replyForm = reactive<ReplyForm>({
+  content: '',
+  attachedFileUrl: undefined,
+});
+const replySelectedFile = ref<File | null>(null);
+const replyFileList = ref<UploadFile[]>([]);
+const replyUploadProgress = ref(0);
+const isReplySubmitting = ref(false);
+
+const replyRules = reactive({
+  content: [{ required: true, message: '请输入回复内容', trigger: 'blur' }],
+});
+
+// 初始化
 onMounted(() => {
   fetchPosts();
 });
 
+// 方法定义
+const formatTime = (timeString: string): string => {
+  const date = new Date(timeString);
+  return date.toLocaleString('zh-CN');
+};
+
 const fetchPosts = async () => {
   try {
     const fetchedPosts = await CommunityService.getPosts();
-    posts.value = fetchedPosts;
+    posts.value = fetchedPosts.map(post => ({
+      ...post,
+      isCollected: false // 默认设置为未收藏，实际项目中应该根据用户状态判断
+    }));
   } catch (error) {
     console.error('获取帖子列表失败:', error);
+    ElMessage.error('获取帖子列表失败');
   }
 };
 
-// 帖子文件选择处理
+const fetchCollectedPosts = async () => {
+  try {
+    const collected = await CommunityService.getCollectedPosts(userId.value);
+    collectedPosts.value = collected;
+
+    // 更新主列表中的收藏状态
+    posts.value.forEach(post => {
+      post.isCollected = collected.some(cp => cp.id === post.id);
+    });
+  } catch (error) {
+    console.error('获取收藏列表失败:', error);
+    ElMessage.error('获取收藏列表失败');
+  }
+};
+
+const toggleCollectedView = async () => {
+  showCollectedPosts.value = !showCollectedPosts.value;
+  if (showCollectedPosts.value) {
+    await fetchCollectedPosts();
+  }
+};
+
+// 文件上传限制处理
+const handleExceed = () => {
+  ElMessage.warning('最多只能上传一个文件');
+};
+
+// 帖子文件处理
 const handleNewPostFileChange = (uploadFile: UploadFile) => {
   newPostSelectedFile.value = uploadFile.raw || null;
   newPostFileList.value = [uploadFile];
-  newPostUploadProgress.value = 0; // 重置进度
+  newPostUploadProgress.value = 0;
 };
+
 const handleNewPostFileRemove = () => {
   newPostSelectedFile.value = null;
   newPostFileList.value = [];
-  postForm.attachedFileUrl = undefined; // 清空已上传的 URL
+  postForm.attachedFileUrl = undefined;
   newPostUploadProgress.value = 0;
 };
 
 const submitPost = async () => {
   if (!postFormRef.value) return;
+
   await postFormRef.value.validate(async (valid) => {
     if (valid) {
-      isPostSubmitting.value = true; // 开始加载
+      isPostSubmitting.value = true;
       try {
         let finalAttachedFileUrl: string | undefined = undefined;
 
         // 如果有文件选中，先上传文件
         if (newPostSelectedFile.value) {
           ElMessage.info('正在上传文件，请稍候...');
-          newPostUploadProgress.value = 10; // 模拟开始上传
+          newPostUploadProgress.value = 10;
           try {
-            const uploadedFileInfo: AttachedFile = await CommunityService.uploadFile(newPostSelectedFile.value);
-            finalAttachedFileUrl = uploadedFileInfo.url; // 获取后端返回的文件URL
-            newPostUploadProgress.value = 100; // 上传完成
+            const uploadResult = await CommunityService.uploadFile(newPostSelectedFile.value);
+            finalAttachedFileUrl = uploadResult.url;
+            newPostUploadProgress.value = 100;
             ElMessage.success('文件上传完成，正在发布帖子...');
           } catch (uploadError) {
             ElMessage.error('文件上传失败，请重试！');
             console.error('文件上传失败:', uploadError);
             isPostSubmitting.value = false;
-            return; // 文件上传失败，不继续发布帖子
+            return;
           }
         }
 
-        // 将文件URL绑定到帖子数据中
         postForm.attachedFileUrl = finalAttachedFileUrl;
 
-        // 调用 CommunityService 的创建帖子方法，只传递 PostForm 对象
-        const newPost = await CommunityService.createPost(postForm);
+        const newPost = await CommunityService.createPost(postForm, userId.value);
 
-        posts.value.unshift({ ...newPost, isCollected: false }); // 假设后端返回的 Post 对象，默认未收藏
-        ElMessage.success('帖子发布成功！');
+        posts.value.unshift({ ...newPost, isCollected: false });
         showPostDialog.value = false;
         resetPostForm();
-        await fetchPosts(); // 重新加载帖子列表以确保最新数据
+        ElMessage.success('帖子发布成功！');
+        await fetchPosts();
 
       } catch (error) {
         ElMessage.error('帖子发布失败，请检查填写内容！');
         console.error('帖子发布失败:', error);
       } finally {
-        isPostSubmitting.value = false; // 结束加载
+        isPostSubmitting.value = false;
       }
     } else {
       ElMessage.error('请填写帖子标题和内容！');
@@ -293,106 +379,85 @@ const submitPost = async () => {
 const resetPostForm = () => {
   if (postFormRef.value) {
     postFormRef.value.resetFields();
-    postForm.title = '';
-    postForm.content = '';
-    postForm.attachedFileUrl = undefined;
-    newPostSelectedFile.value = null;
-    newPostFileList.value = [];
-    newPostUploadProgress.value = 0;
   }
-  currentPost.value = null;
+  postForm.title = '';
+  postForm.content = '';
+  postForm.attachedFileUrl = undefined;
+  newPostSelectedFile.value = null;
+  newPostFileList.value = [];
+  newPostUploadProgress.value = 0;
 };
 
-// 帖子详情相关
-const showPostDetailDialog = ref(false);
-const detailPost = ref<Post>({} as Post);
-
-const viewPostDetail = async (post: Post) => {
+const viewPostDetail = async (post: PostResponse) => {
   try {
     const fetchedDetail = await CommunityService.getPostDetail(post.id);
     detailPost.value = { ...fetchedDetail, isCollected: post.isCollected };
     showPostDetailDialog.value = true;
   } catch (error) {
     console.error('获取帖子详情失败:', error);
+    ElMessage.error('获取帖子详情失败');
   }
 };
 
-// 回复相关
-const replyFormRef = ref<FormInstance>();
-const replyForm = reactive<ReplyForm>({ // ReplyForm 接口现在只包含 content, attachedFileUrl
-  content: '',
-  attachedFileUrl: undefined,
-});
-const replySelectedFile = ref<File | null>(null); // 存储回复待上传的文件对象
-const replyFileList = ref<UploadFile[]>([]);
-const replyUploadProgress = ref(0); // 回复文件上传进度
-const isReplySubmitting = ref(false); // 回复按钮加载状态
-
-const replyRules = reactive({
-  content: [{ required: true, message: '请输入回复内容', trigger: 'blur' }],
-});
-
-// 回复文件选择处理
+// 回复文件处理
 const handleReplyFileChange = (uploadFile: UploadFile) => {
   replySelectedFile.value = uploadFile.raw || null;
   replyFileList.value = [uploadFile];
-  replyUploadProgress.value = 0; // 重置进度
-};
-const handleReplyFileRemove = () => {
-  replySelectedFile.value = null;
-  replyFileList.value = [];
-  replyForm.attachedFileUrl = undefined; // 清空已上传的 URL
   replyUploadProgress.value = 0;
 };
 
-const submitReply = async (post: Post) => {
+const handleReplyFileRemove = () => {
+  replySelectedFile.value = null;
+  replyFileList.value = [];
+  replyForm.attachedFileUrl = undefined;
+  replyUploadProgress.value = 0;
+};
+
+const submitReply = async (post: PostResponse) => {
   if (!replyFormRef.value) return;
+
   await replyFormRef.value.validate(async (valid) => {
     if (valid) {
-      isReplySubmitting.value = true; // 开始加载
+      isReplySubmitting.value = true;
       try {
         let finalAttachedFileUrl: string | undefined = undefined;
 
-        // 如果有文件选中，先上传文件
         if (replySelectedFile.value) {
           ElMessage.info('正在上传文件，请稍候...');
-          replyUploadProgress.value = 10; // 模拟开始上传
+          replyUploadProgress.value = 10;
           try {
-            const uploadedFileInfo: AttachedFile = await CommunityService.uploadFile(replySelectedFile.value);
-            finalAttachedFileUrl = uploadedFileInfo.url; // 获取后端返回的文件URL
-            replyUploadProgress.value = 100; // 上传完成
+            const uploadResult = await CommunityService.uploadFile(replySelectedFile.value);
+            finalAttachedFileUrl = uploadResult.url;
+            replyUploadProgress.value = 100;
             ElMessage.success('文件上传完成，正在提交回复...');
           } catch (uploadError) {
             ElMessage.error('文件上传失败，请重试！');
             console.error('文件上传失败:', uploadError);
             isReplySubmitting.value = false;
-            return; // 文件上传失败，不继续提交回复
+            return;
           }
         }
 
-        // 将文件URL绑定到回复数据中
         replyForm.attachedFileUrl = finalAttachedFileUrl;
 
-        // 调用 CommunityService 的创建回复方法，只传递 ReplyForm 对象
-        const newReply = await CommunityService.createReply(
-            post.id,
-            replyForm
-        );
+        const newReply = await CommunityService.createReply(post.id, replyForm, userId.value);
 
         const targetPost = posts.value.find(p => p.id === post.id);
-        if (targetPost) {
+        if (targetPost && targetPost.replies) {
           targetPost.replies.push(newReply);
+        }
+        if (detailPost.value.replies) {
           detailPost.value.replies.push(newReply);
         }
-        ElMessage.success('回复成功！');
+
         resetReplyForm();
-        await viewPostDetail(post); // 重新加载帖子详情，确保回复列表是最新的
+        ElMessage.success('回复成功！');
 
       } catch (error) {
         ElMessage.error('回复失败，请检查填写内容！');
         console.error('回复失败:', error);
       } finally {
-        isReplySubmitting.value = false; // 结束加载
+        isReplySubmitting.value = false;
       }
     } else {
       ElMessage.error('请输入回复内容！');
@@ -403,219 +468,246 @@ const submitReply = async (post: Post) => {
 const resetReplyForm = () => {
   if (replyFormRef.value) {
     replyFormRef.value.resetFields();
-    replyForm.content = '';
-    replyForm.attachedFileUrl = undefined;
-    replySelectedFile.value = null;
-    replyFileList.value = [];
-    replyUploadProgress.value = 0;
   }
+  replyForm.content = '';
+  replyForm.attachedFileUrl = undefined;
+  replySelectedFile.value = null;
+  replyFileList.value = [];
+  replyUploadProgress.value = 0;
 };
 
-const deleteReply = async (post: Post, replyToDelete: Reply) => {
+const deleteReply = async (post: PostResponse, replyToDelete: ReplyResponse) => {
   ElMessageBox.confirm(`确定删除这条回复吗？`, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
     try {
-      await CommunityService.deleteReply(post.id, replyToDelete.id);
+      await CommunityService.deleteReply(replyToDelete.id);
+
       const targetPost = posts.value.find(p => p.id === post.id);
-      if (targetPost) {
+      if (targetPost && targetPost.replies) {
         targetPost.replies = targetPost.replies.filter(reply => reply.id !== replyToDelete.id);
+      }
+      if (detailPost.value.replies) {
         detailPost.value.replies = detailPost.value.replies.filter(reply => reply.id !== replyToDelete.id);
       }
-      ElMessage.success('回复删除成功！');
+
+      ElMessage.success('回复删除成功');
     } catch (error) {
       console.error('删除回复失败:', error);
+      ElMessage.error('删除回复失败');
     }
   }).catch(() => {
     // 用户取消删除
   });
 };
 
-const toggleCollect = async (post: Post) => {
+const toggleCollect = async (post: PostResponse) => {
   try {
-    await CommunityService.toggleCollect(post.id, !post.isCollected);
-    post.isCollected = !post.isCollected;
-    ElMessage.success(post.isCollected ? `已收藏帖子：${post.title}` : `已取消收藏帖子：${post.title}`);
+    const shouldCollect = !post.isCollected;
+    await CommunityService.toggleCollect(post.id, shouldCollect, userId.value);
+
+    post.isCollected = shouldCollect;
+
+    // 如果当前显示收藏列表，需要更新收藏列表
+    if (showCollectedPosts.value) {
+      if (shouldCollect) {
+        collectedPosts.value.push(post);
+      } else {
+        collectedPosts.value = collectedPosts.value.filter(cp => cp.id !== post.id);
+      }
+    }
+
+    ElMessage.success(shouldCollect ? '收藏成功' : '取消收藏成功');
   } catch (error) {
     console.error('更新收藏状态失败:', error);
+    ElMessage.error('操作失败，请重试');
   }
 };
 
-const deletePost = (postToDelete: Post) => {
-  ElMessageBox.confirm(`确定删除帖子《${postToDelete.title}》吗？`, '提示', {
+const deletePost = (postToDelete: PostResponse) => {
+  ElMessageBox.confirm(`确定删除帖子"${postToDelete.title}"吗？`, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
     try {
       await CommunityService.deletePost(postToDelete.id);
+
+      // 从帖子列表中移除
       posts.value = posts.value.filter(post => post.id !== postToDelete.id);
-      ElMessage.success('帖子删除成功！');
+
+      // 如果在收藏列表中也要移除
+      if (showCollectedPosts.value) {
+        collectedPosts.value = collectedPosts.value.filter(post => post.id !== postToDelete.id);
+      }
+
+      ElMessage.success('帖子删除成功');
     } catch (error) {
       console.error('删除帖子失败:', error);
+      ElMessage.error('删除帖子失败');
     }
   }).catch(() => {
     // 用户取消删除
   });
 };
-
-const handleExceed = () => {
-  ElMessage.warning('只能上传一个文件，请先移除当前文件再上传。');
-};
-
 </script>
 
 <style scoped>
-/* 样式保持不变 */
 .community-content-wrapper {
-  flex: 1;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.post-list-card, .collection-card {
-  background-color: #fff;
-  border-radius: 4px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
-  width: 100%; /* <-- 确保这里是 100% */
-  box-sizing: border-box;
-}
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
 }
 
-
-
-.post-list {
-  padding-top: 10px;
+.post-list-card, .collection-card {
+  margin-bottom: 20px;
 }
 
 .post-item {
   margin-bottom: 15px;
-  border-radius: 4px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
-}
-.post-item:last-child {
-  margin-bottom: 0;
+  border-left: 4px solid #409eff;
 }
 
 .post-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-}
-.post-title {
-  font-size: 16px;
-  font-weight: bold;
-  color: #303133;
-  cursor: pointer;
-  margin-right: 15px;
-}
-.post-title:hover {
-  color: #409EFF; /* Hover 效果 */
-}
-.post-author {
-  font-size: 13px;
-  color: #606266;
-  margin-right: 15px;
-}
-.post-time {
-  font-size: 12px;
-  color: #909399;
-}
-.post-content {
-  font-size: 14px;
-  color: #606266;
-  line-height: 1.6;
   margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
+
+.post-title {
+  font-weight: bold;
+  font-size: 16px;
+  color: #409eff;
+  cursor: pointer;
+  flex: 1;
+  min-width: 200px;
+}
+
+.post-title:hover {
+  text-decoration: underline;
+}
+
+.post-author {
+  color: #666;
+  font-size: 14px;
+}
+
+.post-time {
+  color: #999;
+  font-size: 12px;
+}
+
+.post-content {
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
 .post-actions {
   display: flex;
   gap: 10px;
-  border-top: 1px solid #ebeef5;
-  padding-top: 10px;
-  margin-top: 10px;
+  flex-wrap: wrap;
 }
-.post-actions .el-button {
+
+.detail-post-content {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.post-meta {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+  color: #666;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.post-body {
+  line-height: 1.8;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.replies-section {
+  margin-bottom: 20px;
+}
+
+.reply-item {
+  border-left: 3px solid #e4e7ed;
+  padding-left: 15px;
+  margin-bottom: 15px;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.reply-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.reply-author {
+  font-weight: bold;
+  color: #409eff;
+}
+
+.reply-time {
+  color: #999;
+  font-size: 12px;
+}
+
+.reply-content {
+  line-height: 1.6;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.attached-file {
+  margin-top: 10px;
   padding: 5px 0;
 }
 
-/* 帖子详情对话框样式 */
-.detail-post-content {
-  padding: 0 10px;
-}
-.detail-post-content .post-meta {
-  font-size: 13px;
-  color: #909399;
-  margin-bottom: 15px;
-}
-.detail-post-content .post-meta span {
-  margin-right: 20px;
-}
-.detail-post-content .post-body {
-  font-size: 15px;
-  line-height: 1.8;
-  color: #303133;
-  margin-bottom: 20px;
-}
-.detail-post-content .attached-file {
-  margin-left: 10px;
-}
-.replies-section {
-  max-height: 300px; /* 限制回复区域高度，超出滚动 */
-  overflow-y: auto;
-  padding-right: 10px; /* 留出滚动条空间 */
-}
-.reply-item {
-  border-bottom: 1px dashed #ebeef5;
-  padding: 10px 0;
-}
-.reply-item:last-child {
-  border-bottom: none;
-}
-.reply-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
-}
-.reply-author {
-  font-weight: bold;
-  font-size: 13px;
-  color: #409EFF;
-  margin-right: 10px;
-}
-.reply-time {
-  font-size: 12px;
-  color: #909399;
-}
-.reply-content {
-  font-size: 14px;
-  line-height: 1.6;
-  color: #606266;
-  margin-bottom: 5px;
-}
 .reply-form {
   margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e4e7ed;
 }
 
-/* 文件上传组件样式 */
-.upload-demo {
+.upload-demo :deep(.el-upload-dragger) {
   width: 100%;
 }
-.upload-demo .el-upload-dragger {
-  width: 100%;
-  padding: 20px 0;
-}
-.el-upload__text {
-  font-size: 14px;
-}
-.el-upload__tip {
-  font-size: 12px;
-  color: #909399;
+
+@media (max-width: 768px) {
+  .community-content-wrapper {
+    padding: 10px;
+  }
+
+  .post-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .post-actions {
+    justify-content: flex-start;
+  }
+
+  .post-meta {
+    flex-direction: column;
+    gap: 5px;
+  }
 }
 </style>
