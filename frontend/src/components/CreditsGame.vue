@@ -157,7 +157,6 @@ const allContributors = [
   '自己写文档', '你药剂吧干啥', 'ai岂是如此不便之物', '文件名莫名其妙', '你端口号不对', '谁动我代码了', '为什么这么多参数', '我路由呢？'
 ];
 
-// 真正的开发者信息（李昶谨在中间C位）
 const realDevelopers = [
   {
     name: '孙梓康',
@@ -183,14 +182,14 @@ const realDevelopers = [
   {
     name: '梁耀欣',
     avatar: '/src/assets/contributorIcon4.jpg',
-    role: '后端工程师',
+    role: '项目负责人',
     isCenter: false,
     github: 'https://github.com/liangxinlizi'
   },
   {
     name: '田昊',
     avatar: '/src/assets/contributorIcon5.jpg',
-    role: '数据库工程师',
+    role: '后端工程师',
     isCenter: false,
     github: 'https://github.com/Rubiaaaaa'
   }
