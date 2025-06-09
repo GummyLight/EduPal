@@ -6,17 +6,16 @@ import { ElMessage } from 'element-plus';
 interface BackendAdminResponse {
     status: string;
     message: string;
-    username: string;
-    userType: string;
-    userId: string;
     totalUsers: number;
     totalStudents: number;
     totalTeachers: number;
-    totalTeachingContents: number;
-    totalQuestions: number;
-    totalAnswers: number;
-    recentRegistrations: number; // 最近7天注册用户数
-    systemHealth: string; // 系统健康状态
+    todayLoggedInTeachers: number;
+    todayLoggedInStudents: number;
+    todayLoggedInUsers: number;
+    totalTeachingMaterials: number;
+    totalExercises: number;
+    totalCommunityTopics: number;
+    totalStudentQuestions: number;
 }
 
 // 前端期望的管理员首页数据接口
@@ -27,11 +26,11 @@ export interface AdminHomeData {
     totalUsers: number;
     totalStudents: number;
     totalTeachers: number;
-    totalTeachingContents: number;
-    totalQuestions: number;
-    totalAnswers: number;
-    recentRegistrations: number;
-    systemHealth: string;
+    todayLoggedInUsers: number;
+    totalTeachingMaterials: number;
+    totalExercises: number;
+    totalCommunityTopics: number;
+    totalStudentQuestions: number;
 }
 
 // 后端实际返回的完整的学生响应格式
@@ -127,17 +126,17 @@ export const HomeService = {
 
             const rawData = response.data;
             const transformedData: AdminHomeData = {
-                username: rawData.username,
-                userType: parseInt(rawData.userType) as (0 | 1 | 2),
-                userId: rawData.userId,
+                username: '管理员', // 后端没有返回用户名，使用默认值
+                userType: 0,
+                userId: userId,
                 totalUsers: rawData.totalUsers,
                 totalStudents: rawData.totalStudents,
                 totalTeachers: rawData.totalTeachers,
-                totalTeachingContents: rawData.totalTeachingContents,
-                totalQuestions: rawData.totalQuestions,
-                totalAnswers: rawData.totalAnswers,
-                recentRegistrations: rawData.recentRegistrations,
-                systemHealth: rawData.systemHealth,
+                todayLoggedInUsers: rawData.todayLoggedInUsers,
+                totalTeachingMaterials: rawData.totalTeachingMaterials,
+                totalExercises: rawData.totalExercises,
+                totalCommunityTopics: rawData.totalCommunityTopics,
+                totalStudentQuestions: rawData.totalStudentQuestions,
             };
             return transformedData;
         } catch (error: any) {
@@ -152,11 +151,11 @@ export const HomeService = {
                     totalUsers: 156,
                     totalStudents: 120,
                     totalTeachers: 36,
-                    totalTeachingContents: 89,
-                    totalQuestions: 245,
-                    totalAnswers: 198,
-                    recentRegistrations: 12,
-                    systemHealth: '正常',
+                    todayLoggedInUsers: 24,
+                    totalTeachingMaterials: 89,
+                    totalExercises: 245,
+                    totalCommunityTopics: 42,
+                    totalStudentQuestions: 198,
                 };
                 return mockData;
             }

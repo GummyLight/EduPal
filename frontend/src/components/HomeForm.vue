@@ -85,6 +85,47 @@
         </el-col>
       </el-row>
     </div>
+
+    <div v-else-if="props.usertype === 0">
+      <!-- 管理员界面 -->
+      <el-row :gutter="20" class="overview">
+        <el-col :span="6">
+          <el-card shadow="hover"><strong>👥 总用户数：</strong> {{ adminData.totalUsers }} 人</el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card shadow="hover"><strong>🎓 学生总数：</strong> {{ adminData.totalStudents }} 人</el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card shadow="hover"><strong>👨‍🏫 教师总数：</strong> {{ adminData.totalTeachers }} 人</el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card shadow="hover"><strong>📊 今日登录：</strong> {{ adminData.todayLoggedInUsers }} 人</el-card>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="20" class="info-section">
+        <el-col :span="12">
+          <el-card shadow="always" class="admin-summary-card">
+            <h3>教学资源统计</h3>
+            <ul>
+              <li>教学资料：{{ adminData.totalTeachingMaterials }} 个</li>
+              <li>练习题目：{{ adminData.totalExercises }} 个</li>
+              <li>学生提问：{{ adminData.totalStudentQuestions }} 个</li>
+            </ul>
+          </el-card>
+        </el-col>
+        <el-col :span="12">
+          <el-card shadow="always" class="admin-summary-card">
+            <h3>社区活动</h3>
+            <ul>
+              <li>社区话题：{{ adminData.totalCommunityTopics }} 个</li>
+              <li>学生占比：{{ getStudentPercentage().toFixed(1) }}%</li>
+              <li>教师占比：{{ getTeacherPercentage().toFixed(1) }}%</li>
+            </ul>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 
@@ -139,21 +180,52 @@ const teacherData = ref<TeacherHomeData>({
   bottomStudents: [],
 });
 
+// 管理员数据状态
+const adminData = ref<AdminHomeData>({
+  username: '',
+  userType: 0,
+  userId: '',
+  totalUsers: 0,
+  totalStudents: 0,
+  totalTeachers: 0,
+  todayLoggedInUsers: 0,
+  totalTeachingMaterials: 0,
+  totalExercises: 0,
+  totalCommunityTopics: 0,
+  totalStudentQuestions: 0,
+});
+
 // 根据 usertype 调用不同的服务方法
 const loadHomeData = async (userId: string, userType: 0 | 1 | 2) => {
   try {
-    if (userType === 1) { // 学生
+    if (userType === 0) { // 管理员
+      const data: AdminHomeData = await HomeService.getAdminHomeData(userId);
+      adminData.value = data;
+    } else if (userType === 1) { // 学生
       const data: StudentHomeData = await HomeService.getStudentHomeData(userId);
       studentData.value = data;
     } else if (userType === 2) { // 教师
       const data: TeacherHomeData = await HomeService.getTeacherHomeData(userId);
       teacherData.value = data;
     }
-    // 管理员不需要加载额外数据
   } catch (error) {
     console.error('HomeForm.vue - 加载首页数据失败:', error);
     // 根据用户类型设置不同的默认值或错误提示
-    if (userType === 1) {
+    if (userType === 0) {
+      adminData.value = {
+        username: props.username,
+        userType: 0,
+        userId: props.userid,
+        totalUsers: 0,
+        totalStudents: 0,
+        totalTeachers: 0,
+        todayLoggedInUsers: 0,
+        totalTeachingMaterials: 0,
+        totalExercises: 0,
+        totalCommunityTopics: 0,
+        totalStudentQuestions: 0,
+      };
+    } else if (userType === 1) {
       studentData.value = {
         username: props.username,
         userType: 1,
@@ -183,17 +255,28 @@ const loadHomeData = async (userId: string, userType: 0 | 1 | 2) => {
 
 // 监听 props.userid 和 props.usertype 的变化，确保两者都有值才加载数据
 watch(() => [props.userid, props.usertype], ([newUserId, newUsertype]) => {
-  if (newUserId && (newUsertype === 1 || newUsertype === 2)) {
+  if (newUserId && (newUsertype === 0 || newUsertype === 1 || newUsertype === 2)) {
     loadHomeData(newUserId as string, newUsertype);
   }
 }, { immediate: true });
 
 // 在组件挂载时也尝试加载一次
 onMounted(() => {
-  if (props.userid && (props.usertype === 1 || props.usertype === 2)) {
+  if (props.userid && (props.usertype === 0 || props.usertype === 1 || props.usertype === 2)) {
     loadHomeData(props.userid, props.usertype);
   }
 });
+
+// 管理员页面相关计算方法
+const getStudentPercentage = () => {
+  const total = adminData.value.totalUsers;
+  return total > 0 ? (adminData.value.totalStudents / total) * 100 : 0;
+};
+
+const getTeacherPercentage = () => {
+  const total = adminData.value.totalUsers;
+  return total > 0 ? (adminData.value.totalTeachers / total) * 100 : 0;
+};
 </script>
 
 <style scoped>
@@ -211,11 +294,12 @@ onMounted(() => {
 }
 .task-card ul,
 .notice-card ul,
-.student-performance-card ul {
+.admin-summary-card ul {
   padding-left: 20px;
 }
 .task-card li,
-.notice-card li {
+.notice-card li,
+.admin-summary-card li {
   line-height: 1.8;
 }
 
