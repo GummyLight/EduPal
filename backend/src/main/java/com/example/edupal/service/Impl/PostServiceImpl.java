@@ -67,10 +67,17 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void deletePost(String postId) {
-        // 获取当前登录用户（真实ID）
+        // 检查帖子是否存在
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("帖子不存在"));
 
+        // 先删除所有相关的收藏记录
+        postCollectionRepository.deleteByPostId(postId);
+        
+        // 删除所有相关的回复
+        replyRepository.deleteByPostId(postId);
+        
+        // 最后删除帖子本身
         postRepository.delete(post);
     }
 
