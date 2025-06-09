@@ -78,5 +78,37 @@ export const modifyQuiz = async (data: ModifyQuizRequest): Promise<ModifyQuizRes
     }
 };
 
+// 获取最大quiz ID
+export const getMaxQuizId = async (): Promise<number> => {
+    try {
+        const response = await request.get('/quiz/max-quiz-id');
+        if (response.data.code === 200) {
+            return response.data.data; // 返回最大 quiz_id
+        } else {
+            throw new Error(response.data.message || '获取最大 quiz_id 失败');
+        }
+    } catch (error) {
+        console.error('获取最大 quiz_id 错误:', error);
+        throw error;
+    }
+};
+
+// 获取教师的quiz列表
+export const getTeacherQuiz = async (userId: string) => {
+    try {
+        const response = await request.get('/quiz/getTeacherQuiz', {
+            params: { userId }
+        });
+        if (response.data.quizzes) {
+            return response.data.quizzes; // 返回quiz数组
+        } else {
+            return []; // 如果没有quiz则返回空数组
+        }
+    } catch (error) {
+        console.error('获取教师quiz列表失败:', error);
+        throw error;
+    }
+};
+
 // 导出接口类型，供其他组件使用
 export type { CreateQuizRequest, CreateQuizResponse, ModifyQuizRequest, ModifyQuizResponse };

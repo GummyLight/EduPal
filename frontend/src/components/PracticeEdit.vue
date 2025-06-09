@@ -144,7 +144,7 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
-import { createQuiz, modifyQuiz, CreateQuizRequest, ModifyQuizRequest } from '../api/quiz';
+import { createQuiz, modifyQuiz, getMaxQuizId, getTeacherQuiz, CreateQuizRequest, ModifyQuizRequest } from '../api/quiz';
 import axios from 'axios';
 
 const router = useRouter();
@@ -267,7 +267,9 @@ const fetchTeacherClasses = async () => {
 const loadEditData = async () => {
   if (isEdit.value && route.params.exerciseId) {
     try {
-      // 从 URL 查询参数中获取练习数据（如果有的话）
+      const quizId = parseInt(route.params.exerciseId as string);
+      
+      // 先尝试从URL查询参数获取数据
       if (route.query.title) {
         Object.assign(quizForm, {
           title: route.query.title as string || '',
@@ -286,10 +288,37 @@ const loadEditData = async () => {
           if (route.query.class2) classes.push(route.query.class2 as string);
           classSelection.value = classes;
         }
+      } else {
+        // 如果URL参数不存在，从后端获取quiz详情
+        const response = await getTeacherQuiz(userInfo.value.userid);
+        if (response.status === 'success' && response.quizzes) {
+          const targetQuiz = response.quizzes.find((quiz: any) => quiz.quizId === quizId);
+          if (targetQuiz) {
+            Object.assign(quizForm, {
+              title: targetQuiz.title || '',
+              subject: targetQuiz.subject || '',
+              contentType: targetQuiz.contentType || '',
+              difficulty: targetQuiz.difficulty || '',
+              knowledgePoints: targetQuiz.knowledgePoints ? targetQuiz.knowledgePoints.split(',') : [],
+              description: targetQuiz.description || '',
+              deadline: targetQuiz.deadline ? new Date(targetQuiz.deadline).toISOString().slice(0, 16) : '',
+            });
+            
+            // 设置班级选择
+            const classes = [];
+            if (targetQuiz.class1) classes.push(targetQuiz.class1);
+            if (targetQuiz.class2) classes.push(targetQuiz.class2);
+            classSelection.value = classes;
+          } else {
+            throw new Error('未找到对应的quiz');
+          }
+        } else {
+          throw new Error('获取quiz列表失败');
+        }
       }
       
       console.log('编辑模式，练习ID:', route.params.exerciseId);
-      console.log('从路由加载的练习数据:', quizForm);
+      console.log('加载的练习数据:', quizForm);
     } catch (error) {
       console.error('加载编辑数据失败:', error);
       ElMessage.error('加载练习数据失败');
