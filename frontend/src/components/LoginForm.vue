@@ -304,85 +304,72 @@ const handleSubmit = async () => {
   }
   
   try {
+    console.log('开始登录请求...');
     const response = await ex.login(form.userId, form.password, form.type);
-    if (response.code==200) {
-      ElMessage.success(response.message);
+    console.log('登录响应完整信息:', response);
+    
+    // 检查响应格式并处理两种可能的格式
+    let isSuccess = false;
+    let message = '';
+    let userId = '';
+    let userType = '';
+    let userName = '';
+
+    // 检查是否为ApiResponse格式（包含code字段）
+    if ('code' in response) {
+      isSuccess = response.code === 200;
+      message = response.message || '';
+      if (response.data) {
+        userId = response.data.userId || form.userId;
+        userType = response.data.userType?.toString() || '0';
+        userName = response.data.userName || 'name';
+      }
+    } 
+    // 检查是否为直接LoginResponseData格式（包含success字段）
+    else if ('success' in response) {
+      isSuccess = response.success;
+      message = response.message || '';
+      userId = response.userId || form.userId;
+      userType = response.userType?.toString() || '0';
+      userName = response.userName || 'name';
+    }
+    
+    if (isSuccess) {
+      ElMessage.success(message || '登录成功');
       
-      localStorage.setItem('user_id', form.userId);
-      localStorage.setItem('user_type', response.data?.userType?.toString() || '1');
-      localStorage.setItem('user_name', response.data?.userName?.toString() || 'name');
+      localStorage.setItem('user_id', userId);
+      localStorage.setItem('user_type', userType);
+      localStorage.setItem('user_name', userName);
       
       window.location.href = '/home';
 
     } else {
-      // 统一的错误处理逻辑
-      let shouldShowCustomMessage = false;
-      let customMessage = '';
-      const errorMessage = response.message || '';
-      
-      // 检查是否是认证相关的错误
-      if (errorMessage && (errorMessage.includes('用户名') || errorMessage.includes('密码') || 
-          errorMessage.includes('邮箱') || errorMessage.includes('登录') || errorMessage.includes('认证') ||
-          errorMessage.includes('用户不存在') || errorMessage.includes('密码错误') || errorMessage.includes('Invalid'))) {
-        shouldShowCustomMessage = true;
-        if (form.type === 0) {
-          customMessage = '用户名或密码错误';
-        } else {
-          customMessage = '邮箱或密码错误';
-        }
-      }
-      
-      // 显示错误消息
-      if (shouldShowCustomMessage) {
-        ElMessage.error(customMessage);
-      } else if (errorMessage && errorMessage.trim() !== '') {
-        ElMessage.error(errorMessage);
-      } else {
-        ElMessage.error('登录失败，请重试');
-      }
-      
+      // 确保错误消息不为空
+      const errorMessage = message && message.trim() ? message.trim() : '登录失败';
+      console.log('登录失败，错误消息:', errorMessage);
+      ElMessage.error(errorMessage);
       refreshCode(); // 登录失败时刷新验证码
       form.verifyCode = ''; // 清空验证码输入
     }
   } catch (error: any) {
     console.error('Login failed:', error);
-    
-    // 统一的错误处理逻辑
-    let shouldShowCustomMessage = false;
-    let customMessage = '';
-    let errorMessage = '';
-    
-    // 获取错误消息
-    if (error.response && error.response.data) {
-      errorMessage = error.response.data.message || '';
+    if (error.response) {
+      console.error('Error response:', error.response);
+      let errorMsg = '登录失败，请检查网络连接或联系管理员';
+      
+      // 尝试提取错误消息
+      if (error.response.data?.message) {
+        errorMsg = error.response.data.message.trim() || errorMsg;
+      } else if (error.response.statusText) {
+        errorMsg = error.response.statusText.trim() || errorMsg;
+      }
+      
+      console.log('显示错误消息:', errorMsg);
+      ElMessage.error(errorMsg);
     } else {
-      errorMessage = error.message || '';
+      console.log('显示网络错误消息');
+      ElMessage.error('登录失败，请检查网络连接或联系管理员');
     }
-    
-    // 检查是否是认证相关的错误
-    if (errorMessage && (errorMessage.includes('用户名') || errorMessage.includes('密码') || 
-        errorMessage.includes('邮箱') || errorMessage.includes('登录') || errorMessage.includes('认证') ||
-        errorMessage.includes('用户不存在') || errorMessage.includes('密码错误') || errorMessage.includes('Invalid'))) {
-      shouldShowCustomMessage = true;
-      if (form.type === 0) {
-        customMessage = '用户名或密码错误';
-      } else {
-        customMessage = '邮箱或密码错误';
-      }
-    }
-    
-    // 延迟显示错误消息，避免与全局拦截器冲突
-    setTimeout(() => {
-      if (shouldShowCustomMessage) {
-        ElMessage.error(customMessage);
-      } else if (errorMessage && errorMessage.trim() !== '') {
-        // 对于非认证错误，如果全局拦截器没有显示，我们显示
-        ElMessage.error(errorMessage);
-      } else {
-        ElMessage.error('登录失败，请检查网络连接或联系管理员');
-      }
-    }, 100); // 100ms延迟确保全局拦截器先执行
-    
     refreshCode(); // 登录失败时刷新验证码
     form.verifyCode = ''; // 清空验证码输入
   }
