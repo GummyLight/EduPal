@@ -1,5 +1,82 @@
 <template>
   <div class="community-content-wrapper">
+    <!-- 管理员统计和搜索功能 -->
+    <div v-if="userType === 0" class="admin-controls">
+      <el-row :gutter="20" class="stats-section">
+        <el-col :span="6">
+          <el-card class="stats-card">
+            <div class="stats-item">
+              <span class="stats-label">总帖子数</span>
+              <span class="stats-value">{{ posts.length }}</span>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="stats-card">
+            <div class="stats-item">
+              <span class="stats-label">有附件帖子</span>
+              <span class="stats-value">{{ postsWithAttachments }}</span>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="stats-card">
+            <div class="stats-item">
+              <span class="stats-label">总回复数</span>
+              <span class="stats-value">{{ totalReplies }}</span>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="stats-card">
+            <div class="stats-item">
+              <span class="stats-label">今日帖子</span>
+              <span class="stats-value">{{ todayPosts }}</span>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+      
+      <el-row :gutter="20" class="search-section">
+        <el-col :span="8">
+          <el-input
+            v-model="searchTitle"
+            placeholder="按标题或内容搜索"
+            clearable
+            @clear="clearSearch"
+            @keyup.enter="handleSearch"
+          >
+            <template #append>
+              <el-button @click="handleSearch" :icon="Search">搜索</el-button>
+            </template>
+          </el-input>
+        </el-col>
+        <el-col :span="8">
+          <el-input
+            v-model="searchAuthor"
+            placeholder="按作者搜索"
+            clearable
+            @clear="clearSearch"
+            @keyup.enter="handleSearch"
+          >
+            <template #append>
+              <el-button @click="handleSearch" :icon="User">搜索作者</el-button>
+            </template>
+          </el-input>
+        </el-col>
+        <el-col :span="4">
+          <el-button @click="clearSearch" :icon="Refresh">清空搜索</el-button>
+        </el-col>
+        <el-col :span="4">
+          <el-switch
+            v-model="showTableView"
+            inactive-text="卡片视图"
+            active-text="表格视图"
+          />
+        </el-col>
+      </el-row>
+    </div>
+
     <!-- 帖子列表 -->
     <el-card class="post-list-card" shadow="never">
       <template #header>
@@ -10,35 +87,104 @@
       </template>
 
       <div class="post-list">
-        <el-card v-for="post in posts" :key="post.id" class="post-item" shadow="hover">
-          <div class="post-header">
-            <span class="post-title" @click="viewPostDetail(post)">{{ post.title }}</span>
-            <span class="post-author">发布人: {{ post.authorName }}</span>
-            <span class="post-time">{{ formatTime(post.publishTime) }}</span>
-          </div>
-          <div class="post-content">{{ post.content.substring(0, 100) }}...</div>
-          <div class="post-actions">
-            <el-button type="primary" text size="small" @click="viewPostDetail(post)">
-              查看详情 ({{ post.replies ? post.replies.length : 0 }})
-            </el-button>
-            <el-button type="info" text size="small" @click="toggleCollect(post)">
-              {{ post.isCollected ? '取消收藏' : '收藏' }}
-            </el-button>
-            <el-button v-if="post.attachedFileUrl" type="success" text size="small">
-              <el-link :href="post.attachedFileUrl" target="_blank">查看附件</el-link>
-            </el-button>
-            <el-button
-                v-if="userType === 0 || post.authorId === userId"
-                type="danger"
-                text
-                size="small"
-                @click="deletePost(post)"
-            >
-              删除
-            </el-button>
-          </div>
-        </el-card>
-        <el-empty v-if="posts.length === 0" description="暂无帖子"></el-empty>
+        <!-- 管理员表格视图 -->
+        <div v-if="userType === 0 && showTableView">
+          <el-table
+            :data="filteredPosts"
+            style="width: 100%"
+            stripe
+            border
+            height="500"
+          >
+            <el-table-column prop="id" label="帖子ID" width="120" />
+            <el-table-column prop="title" label="标题" min-width="200">
+              <template #default="{ row }">
+                <el-button type="text" @click="viewPostDetail(row)">{{ row.title }}</el-button>
+              </template>
+            </el-table-column>
+            <el-table-column prop="authorName" label="作者" width="120" />
+            <el-table-column prop="authorId" label="作者ID" width="120" />
+            <el-table-column label="附件" width="80">
+              <template #default="{ row }">
+                <el-tag v-if="row.attachedFileUrl" type="success" size="small">
+                  <el-icon><Paperclip /></el-icon>
+                </el-tag>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="回复数" width="100">
+              <template #default="{ row }">
+                <el-tag type="info" size="small">{{ row.replies?.length || 0 }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="publishTime" label="发布时间" width="180">
+              <template #default="{ row }">
+                <span>{{ formatTime(row.publishTime) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="content" label="内容预览" min-width="200">
+              <template #default="{ row }">
+                <el-tooltip :content="row.content" placement="top">
+                  <span class="content-preview">
+                    {{ truncateText(row.content, 50) }}
+                  </span>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="180" fixed="right">
+              <template #default="{ row }">
+                <el-button
+                  type="primary"
+                  size="small"
+                  @click="viewPostDetail(row)"
+                >
+                  查看
+                </el-button>
+                <el-button
+                  type="danger"
+                  size="small"
+                  @click="deletePost(row)"
+                >
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        
+        <!-- 普通卡片视图 -->
+        <div v-else>
+          <el-card v-for="post in filteredPosts" :key="post.id" class="post-item" shadow="hover">
+            <div class="post-header">
+              <span class="post-title" @click="viewPostDetail(post)">{{ post.title }}</span>
+              <span class="post-author">发布人: {{ post.authorName }}</span>
+              <span class="post-time">{{ formatTime(post.publishTime) }}</span>
+            </div>
+            <div class="post-content">{{ post.content.substring(0, 100) }}...</div>
+            <div class="post-actions">
+              <el-button type="primary" text size="small" @click="viewPostDetail(post)">
+                查看详情 ({{ post.replies ? post.replies.length : 0 }})
+              </el-button>
+              <el-button type="info" text size="small" @click="toggleCollect(post)">
+                {{ post.isCollected ? '取消收藏' : '收藏' }}
+              </el-button>
+              <el-button v-if="post.attachedFileUrl" type="success" text size="small">
+                <el-link :href="post.attachedFileUrl" target="_blank">查看附件</el-link>
+              </el-button>
+              <el-button
+                  v-if="userType === 0 || post.authorId === userId"
+                  type="danger"
+                  text
+                  size="small"
+                  @click="deletePost(post)"
+              >
+                删除
+              </el-button>
+            </div>
+          </el-card>
+        </div>
+        
+        <el-empty v-if="filteredPosts.length === 0" description="暂无帖子"></el-empty>
       </div>
     </el-card>
 
@@ -188,7 +334,7 @@
 import { ref, reactive, computed, onMounted, defineProps } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, ElMessageBox, FormInstance, UploadFile } from 'element-plus';
-import { UploadFilled } from '@element-plus/icons-vue';
+import { UploadFilled, Search, User, Refresh, Paperclip } from '@element-plus/icons-vue';
 
 import {
   CommunityService,
@@ -225,6 +371,51 @@ console.log('userType:', userType.value, 'username:', username.value, 'userId:',
 const posts = ref<PostResponse[]>([]);
 const collectedPosts = ref<PostResponse[]>([]);
 const showCollectedPosts = ref(false);
+
+// 管理员功能
+const showTableView = ref(false);
+const searchTitle = ref('');
+const searchAuthor = ref('');
+
+// 计算属性
+const filteredPosts = computed(() => {
+  let result = posts.value;
+  
+  if (userType.value === 0) {
+    // 管理员搜索功能
+    if (searchTitle.value.trim()) {
+      result = result.filter(post => 
+        post.title.toLowerCase().includes(searchTitle.value.toLowerCase()) ||
+        post.content.toLowerCase().includes(searchTitle.value.toLowerCase())
+      );
+    }
+    
+    if (searchAuthor.value.trim()) {
+      result = result.filter(post => 
+        post.authorName.toLowerCase().includes(searchAuthor.value.toLowerCase()) ||
+        post.authorId.includes(searchAuthor.value)
+      );
+    }
+  }
+  
+  return result;
+});
+
+const postsWithAttachments = computed(() => 
+  posts.value.filter(post => post.attachedFileUrl).length
+);
+
+const totalReplies = computed(() => 
+  posts.value.reduce((total, post) => total + (post.replies?.length || 0), 0)
+);
+
+const todayPosts = computed(() => {
+  const today = new Date().toDateString();
+  return posts.value.filter(post => {
+    const postDate = new Date(post.publishTime).toDateString();
+    return postDate === today;
+  }).length;
+});
 
 // 发布帖子相关
 const showPostDialog = ref(false);
@@ -272,6 +463,21 @@ onMounted(() => {
 const formatTime = (timeString: string): string => {
   const date = new Date(timeString);
   return date.toLocaleString('zh-CN');
+};
+
+const truncateText = (text: string, maxLength: number): string => {
+  if (!text) return '';
+  return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+};
+
+// 搜索和过滤方法
+const handleSearch = () => {
+  // filteredPosts 计算属性会自动处理搜索逻辑
+};
+
+const clearSearch = () => {
+  searchTitle.value = '';
+  searchAuthor.value = '';
 };
 
 const fetchPosts = async () => {
@@ -559,6 +765,54 @@ const deletePost = (postToDelete: PostResponse) => {
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+/* 管理员控制面板样式 */
+.admin-controls {
+  margin-bottom: 20px;
+}
+
+.stats-section {
+  margin-bottom: 20px;
+}
+
+.stats-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stats-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stats-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.stats-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #409eff;
+}
+
+.search-section {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e4e7ed;
+}
+
+.content-preview {
+  display: inline-block;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .card-header {

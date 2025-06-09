@@ -114,11 +114,6 @@ const routes = [
         component: () => import('../views/AdminCourse.vue'),
         meta: { requiresAuth: true, roles: ['admin'] }
       },
-      { 
-        path: 'admin-community', 
-        component: () => import('../views/AdminCommunity.vue'),
-        meta: { requiresAuth: true, roles: ['admin'] }
-      },
     ]
   }
 ];

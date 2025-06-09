@@ -60,9 +60,9 @@
         <i class="el-icon-reading"></i>
         <span>教学内容管理</span>
       </el-menu-item>
-      <el-menu-item v-if="props.usertype === 0" index="/home/admin-community">
+      <el-menu-item v-if="props.usertype === 0" index="/home/community">
         <i class="el-icon-chat-line-square"></i>
-        <span>社区管理</span>
+        <span>社区交流</span>
       </el-menu-item>
     </el-menu>
 
