@@ -106,21 +106,6 @@ export interface StudentDetailsFrontend {
     studentVariation: number;
 }
 
-// 作业进度相关接口
-export interface QuizProgressData {
-    totalQuizzes: number;
-    completedQuizzes: number;
-    progressPercentage: number;
-}
-
-// 后端返回的作业进度响应格式
-interface BackendQuizProgressResponse {
-    status: string;
-    message: string;
-    quizNum: number;
-    completedCount: number;
-}
-
 export const HomeService = {
     /**
      * 获取管理员首页数据
@@ -305,44 +290,6 @@ export const HomeService = {
                 ElMessage.error(error.message);
             } else {
                 ElMessage.error('获取教师首页数据失败，请检查网络或联系管理员！');
-            }
-            throw error;
-        }
-    },
-
-    /**
-     * 获取作业进度数据
-     * @param {string} userId - 用户的ID
-     * @returns {Promise<QuizProgressData>} 作业进度数据对象
-     */
-    async getQuizProgressData(userId: string): Promise<QuizProgressData> {
-        try {
-            const response = await api.get<BackendQuizProgressResponse>('/home/quiz-progress', {
-                params: {
-                    userId: userId,
-                }
-            });
-
-            if (response.data.status !== "success") {
-                throw new Error(response.data.message || '获取作业进度数据失败');
-            }
-
-            const rawData = response.data;
-            const transformedData: QuizProgressData = {
-                totalQuizzes: rawData.quizNum,
-                completedQuizzes: rawData.completedCount,
-                progressPercentage: (rawData.completedCount / rawData.quizNum) * 100,
-            };
-            return transformedData;
-        } catch (error: any) {
-            console.error('获取作业进度数据失败:', error);
-            
-            if (error.response && error.response.data && error.response.data.message) {
-                ElMessage.error(error.response.data.message);
-            } else if (error.message) {
-                ElMessage.error(error.message);
-            } else {
-                ElMessage.error('获取作业进度数据失败，请检查网络或联系管理员！');
             }
             throw error;
         }

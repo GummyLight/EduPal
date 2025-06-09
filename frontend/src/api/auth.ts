@@ -90,8 +90,8 @@ export const login = async (userInput: string, password: string, type: number): 
 // 发送邮箱验证码函数
 export const sendEmailCode = async (email: string): Promise<ApiResponse> => {
   try {
-    const requestData: EmailCodeRequest = { email };
-    const response = await axios.post<ApiResponse>('/api/auth/send-code', requestData);
+    // 后端期望URL参数而不是请求体
+    const response = await axios.post<ApiResponse>(`/api/auth/send-code?email=${encodeURIComponent(email)}`);
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
