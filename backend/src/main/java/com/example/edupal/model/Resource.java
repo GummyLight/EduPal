@@ -16,7 +16,7 @@ public class Resource {
     private int resource_id;
 
 
-    @Column(length = 8, nullable = false)
+    @Column(length = 10, nullable = false)
     private String subject;
 
     @Column(length = 10)

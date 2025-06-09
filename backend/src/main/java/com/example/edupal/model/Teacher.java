@@ -21,7 +21,7 @@ public class Teacher {
     @Column(name="teacher_name",length = 10)
     private String teacherName;
 
-    @Column(name="teaching_subject",length = 8)
+    @Column(name="teaching_subject",length = 10)
     private String teachingSubject;
 
     @Column(name="class1",length = 4)

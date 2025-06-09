@@ -15,7 +15,7 @@ public class TeachingContent {
     @Column(length = 36)
     private String teaching_content_id;
 
-    @Column(length = 8, nullable = false)
+    @Column(length = 10, nullable = false)
     private String subject;
 
     @Column(length = 10)

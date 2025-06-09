@@ -142,11 +142,16 @@
           <div class="input-actions">
             <div class="input-tools">
               <el-select v-model="currentSubject" size="small" style="width: 100px;">
-                <el-option label="数学" value="math" />
-                <el-option label="物理" value="physics" />
-                <el-option label="化学" value="chemistry" />
-                <el-option label="编程" value="programming" />
-                <el-option label="其他" value="other" />
+                <el-option label="数学" value="数学" />
+                <el-option label="物理" value="物理" />
+                <el-option label="化学" value="化学" />
+                <el-option label="英语" value="英语" />
+                <el-option label="语文" value="语文" />
+                <el-option label="生物" value="生物" />
+                <el-option label="历史" value="历史" />
+                <el-option label="地理" value="地理" />
+                <el-option label="政治" value="政治" />
+                <el-option label="其他" value="其他" />
               </el-select>
             </div>
             <el-button 
@@ -361,7 +366,7 @@ interface Conversation {
 
 // 响应式数据
 const currentQuestion = ref('');
-const currentSubject = ref('math');
+const currentSubject = ref('数学');
 const isLoading = ref(false);
 const isSyncing = ref(false); // 同步状态
 const loadingProgress = ref(0);
@@ -541,13 +546,25 @@ const loadAndMergeBackendHistory = async () => {
 // 获取学科中文名称
 const getSubjectName = (subject: string): string => {
   const subjectNames: Record<string, string> = {
+    // 英文到中文的映射（兼容旧数据）
     'math': '数学',
     'physics': '物理', 
     'chemistry': '化学',
     'chem': '化学',        // 支持缩短的学科代码
     'programming': '编程',
     'prog': '编程',        // 支持缩短的学科代码
-    'other': '其他'
+    'other': '其他',
+    // 中文到中文的映射（新标准）
+    '数学': '数学',
+    '物理': '物理',
+    '化学': '化学',
+    '英语': '英语',
+    '语文': '语文',
+    '生物': '生物',
+    '历史': '历史',
+    '地理': '地理',
+    '政治': '政治',
+    '其他': '其他'
   };
   return subjectNames[subject] || subject;
 };
@@ -577,27 +594,34 @@ const getCurrentQuestionSubject = (): string => {
   return currentSubject.value;
 };
 
-// 将后端学科代码映射为前端统一格式
+// 将学科代码映射为统一格式（用于与后端交互）
 const normalizeSubject = (subject: string): string => {
   const subjectMapping: Record<string, string> = {
-    '数学': 'math',
-    'math': 'math',
-    '物理': 'physics', 
-    'physics': 'physics',
-    '化学': 'chemistry',
-    'chemistry': 'chemistry',
-    'chem': 'chemistry',
-    '编程': 'programming',
-    'programming': 'programming',
-    'prog': 'programming',
-    '计算机': 'programming',
-    '计算机科学': 'programming',
-    '数据结构': 'programming',
-    '算法': 'programming',
-    '其他': 'other',
-    'other': 'other'
+    // 新的中文标准（优先使用）
+    '数学': '数学',
+    '物理': '物理',
+    '化学': '化学',
+    '英语': '英语',
+    '语文': '语文',
+    '生物': '生物',
+    '历史': '历史',
+    '地理': '地理',
+    '政治': '政治',
+    '其他': '其他',
+    // 为了向后兼容，保留英文映射到中文
+    'math': '数学',
+    'physics': '物理',
+    'chemistry': '化学',
+    'chem': '化学',
+    'programming': '编程',
+    'prog': '编程',
+    '计算机': '编程',
+    '计算机科学': '编程',
+    '数据结构': '编程',
+    '算法': '编程',
+    'other': '其他'
   };
-  return subjectMapping[subject] || subject.toLowerCase();
+  return subjectMapping[subject] || subject;
 };
 
 // 实时同步功能：在成功发送消息后同步到云端

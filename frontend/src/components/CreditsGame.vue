@@ -173,7 +173,7 @@ const realDevelopers = [
     github: 'https://github.com/XunMengDeFengZheng'
   },
   {
-    name: '李昶谨',
+    name: '李昶瑾',
     avatar: '/src/assets/contributorIcon3.jpg',
     role: '项目架构师',
     isCenter: true,

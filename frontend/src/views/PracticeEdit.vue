@@ -16,9 +16,15 @@
           </el-form-item>
           <el-form-item label="所属科目" prop="subject">
             <el-select v-model="practiceForm.subject" placeholder="请选择科目">
-              <el-option label="数学" value="math" />
-              <el-option label="物理" value="physics" />
-              <el-option label="化学" value="chemistry" />
+              <el-option label="数学" value="数学" />
+              <el-option label="物理" value="物理" />
+              <el-option label="英语" value="英语" />
+              <el-option label="化学" value="化学" />
+              <el-option label="语文" value="语文" />
+              <el-option label="生物" value="生物" />
+              <el-option label="历史" value="历史" />
+              <el-option label="地理" value="地理" />
+              <el-option label="政治" value="政治" />
             </el-select>
           </el-form-item>
           <el-form-item label="题目类型" prop="type">
@@ -26,9 +32,9 @@
           </el-form-item>
           <el-form-item label="难度等级" prop="difficulty">
             <el-select v-model="practiceForm.difficulty" placeholder="请选择难度">
-              <el-option label="简单" value="easy" />
-              <el-option label="中等" value="medium" />
-              <el-option label="困难" value="hard" />
+              <el-option label="简单" value="简单" />
+              <el-option label="中等" value="中等" />
+              <el-option label="困难" value="困难" />
             </el-select>
           </el-form-item>
           <el-form-item label="关联知识点" prop="knowledge_point">

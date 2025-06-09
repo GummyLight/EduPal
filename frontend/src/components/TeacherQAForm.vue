@@ -422,13 +422,32 @@ const formatTime = (date: Date) => {
 
 const getSubjectName = (subject: string): string => {
   const subjectNames: Record<string, string> = {
+    // 英文到中文的映射（向后兼容）
     'math': '数学',
     'physics': '物理', 
     'chemistry': '化学',
     'chem': '化学',
+    'english': '英语',
+    'chinese': '语文',
+    'biology': '生物',
+    'history': '历史',
+    'geography': '地理',
+    'politics': '政治',
     'programming': '编程',
     'prog': '编程',
-    'other': '其他'
+    'other': '其他',
+    // 中文到中文的映射（新标准）
+    '数学': '数学',
+    '物理': '物理',
+    '英语': '英语',
+    '化学': '化学',
+    '语文': '语文',
+    '生物': '生物',
+    '历史': '历史',
+    '地理': '地理',
+    '政治': '政治',
+    '编程': '编程',
+    '其他': '其他'
   };
   return subjectNames[subject] || subject;
 };

@@ -19,9 +19,15 @@
           </el-form-item>
           <el-form-item label="学科分类">
             <el-select v-model="filters.subject" placeholder="选择学科" clearable>
-              <el-option label="数学" value="Math" /> <el-option label="物理" value="Physics" />
-              <el-option label="英语" value="English" />
-              <el-option label="化学" value="Chemistry" />
+              <el-option label="数学" value="数学" />
+              <el-option label="物理" value="物理" />
+              <el-option label="英语" value="英语" />
+              <el-option label="化学" value="化学" />
+              <el-option label="语文" value="语文" />
+              <el-option label="生物" value="生物" />
+              <el-option label="历史" value="历史" />
+              <el-option label="地理" value="地理" />
+              <el-option label="政治" value="政治" />
             </el-select>
           </el-form-item>
           <el-form-item label="资料描述">
@@ -156,17 +162,27 @@ const filters = ref({
   description: '', // 资料描述筛选
 });
 
-// 学科选项映射
+// 学科选项列表（统一使用中文）
 const subjectOptions: { [key: string]: string } = {
-  'Math': '数学', // 后端返回 Math, Physics 等，前端显示中文
+  '数学': '数学',
+  '物理': '物理', 
+  '英语': '英语',
+  '化学': '化学',
+  '语文': '语文',
+  '生物': '生物',
+  '历史': '历史',
+  '地理': '地理',
+  '政治': '政治',
+  // 为了兼容可能的旧数据，保留英文到中文的映射
+  'Math': '数学',
   'Physics': '物理',
-  'English': '英语',
+  'English': '英语', 
   'Chemistry': '化学',
-  // 如果后端可能直接返回中文，为了健壮性也可以加上，但通常建议以后端返回的英文为准
-  // '数学': '数学',
-  // '物理': '物理',
-  // '英语': '英语',
-  // '化学': '化学',
+  'Chinese': '语文',
+  'Biology': '生物',
+  'History': '历史',
+  'Geography': '地理',
+  'Politics': '政治'
 };
 
 

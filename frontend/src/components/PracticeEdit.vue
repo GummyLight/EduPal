@@ -30,9 +30,15 @@
             <el-col :span="12">
               <el-form-item label="所属学科" prop="subject">
                 <el-select v-model="quizForm.subject" placeholder="请选择学科">
-                  <el-option label="数学" value="math" />
-                  <el-option label="物理" value="physics" />
-                  <el-option label="化学" value="chemistry" />
+                  <el-option label="数学" value="数学" />
+                  <el-option label="物理" value="物理" />
+                  <el-option label="英语" value="英语" />
+                  <el-option label="化学" value="化学" />
+                  <el-option label="语文" value="语文" />
+                  <el-option label="生物" value="生物" />
+                  <el-option label="历史" value="历史" />
+                  <el-option label="地理" value="地理" />
+                  <el-option label="政治" value="政治" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -52,9 +58,9 @@
             <el-col :span="12">
               <el-form-item label="难度等级" prop="difficulty">
                 <el-select v-model="quizForm.difficulty" placeholder="请选择难度">
-                  <el-option label="简单" value="easy" />
-                  <el-option label="中等" value="medium" />
-                  <el-option label="困难" value="hard" />
+                  <el-option label="简单" value="简单" />
+                  <el-option label="中等" value="中等" />
+                  <el-option label="困难" value="困难" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -138,7 +144,7 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from 'element-plus';
-import { createQuiz, modifyQuiz, CreateQuizRequest, ModifyQuizRequest } from '@/api/quiz';
+import { createQuiz, modifyQuiz, CreateQuizRequest, ModifyQuizRequest } from '../api/quiz';
 import axios from 'axios';
 
 const router = useRouter();
@@ -258,18 +264,36 @@ const fetchTeacherClasses = async () => {
 };
 
 // 加载编辑数据
-const loadEditData = () => {
-  if (isEdit.value && route.state?.exercise) {
-    const exercise = route.state.exercise;
-    Object.assign(quizForm, {
-      title: exercise.内容 || '',
-      subject: exercise.科目 || '',
-      contentType: exercise.类型 || '',
-      difficulty: exercise.难度 || '',
-      knowledgePoints: exercise.知识点 ? exercise.知识点.split(',') : [],
-      description: exercise.description || '',
-      deadline: exercise.截止时间 || '',
-    });
+const loadEditData = async () => {
+  if (isEdit.value && route.params.exerciseId) {
+    try {
+      // 从 URL 查询参数中获取练习数据（如果有的话）
+      if (route.query.title) {
+        Object.assign(quizForm, {
+          title: route.query.title as string || '',
+          subject: route.query.subject as string || '',
+          contentType: route.query.contentType as string || '',
+          difficulty: route.query.difficulty as string || '',
+          knowledgePoints: route.query.knowledgePoints ? (route.query.knowledgePoints as string).split(',') : [],
+          description: route.query.description as string || '',
+          deadline: route.query.deadline as string || '',
+        });
+        
+        // 设置班级选择
+        if (route.query.class1 || route.query.class2) {
+          const classes = [];
+          if (route.query.class1) classes.push(route.query.class1 as string);
+          if (route.query.class2) classes.push(route.query.class2 as string);
+          classSelection.value = classes;
+        }
+      }
+      
+      console.log('编辑模式，练习ID:', route.params.exerciseId);
+      console.log('从路由加载的练习数据:', quizForm);
+    } catch (error) {
+      console.error('加载编辑数据失败:', error);
+      ElMessage.error('加载练习数据失败');
+    }
   }
 };
 
@@ -299,7 +323,7 @@ const handleSubmit = async () => {
       subject: quizForm.subject,
       contentType: quizForm.contentType,
       difficulty: quizForm.difficulty,
-      knowledgePoints: quizForm.knowledgePoints,
+      knowledgePoints: Array.isArray(quizForm.knowledgePoints) ? quizForm.knowledgePoints.join(',') : quizForm.knowledgePoints,
       description: quizForm.description,
       teacherId: userInfo.value.userid,
       teacherName: userInfo.value.username,
@@ -357,9 +381,9 @@ const goBack = () => {
 };
 
 // 组件挂载
-onMounted(() => {
-  fetchTeacherClasses();
-  loadEditData();
+onMounted(async () => {
+  await fetchTeacherClasses();
+  await loadEditData();
 });
 </script>
 

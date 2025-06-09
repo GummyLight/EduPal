@@ -146,7 +146,18 @@
         <!-- 教师特有字段 -->
         <template v-if="registerForm.userType === 2">
           <el-form-item label="教学科目" prop="teachingSubject">
-            <el-input v-model="registerForm.teachingSubject" placeholder="请输入教学科目" />
+            <el-select v-model="registerForm.teachingSubject" placeholder="请选择教学科目" style="width: 100%;">
+              <el-option label="数学" value="数学" />
+              <el-option label="物理" value="物理" />
+              <el-option label="英语" value="英语" />
+              <el-option label="化学" value="化学" />
+              <el-option label="语文" value="语文" />
+              <el-option label="生物" value="生物" />
+              <el-option label="历史" value="历史" />
+              <el-option label="地理" value="地理" />
+              <el-option label="政治" value="政治" />
+              <el-option label="其他" value="其他" />
+            </el-select>
           </el-form-item>
           <el-form-item label="授课班级" prop="teacherClass">
             <el-select v-model="registerForm.teacherClass" multiple placeholder="请选择授课班级" style="width: 100%;">
@@ -223,7 +234,18 @@
             <el-input v-model="currentTeacherInfo.teachingSubject" disabled />
           </el-form-item>
           <el-form-item label="新科目">
-            <el-input v-model="manageForm.newSubject" placeholder="请输入新教学科目" />
+            <el-select v-model="manageForm.newSubject" placeholder="请选择新教学科目" style="width: 100%;">
+              <el-option label="数学" value="数学" />
+              <el-option label="物理" value="物理" />
+              <el-option label="英语" value="英语" />
+              <el-option label="化学" value="化学" />
+              <el-option label="语文" value="语文" />
+              <el-option label="生物" value="生物" />
+              <el-option label="历史" value="历史" />
+              <el-option label="地理" value="地理" />
+              <el-option label="政治" value="政治" />
+              <el-option label="其他" value="其他" />
+            </el-select>
           </el-form-item>
           <el-form-item label="当前班级">
             <el-tag v-for="cls in currentTeacherInfo.teacherClass" :key="cls" style="margin-right: 8px;">

@@ -63,11 +63,30 @@ interface GetMyTeacherResponse {
 }
 
 // 学科映射：将前端学科字符串映射为后端兼容的短字符串
+// 主要使用中文学科名称，同时保持向后兼容性
 const subjectMap: Record<string, string> = {
+  // 中文学科名称（新标准）
+  '数学': 'math',
+  '物理': 'physics',
+  '化学': 'chem',
+  '英语': 'engl',
+  '语文': 'chin',
+  '生物': 'biol',
+  '历史': 'hist',
+  '地理': 'geog',
+  '政治': 'poli',
+  '其他': 'other',
+  // 英文学科名称（向后兼容）
   'math': 'math',
   'physics': 'physics', 
-  'chemistry': 'chem',     // 缩短为4个字符以适应数据库限制
-  'programming': 'prog',   // 缩短为4个字符以适应数据库限制
+  'chemistry': 'chem',
+  'english': 'engl',
+  'chinese': 'chin',
+  'biology': 'biol',
+  'history': 'hist',
+  'geography': 'geog',
+  'politics': 'poli',
+  'programming': 'prog',
   'other': 'other'
 };
 

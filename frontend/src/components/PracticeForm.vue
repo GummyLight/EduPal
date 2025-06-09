@@ -16,16 +16,22 @@
           </el-form-item>
           <el-form-item label="难易级别">
             <el-select v-model="filters.difficulty" placeholder="请选择难度" clearable>
-              <el-option label="简单" value="easy" />
-              <el-option label="中等" value="medium" />
-              <el-option label="困难" value="hard" />
+              <el-option label="简单" value="简单" />
+              <el-option label="中等" value="中等" />
+              <el-option label="困难" value="困难" />
             </el-select>
           </el-form-item>
           <el-form-item label="所属学科">
             <el-select v-model="filters.subject" placeholder="请选择学科" clearable>
-              <el-option label="数学" value="math" />
-              <el-option label="物理" value="physics" />
-              <el-option label="化学" value="chemistry" />
+              <el-option label="数学" value="数学" />
+              <el-option label="物理" value="物理" />
+              <el-option label="化学" value="化学" />
+              <el-option label="语文" value="语文" />
+              <el-option label="英语" value="英语" />
+              <el-option label="生物" value="生物" />
+              <el-option label="历史" value="历史" />
+              <el-option label="地理" value="地理" />
+              <el-option label="政治" value="政治" />
             </el-select>
           </el-form-item>
           <el-form-item v-if="userType === 2" label="选择班级">
@@ -148,9 +154,9 @@
         
         <el-form-item label="难度等级" required>
           <el-select v-model="addQuizForm.difficulty" placeholder="请选择难度" style="width: 100%">
-            <el-option label="简单" value="easy" />
-            <el-option label="中等" value="medium" />
-            <el-option label="困难" value="hard" />
+            <el-option label="简单" value="简单" />
+            <el-option label="中等" value="中等" />
+            <el-option label="困难" value="困难" />
           </el-select>
         </el-form-item>
         
@@ -246,9 +252,9 @@
         
         <el-form-item label="难度等级" required>
           <el-select v-model="editQuizForm.difficulty" placeholder="请选择难度" style="width: 100%">
-            <el-option label="简单" value="easy" />
-            <el-option label="中等" value="medium" />
-            <el-option label="困难" value="hard" />
+            <el-option label="简单" value="简单" />
+            <el-option label="中等" value="中等" />
+            <el-option label="困难" value="困难" />
           </el-select>
         </el-form-item>
         
@@ -760,24 +766,25 @@ const currentEditQuizId = ref<number>(0);
 const handleEdit = (row: TableDataItem) => {
   console.log('教师操作: 编辑练习内容:', row);
   
-  // 填充表单数据
-  editQuizForm.value = {
-    title: row.内容,
-    subject: row.科目,
-    contentType: row.类型,
-    difficulty: row.难度,
-    knowledgePoints: row.知识点,
-    description: row.知识点 ? `练习：${row.内容}` : '',
-    deadline: row.截止时间,
-    class1: '', // 这些信息在当前数据结构中没有，保持空
-    class2: ''
-  };
-  
-  // 重置文件列表
-  resetEditForm();
-  
-  currentEditQuizId.value = Number(row.习题号);
-  showEditDialog.value = true;
+  // 导航到练习编辑页面，通过查询参数传递数据
+  router.push({
+    name: 'PracticeEdit',
+    params: { exerciseId: row.习题号.toString() },
+    query: {
+      usertype: userType.value.toString(),
+      username: username.value,
+      userid: userId.value,
+      title: row.内容,
+      subject: row.科目,
+      contentType: row.类型,
+      difficulty: row.难度,
+      knowledgePoints: row.知识点,
+      deadline: row.截止时间,
+      description: `练习：${row.内容}`,
+      class1: '', // 这些信息在当前数据结构中没有，保持空
+      class2: ''
+    }
+  });
 };
 
 // 确认编辑练习

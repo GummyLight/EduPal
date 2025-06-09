@@ -15,10 +15,15 @@
 
         <el-form-item label="学科分类" prop="subject">
           <el-select v-model="uploadForm.subject" placeholder="请选择学科">
-            <el-option label="数学" value="Math" />
-            <el-option label="物理" value="Physics" />
-            <el-option label="英语" value="English" />
-            <el-option label="化学" value="Chemistry" />
+            <el-option label="数学" value="数学" />
+            <el-option label="物理" value="物理" />
+            <el-option label="英语" value="英语" />
+            <el-option label="化学" value="化学" />
+            <el-option label="语文" value="语文" />
+            <el-option label="生物" value="生物" />
+            <el-option label="历史" value="历史" />
+            <el-option label="地理" value="地理" />
+            <el-option label="政治" value="政治" />
           </el-select>
         </el-form-item>
 

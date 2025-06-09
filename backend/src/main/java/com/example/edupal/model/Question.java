@@ -26,7 +26,7 @@ public class Question {
     @Column(name="question_content", nullable = false)
     private String questionContent;
 
-    @Column(name="question_subject", length = 8, nullable = false)
+    @Column(name="question_subject", length = 10, nullable = false)
     private String questionSubject;
 
     @Column(name="question_type",nullable = false)
